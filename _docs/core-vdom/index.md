@@ -1,7 +1,7 @@
 ---
 module: virtual-dom
 maintainer: Deva Satyam
-title: Parcela's virtual DOM manager
+title: "Parcela's virtual DOM manager"
 intro: "Manages the virtual DOM, ensuring it is properly reflected in the browser actual DOM"
 firstpar: get-started
 ---
@@ -16,9 +16,9 @@ The developer will usually have little interaction with the virtual DOM directly
 
 The page that the browser shows is what we call the *actual* DOM.   Due to the cost of accessing the actual DOM, Parcela keeps a very handy copy of the actual DOM, which is the virtual-DOM.
 
-There is always one virtual DOM and, occassionally and for brief intervals, sections of a second one.   The permanent one is the `existing` virtual DOM.  The actual DOM should reflect the `existing` virtual DOM.   
+There is always one virtual DOM and, occassionally and for brief intervals, sections of a second one.   The permanent one is the `existing` virtual DOM.  The actual DOM should reflect the `existing` virtual DOM.
 
-During the rendering process, a second `expected` virtual DOM is created by calling the `view` method of each of the `Parcel` instances.  The `existing` and the `expected` virtual DOMs are then compared and, when a difference is found, a suitable DOM method is invoked to change the actual DOM to reflect the new `expected` version.  The `existing` virtual DOM is also changed to reflect this new state.  
+During the rendering process, a second `expected` virtual DOM is created by calling the `view` method of each of the `Parcel` instances.  The `existing` and the `expected` virtual DOMs are then compared and, when a difference is found, a suitable DOM method is invoked to change the actual DOM to reflect the new `expected` version.  The `existing` virtual DOM is also changed to reflect this new state.
 
 At the end of the rendering process, the `expected` virtual DOM is dropped since, at this time, both the `existing` and the `expected` should be the same.
 
@@ -42,11 +42,11 @@ The `render` method refreshes the screen. If called without any argument, it wil
 
 The method will call the `view` methods of the parcels and generate the `expected` virtual DOM.   It will compare it with the `existing` virtual DOM and, when a difference is found, it will call the DOM methods to update the actual DOM.  The `existing` will then be updated to reflect these changes.
 
-The `render` method will usually be called internally when the system detects external stimuli that might have produced changes within the state of the application.  
+The `render` method will usually be called internally when the system detects external stimuli that might have produced changes within the state of the application.
 
 ### Routing
 
-When routing is enabled, it is the routing subsystem that will call `rootApp` to trigger the render process for the corresponding page.  
+When routing is enabled, it is the routing subsystem that will call `rootApp` to trigger the render process for the corresponding page.
 
 ## The vNode
 
@@ -58,7 +58,7 @@ Corresponds to the `tagName` or `nodeName` property of an actual DOM node.  This
 
 ### attrs
 
-The `attrs` property is an object with properties corresponding to the DOM element properties.   It is optional and only attributes with values different from their defaults are included.  
+The `attrs` property is an object with properties corresponding to the DOM element properties.   It is optional and only attributes with values different from their defaults are included.
 
 Two attributes receive special treatment.  The `class` attribute contains and array of strings.   The `style` attribute contains a further hash map of style names to their values.
 
@@ -74,18 +74,18 @@ The `node` property holds a reference to the actual DOM node.  The property will
 
 ### parcel
 
-A Parcela application is made of a series of nested Parcels.  Each instance of `Parcel` will be rendered into a `vNode` which, in turn, will produce an actual DOM node.   The `parcel` property points to the `Parcel` instance that created this `vNode`.  
+A Parcela application is made of a series of nested Parcels.  Each instance of `Parcel` will be rendered into a `vNode` which, in turn, will produce an actual DOM node.   The `parcel` property points to the `Parcel` instance that created this `vNode`.
 
 ### stamp
 
-In order to save on rendering time, `Parcel` instances can have a `stamp` method which will produce a value that represents the current state of the parcel. The virtual DOM doesn't care how this is computed but it only knows that if the result of calling `stamp` is the same as the last time, it means the contents of the parcel have not changed.   By default the `stamp` method of the `Parcel` base class returns `NaN` which is never equal to anything, not even to itself.  Thus, if unchanged, Parcels will always be checked for differences.  This does not mean that the whole DOM for the parcel will be refreshed, it only means the parcel will be checked for differences against the 
+In order to save on rendering time, `Parcel` instances can have a `stamp` method which will produce a value that represents the current state of the parcel. The virtual DOM doesn't care how this is computed but it only knows that if the result of calling `stamp` is the same as the last time, it means the contents of the parcel have not changed.   By default the `stamp` method of the `Parcel` base class returns `NaN` which is never equal to anything, not even to itself.  Thus, if unchanged, Parcels will always be checked for differences.  This does not mean that the whole DOM for the parcel will be refreshed, it only means the parcel will be checked for differences against the
 
 
 
 
 
 * `tag`: The `tagName` or `nodeName` of the DOM element.
-* `attrs`: A hash map of attribute names to their values.  
+* `attrs`: A hash map of attribute names to their values.
 * `children`: an array of child `vNode`s
 * `node`: a reference to the actual DOM node
 

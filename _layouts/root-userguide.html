@@ -14,6 +14,9 @@
         </div>
         <div class="body-content userguide">
             {{ content }}
+            
+            {{ site }}
+            
             <ul class="userguide-list">{% for files in site.docs %}{% assign fragments = files.url | split: '/' %}{% assign filename = fragments.last %}{% if filename == 'index.html' %}
                 <li>
                   <a class="pure-button pure-button-bordered"  href="..{{ files.url }}">{{ files.module }}</a>

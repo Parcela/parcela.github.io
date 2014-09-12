@@ -1,0 +1,87 @@
+---
+layout: "root-index"
+userguide_url: "userguide/index.html"
+contribution_url: "contribution/index.html"
+---
+
+<h1 class="title"><img src="assets/logo-small.png" />{{ site.title }}</h1>
+
+<div class="highlight center"><pre><span class="ss">Isomorphic <span class="blue">modules</span> for building building ultrafast, robust and scalable webapplications</span></pre></div>
+
+<div class="body-content-home">
+    <div class="after-intro">
+        <a class="pure-button pure-button-primary pure-button-bordered" href="{{ page.userguide_url }}">User guides</a>
+        <a class="pure-button pure-button-bordered" href="https://github.com/{{ site.github_username }}">View on Github</a>
+        <a class="pure-button pure-button-bordered" href="{{ page.contribution_url }}">Contribute</a>
+    </div>
+
+<p>The name Parcela comes from the Spanish (the mother tongue of one of the authors) for <span class="blue">parcel</span> in the sense of "a distinct, continuous portion or tract of land". A parcel in Parcela represents a small portion of a web page.</p>
+
+<p>Parcela is a community-project. We develop basic commonjs-modules which can be used on both server and client (isomorphic). We demand this feature to be able to do serverside developing and rendering. All modules are highly tested, well documented and high performant. Among the modules are:
+
+<ul>
+   <li><span class="blue">Virtual DOM</span> (using Parcels) <i>work in progress</i></li>
+   <li><span class="blue">Promised IO</span></li>
+   <li><span class="blue">Rich Event system</span></li>
+   <li><span class="blue">I-tags</span> (isomorphic custom elements) <i>work in progress</i></li>
+</ul>
+
+<div class="started">Get Started</div>
+
+Creating a webapplication or server-application is just a matter of:
+
+<ul>
+   <li>Setup package.json for your project</li>
+   <li>For browserenvironments: create a buildfile</li>
+   <li>Create your code reqquireing the modules</li>
+</ul>
+
+You are free to mix Parcela modules with other npm-modules.
+</p>
+
+<h1>Example package.json</h1>
+{% highlight json %}
+{
+    "name": "my-project",
+    "version": "0.0.1",
+    "dependencies": {
+        "io": "Parcela/io",
+        "io-transfer": "Parcela/io-transfer"
+    }
+}
+{% endhighlight %}
+
+<h1>With nodejs:</h1>
+{% highlight js %}
+var IO = require('io'),
+    IOtransfer = require('io-transfer'); // delivers the method 'get'
+
+IOtransfer.mergeInto(IO);
+
+IO.get('http://somedomain.com/getInfo?q=something').then(
+    function(response) {
+        // `response` holds the remotedata
+    }
+);
+{% endhighlight %}
+
+<h1>In the browser:</h1>
+{% include loader.html %}
+
+{% highlight js %}
+<script>
+    var IO = require('io'),
+        IOtransfer = require('io-transfer'); // delivers the method 'get'
+
+    IOtransfer.mergeInto(IO);
+
+    IO.get('/getInfo?q=something').then(
+        function(response) {
+            // `response` holds the remotedata
+        }
+    );
+
+</script>
+{% endhighlight %}
+
+</div>

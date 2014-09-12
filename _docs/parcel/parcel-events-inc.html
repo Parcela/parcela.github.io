@@ -1,0 +1,140 @@
+
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Active Menu</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+<style type="text/css">
+.pure-table td.selected {
+    background-color: #F00;
+    color: #FFF;
+}
+.pure-table td {
+    cursor: default;
+}
+</style>
+</head>
+
+<body>
+    <script src="../../assets/core.js"></script>
+    <script>
+        ITSA = require('core');
+        ITSA.ready().then(
+            function () {
+                var v = ITSA.Parcel.vNode;
+
+                var data = [
+                    { id: 'ga-3475', name: 'gadget',   price: '$6.99' },
+                    { id: 'sp-9980', name: 'sprocket', price: '$3.75' },
+                    { id: 'wi-0650', name: 'widget',   price: '$4.25' }
+                ];
+
+                var DataRow = ITSA.Parcel.subClass({
+                    containerType: 'tr',
+                    view: function () {
+                        var tds = [],
+                            item = this.item,
+                            selectedCell = this.selectedCell,
+                            rowSelected = this.rowSelected;
+                        item.each(
+                            function(value, key) {
+                                var attrs = {
+                                    data: key
+                                };
+                                if (rowSelected && (selectedCell===key)) {
+                                    attrs.class = 'selected';
+                                }
+                                tds.push(v('td', attrs, value));
+                            }
+                        );
+                        return tds;
+                    }
+                });
+
+                var HeaderRow = ITSA.Parcel.subClass({
+                    containerType: 'thead',
+                    init: function (config) {
+                        var ths = [];
+                        for (var c = 0; c < this.cols; c++) {
+                            ths.push(v('th', 'H' + c));
+                        }
+                        this.ths = ths;
+                    },
+                    view: function () {
+                        return v('tr', this.ths);
+                    }
+                });
+
+                var BodySection = ITSA.Parcel.subClass({
+                    containerType: 'tbody',
+                    init: function (config) {
+                        var data = this.data;
+                        this.dataRows = [];
+                        for (var r = 0; r < data.length; r++) {
+                            this.dataRows[r] = new DataRow(Object.merge(config, {
+                                item: data[r]
+                            }));
+                        }
+                    },
+                    view: function () {
+                        return this.dataRows;
+                    }
+                });
+
+                var Table = ITSA.Parcel.subClass({
+                    containerType: 'table',
+                    className: 'pure-table pure-table-horizontal',
+                    init: function (config) {
+                        this.header = new HeaderRow(config);
+                        this.body = new BodySection(config);
+                        this.after('click', this.markCell, 'td');
+                    },
+                    view: function () {
+                        return [
+                            this.header,
+                            this.body
+                        ];
+                    },
+                    markCell: function(e) {
+                        var bodyParcel = e.parcelTree[1],
+                            rowParcel = e.parcelTree[2],
+                            vNode = e.target;
+                        bodyParcel.dataRows.each(
+                            function(rowparcel) {
+                                rowparcel.rowSelected = (rowparcel===rowParcel);
+                            }
+                        );
+                        rowParcel.selectedCell = vNode.attrs.data;
+                        ITSA.render(); // should be done automaticly by the vDOM after any event
+                    }
+                });
+
+                var WebApp = ITSA.Parcel.subClass({
+                    init: function (config) {
+                        this.table1 = new Table({
+                            data: data
+                        });
+                        this.table2 = new Table({
+                            data: data
+                        });
+                    },
+                    view: function () {
+                        return [
+                            this.table1,
+                            v('br'),
+                            v('br'),
+                            this.table2
+                        ];
+                    }
+                });
+
+                var webApp = new WebApp();
+
+                ITSA.rootApp(webApp);
+            }
+        );
+    </script>
+</body>
+
+</html>

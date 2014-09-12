@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/routing/routing.js - Parcela</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title="Parcela"></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.0.1</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/Event.html">Event</a></li>
+            
+                <li><a href="../classes/Event.Emitter.html">Event.Emitter</a></li>
+            
+                <li><a href="../classes/Event.Listener.html">Event.Listener</a></li>
+            
+                <li><a href="../classes/Function.html">Function</a></li>
+            
+                <li><a href="../classes/IO.html">IO</a></li>
+            
+                <li><a href="../classes/Object.html">Object</a></li>
+            
+                <li><a href="../classes/Parcel.html">Parcel</a></li>
+            
+                <li><a href="../classes/Parcel.EventListener.html">Parcel.EventListener</a></li>
+            
+                <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
+            
+                <li><a href="../classes/Promise.html">Promise</a></li>
+            
+                <li><a href="../classes/Router.html">Router</a></li>
+            
+                <li><a href="../classes/Utils.html">Utils</a></li>
+            
+                <li><a href="../classes/vDOM.html">vDOM</a></li>
+            
+                <li><a href="../classes/vNode.html">vNode</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/core.html">core</a></li>
+            
+                <li><a href="../modules/core-routing.html">core-routing</a></li>
+            
+                <li><a href="../modules/event.html">event</a></li>
+            
+                <li><a href="../modules/event-dom.html">event-dom</a></li>
+            
+                <li><a href="../modules/event-emitter.html">event-emitter</a></li>
+            
+                <li><a href="../modules/event-hammerjs.html">event-hammerjs</a></li>
+            
+                <li><a href="../modules/event-listener.html">event-listener</a></li>
+            
+                <li><a href="../modules/io.html">io</a></li>
+            
+                <li><a href="../modules/io-assets.html">io-assets</a></li>
+            
+                <li><a href="../modules/io-cors.html">io-cors</a></li>
+            
+                <li><a href="../modules/io-jsonp.html">io-jsonp</a></li>
+            
+                <li><a href="../modules/io-node.html">io-node</a></li>
+            
+                <li><a href="../modules/io-transfer.html">io-transfer</a></li>
+            
+                <li><a href="../modules/io-win.html">io-win</a></li>
+            
+                <li><a href="../modules/io-xml.html">io-xml</a></li>
+            
+                <li><a href="../modules/Object.html">Object</a></li>
+            
+                <li><a href="../modules/parcel.html">parcel</a></li>
+            
+                <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Promise.html">Promise</a></li>
+            
+                <li><a href="../modules/promise-ext.html">promise-ext</a></li>
+            
+                <li><a href="../modules/utils.html">utils</a></li>
+            
+                <li><a href="../modules/virtual-dom.html">virtual-dom</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/routing/routing.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/*
+In good part inspired by Leo Horie&#x27;s Mithirl https://github.com/lhorie/mithril.js
+*/
+/**
+Provides routing services.
+
+The module exports a single function which should be called to 
+fetch the [Router](../classes/Router.html) class.
+
+The function must be passed a reference to the DOM &#x60;window&#x60; object
+or a reasonable substitute.
+For modules to be loaded through Browserify, 
+this is usually &#x60;global.window&#x60;.  For modules loaded both through
+Browserify or node, assuming a suitable emulator, it can be
+done like this:
+ 
+&#x60;&#x60;&#x60;   
+var vDOM = require(&#x27;virtual-dom&#x27;)(global.window || require(&#x27;dom-window-emulator&#x27;));
+&#x60;&#x60;&#x60;
+
+@module core
+@submodule core-routing
+*/
+
+/**
+Provides routing services to Parcela
+
+@class Router
+@static
+*/
+
+
+module.exports = function (window) {
+    &quot;use strict&quot;;
+    
+    var winLoc = window.location,
+        document = window.document;
+    
+    var rootApp = require(&#x27;virtual-dom&#x27;)(window).rootApp;
+    require(&#x27;lang-ext&#x27;);
+    
+    
+
+    var r = {
+        /**
+        Current routing mode.  Can be one of the following, allowing paths of the format shown:
+        
+        * &#x60;&#x27;pathname&#x27;&#x60;: http://server/path/to/page
+        * &#x60;&#x27;hash&#x27;&#x60;: http://server/#/path/to/page
+        * **&#x60;&#x27;search&#x27;&#x60;**: http://server/?/path/to/page
+        
+        See the user guide for further discussion about the different modes.
+        
+        @property mode
+        @type String
+        @default &#x27;search&#x27;
+        */
+        mode: &#x27;search&#x27;,
+        
+        /**
+        Routing table. Contains a hash map, indexed by the url, 
+        with the sub-Class of Parcel that should be instantiated to handle the route.
+        
+        @property routes
+        @type Hash table
+        @default {}
+        */
+        routes: {},
+        
+        /**
+        DOM element where the application will be rendered.  Defaults to the &#x60;document.body&#x60;.
+        
+        @property rootNode
+        @type DOM reference
+        @default document.body
+        */
+        rootNode: document.body,
+        
+        /**
+        Default route to use when the url given by the browser does not match any 
+        in the routing table
+        
+        @property defaultRoute
+        @type String
+        @default &#x27;/&#x27;
+        */
+        defaultRoute: &#x27;/&#x27;,
+
+        _modes: {pathname: &quot;&quot;, hash: &quot;#&quot;, search: &quot;?&quot;},
+        _routeParams: {}, 
+        _currentRoute:null,
+        _redirect: function() {}, 
+        _computePostRedrawHook: null,
+
+        _buildQueryString: function (object, prefix) {
+            if (!object) return null;
+            var str = [];
+            object.each(function (prop) {
+                var key = prefix ? prefix + &quot;[&quot; + prop + &quot;]&quot; : prop, value = object[prop];
+                str.push(
+                    typeof value == &quot;object&quot; ? 
+                    r._buildQueryString(value, key) : 
+                    encodeURIComponent(key) + &quot;=&quot; + encodeURIComponent(value)
+                );
+            });
+            return str.join(&quot;&amp;&quot;);
+        },
+        
+
+        _parseQueryString: function (str) {
+            var params = {};
+    
+            var decodeSpace = function (string) {
+                return decodeURIComponent(string.replace(/\+/g, &quot; &quot;));
+            };
+            str.split(&#x27;&amp;&#x27;).forEach(function (pair) {
+                pair = pair.split(&quot;=&quot;);
+                params[decodeSpace(pair[0])] = pair[1] ? decodeSpace(pair[1]) : (pair.length === 1 ? true : &quot;&quot;);
+            });
+            return params;
+        },
+        
+        _routeByValue: function (path) {
+            r._routeParams = {};
+            var routes = r.routes, matches;
+
+            var queryStart = path.indexOf(&quot;?&quot;);
+            if (queryStart !== -1) {
+                r._routeParams = r._parseQueryString(path.substr(queryStart + 1, path.length));
+                path = path.substr(0, queryStart);
+            }
+            if (r.mode === &#x27;pathname&#x27;) {
+                r._routeParams = r._parseQueryString(winLoc.search.substr(1));
+            }
+                
+            r._routeParams.route = path;
+
+            return routes.some(function (config, route) {
+                if (route == path) {
+                    rootApp(new config.parcel(r._routeParams), r.rootNode);
+                    return true;
+                }
+                /*jshint -W084 */
+                if (matches = config.rx.exec(path)) {
+                /*jshint +W084 */
+                    
+                    config.names.forEach(function (name, i) {
+                        r._routeParams[name] = decodeURIComponent(matches[i +1]);
+                    });
+                    rootApp(new config.parcel(r._routeParams), r.rootNode);
+                    return true;
+                }
+            });
+        },
+
+        _setScroll: function () {
+            if (r.mode != &quot;hash&quot; &amp;&amp; winLoc.hash) {
+                winLoc.hash = winLoc.hash;
+            } else window.scrollTo(0, 0);
+        },
+        getCurrent: function () {
+            return r._currentRoute;
+        },
+        
+        /**
+        Determines the routing configuration for an application.
+        It will immediately act on the given routes, running the corresponding parcel.
+        This method is for conveniency, all the properties it sets are public.
+        
+        &#x60;&#x60;&#x60;
+        ITSA.Router.setRoutes(
+            {
+                &#x27;/item/:id&#x27;: ItemParcel,
+                &#x27;/itemList&#x27;: ItemList
+            },
+            &#x27;/itemList&#x27;
+        );
+        &#x60;&#x60;&#x60;
+        In this case we define two routes, the first one with a parameter &#x60;id&#x60;,
+        each handled by a different Parcel. The default is the second route.
+        No &#x60;rootNode&#x60; has been specified, thus the parcel will be rendered
+        in the &#x60;document.body&#x60;.
+        
+
+        @method setRoutes
+        @chainable
+        @param routes {Object} A route table as described in [routes](#property_routes)
+        @param [mode] {String} One of &#x60;search&#x60;, &#x60;hash&#x60; of &#x60;pathname&#x60; to set the [mode](#property_mode) property.
+        @param [defaultRoute] {String} url of the route to execute if the current location doesn&#x27;t match any of the above.
+             defaults to &#x27;/&#x27;
+        @param [rootNode] {DOM Element} Where to render the given Parcel. Defaults to &#x60;document.body&#x60;.
+        */
+        setRoutes: function (routes, mode, defaultRoute, rootNode) {
+            routes.each(function (parcel, route) {
+                r.setRoute(route, parcel);
+            });
+            if (mode !== undefined) {
+                if (mode in r._modes) {
+                    r.mode = mode;
+                } else {
+                    rootNode = defaultRoute;
+                    defaultRoute = mode;
+                }
+                if (defaultRoute !== undefined &amp;&amp; defaultRoute.appendChild) {
+                    rootNode = defaultRoute;
+                    defaultRoute = null;
+                }
+            }
+                    
+            
+            r.rootNode = rootNode || document.body;
+            r.defaultRoute = defaultRoute || &#x27;/&#x27;;
+
+            var normalizeRoute = function (route) {
+                return route.slice(r._modes[r.mode].length);
+            };
+            r._redirect = function(source) {
+                var path = r._currentRoute = normalizeRoute(source);
+                if (!r._routeByValue(path)) {
+                    r.navigate(r.defaultRoute, true);
+                }
+            };
+            var listener = r.mode == &quot;hash&quot; ? &quot;onhashchange&quot; : &quot;onpopstate&quot;;
+            window[listener] = function () {
+                if (r._currentRoute != normalizeRoute(winLoc[r.mode])) {
+                    r._redirect(winLoc[r.mode]);
+                }
+            };
+            r._computePostRedrawHook = r._setScroll;
+            window[listener]();
+            return r;
+        },
+        
+        /**
+        Returns the value of a parameter from the url when the route had variable parts.
+        For a route such as &#x60;&#x27;/item/:id&#x27;&#x60; if the browser navigates to &#x60;/item/123&#x60;,
+        &#x60;getParam(&#x27;id&#x27;)&#x60; should return &#x60;123&#x60;.
+        
+        @method getParam
+        @param name {String} Name of the parameter to read
+        @return {String} value of the parameter or undefined if not found.
+        */
+        getParam: function (name) {
+            return r._routeParams[name];
+        },
+        
+        /**
+        Navigates to the given route. Query parameters can be passed.  
+        The new route can either be added to the browser history or replace the current entry.
+        If the route is not found in the routing table, the [defaultRoute](#property_defaultRoute)
+        will be used.
+        
+        @method navigate
+        @chainable
+        @param route {String} url of the route to navigate to
+        @param [params] {Hash Map} parameters to be added to the query
+        @param [replace] {Boolean} if true, the given route will replace the current one in the browser history
+        */
+        navigate: function (route, params, replace) {
+            r._currentRoute = route;
+            if (typeof params !== &quot;object&quot;) {
+                replace = params;
+                params = null;
+            }
+
+            var querystring = r._buildQueryString(params);
+            if (querystring) {
+                r._currentRoute += (r._currentRoute.indexOf(&quot;?&quot;) === -1 ? &quot;?&quot; : &quot;&amp;&quot;) + querystring;
+            }
+            
+            if (window.history.pushState) {
+                r._computePostRedrawHook = function() {
+                    window.history[replace === true ? &quot;replaceState&quot; : &quot;pushState&quot;]
+                        (null, document.title, r._modes[r.mode] + r._currentRoute);
+                    r._setScroll();
+                };
+                r._redirect(r._modes[r.mode] + r._currentRoute);
+            }
+            else winLoc[r.mode] = r._currentRoute;
+            return r;
+        },
+        
+        
+        /**
+        Helper method to set or replace a route in the routing table.
+        
+        @method setRoute
+        @chainable
+        @param route {String |regex} url template of the route to set or replace 
+            or a regular expression that should match the route.
+        @param parcel {Parcel} sub-class of Parcel to instantiate to handle this route
+        */
+        setRoute: function (route, parcel) {
+            var names = [], name, match = /:([^\/\*]+)/g;
+            while ((name = match.exec(route)) !== null) {
+                names.push(name[1]);
+            }
+            r.routes[route] = {
+                parcel:parcel, 
+                rx: new RegExp(&quot;^&quot; + route.replace(/:\w+\*/g, &quot;(.*?)&quot;).replace(/:\w+/g, &quot;([^\\/]+)&quot;) + &quot;\/?$&quot;),
+                names: names
+            };
+        },
+
+        /** 
+        Removes the given route from the routing table.
+        @method removeRoute
+        @chainable
+        @param route {String} route to remove
+        */
+        removeRoute: function (route) {
+            delete r.routes[route];
+            return r;
+        }
+    };
+
+    /* *
+    Shortcut to the [Router.setRoutes](#method_setRoutes) method.
+    
+    &#x60;&#x60;&#x60;
+    ITSA.Router(
+        {
+            &#x27;/item/:id&#x27;: ItemParcel,
+            &#x27;/itemList&#x27;: ItemList
+        },
+        &#x27;/itemList&#x27;
+    );
+    &#x60;&#x60;&#x60;
+
+    **Important** If this method is used, 
+    it should be used before any of the other methods in this static class are used.
+    
+    @method ()
+    @chainable
+    @param routes {Object} A route table as described in [routes](#property_routes)
+        @param [mode] {String} One of &#x60;search&#x60;, &#x60;hash&#x60; of &#x60;pathname&#x60; to set the [mode](#property_mode) property.
+        @param [defaultRoute] {String} url of the route to execute if the current location doesn&#x27;t match any of the above.
+             defaults to &#x27;/&#x27;
+        @param [rootNode] {DOM Element} Where to render the given Parcel. Defaults to &#x60;document.body&#x60;.
+    */
+    
+    return function () {
+        return r.setRoutes.apply(r, arguments);
+    }.merge(r);
+};
+
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

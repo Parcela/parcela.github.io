@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/parcel/events.js - Parcela</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title="Parcela"></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.0.1</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/Event.html">Event</a></li>
+            
+                <li><a href="../classes/Event.Emitter.html">Event.Emitter</a></li>
+            
+                <li><a href="../classes/Event.Listener.html">Event.Listener</a></li>
+            
+                <li><a href="../classes/Function.html">Function</a></li>
+            
+                <li><a href="../classes/IO.html">IO</a></li>
+            
+                <li><a href="../classes/Object.html">Object</a></li>
+            
+                <li><a href="../classes/Parcel.html">Parcel</a></li>
+            
+                <li><a href="../classes/Parcel.EventListener.html">Parcel.EventListener</a></li>
+            
+                <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
+            
+                <li><a href="../classes/Promise.html">Promise</a></li>
+            
+                <li><a href="../classes/Router.html">Router</a></li>
+            
+                <li><a href="../classes/Utils.html">Utils</a></li>
+            
+                <li><a href="../classes/vDOM.html">vDOM</a></li>
+            
+                <li><a href="../classes/vNode.html">vNode</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/core.html">core</a></li>
+            
+                <li><a href="../modules/core-routing.html">core-routing</a></li>
+            
+                <li><a href="../modules/event.html">event</a></li>
+            
+                <li><a href="../modules/event-dom.html">event-dom</a></li>
+            
+                <li><a href="../modules/event-emitter.html">event-emitter</a></li>
+            
+                <li><a href="../modules/event-hammerjs.html">event-hammerjs</a></li>
+            
+                <li><a href="../modules/event-listener.html">event-listener</a></li>
+            
+                <li><a href="../modules/io.html">io</a></li>
+            
+                <li><a href="../modules/io-assets.html">io-assets</a></li>
+            
+                <li><a href="../modules/io-cors.html">io-cors</a></li>
+            
+                <li><a href="../modules/io-jsonp.html">io-jsonp</a></li>
+            
+                <li><a href="../modules/io-node.html">io-node</a></li>
+            
+                <li><a href="../modules/io-transfer.html">io-transfer</a></li>
+            
+                <li><a href="../modules/io-win.html">io-win</a></li>
+            
+                <li><a href="../modules/io-xml.html">io-xml</a></li>
+            
+                <li><a href="../modules/Object.html">Object</a></li>
+            
+                <li><a href="../modules/parcel.html">parcel</a></li>
+            
+                <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Promise.html">Promise</a></li>
+            
+                <li><a href="../modules/promise-ext.html">promise-ext</a></li>
+            
+                <li><a href="../modules/utils.html">utils</a></li>
+            
+                <li><a href="../modules/virtual-dom.html">virtual-dom</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/parcel/events.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/* globals document:true */
+
+&quot;use strict&quot;;
+
+/**
+ * Extends the Event-instance by adding the object &#x60;listener&#x60; to it.
+ * The returned object should be merged into any Class-instance or object you want to
+ * extend with the listener-methods, so the appropriate methods can be invoked on the instance.
+ *
+ * Should be called using  the provided &#x60;extend&#x60;-method like this:
+ * @example
+ *     var coreEventListener = require(&#x27;core-event-listener&#x27;);&lt;br&gt;
+ *     coreEventListener.extend(ITSA.event);
+ *
+ * @module parcel
+ * @submodule parcel-event-listener
+ * @class Parcel.Listener
+ * @since 0.0.1
+ *
+ * &lt;i&gt;Copyright (c) 2014 Parcela - https://github.com/Parcela&lt;/i&gt;
+ * New BSD License - https://github.com/ItsAsbreuk/itsa-library/blob/master/LICENSE
+ *
+*/
+
+// Include Function.mergePrototypes:
+require(&#x27;core-lang-ext&#x27;);
+
+var NAME = &#x27;[parcel-events]: &#x27;,
+    EventEmitter = require(&#x27;event/event-emitter.js&#x27;),
+    DOCUMENT = document,
+
+createListener = {
+    mergeInto: function (ParcelClass, instanceEvent) {
+        /**
+         * Holds all event-listener methods.
+         * The returned object should be merged into any Class-instance or object you want to
+         * extend with the listener-methods, so the appropriate methods can be invoked on the instance.
+         *
+         * See [Event.listener](Event.listener.html) for all properties that can be merged.
+         *
+         * @example
+         *     var blueObject = {};
+         *     blueObject.merge(Event.Listener);
+         *     blueObject.after(&#x27;*:save&#x27;, function(e) {
+         *         ...
+         *     });
+         *
+         * @example
+         *     Members.mergePrototypes(Event.Listener);
+         *     var myMembers = new Members();
+         *     myMembers.after(&#x27;PersonalProfile:save&#x27;, function(e) {
+         *         ...
+         *     });
+         *
+         * @for Parcel
+         * @property EventListener
+         * @type Object
+         * @since 0.0.1
+         */
+
+        /**
+         * This object should be merged into any Class-instance or object that you want to provide
+         * event-listener methods. This way, the appropriate methods can be invoked on the instance.
+         * instead of using the static Event-methods.
+         *
+         * It is highly recommendable to merge on the prototype instead of the instance. See the docs.
+         *
+         * @class Parcel.EventListener
+         *
+        */
+
+        // if Event doesn&#x27;t have its Emitter plugin, then we will plug it in now:
+        instanceEvent.Emitter || (EventEmitter.mergeInto(instanceEvent));
+
+        instanceEvent._getCurrentTarget = function(subscriber) {
+            var ispNode = (typeof ((subscriber.o.parcel &amp;&amp; subscriber.o.parcel.view) || subscriber.o.view) === &#x27;function&#x27;);
+            ispNode &amp;&amp; (subscriber.parcel=true);
+            // in case of pNode, subscriber.o._pNode might not exist yet --&gt; so we can&#x27;t return anything at this stage
+            // it will be set the first time the even gets called inside _invokeSubs
+            return ispNode ? undefined : DOCUMENT;
+        };
+
+        /**
+         * Given a domnode and a parcel, this method returns an object from the parcel
+         * with information about which vNode corresponds with the domnode and the parcelTree towards
+         * this vNode.
+         *
+         * @method _getPVnode
+         * @param parcel {parcel} Parcelinstance to search through
+         * @param domnode {DOMnode} DOMnode to search for
+         * @private
+         * @return {Object|undefined} undefined when &#x60;domnode&#x60; is not within the parcel, the object has 2 properties:
+         * &lt;ul&gt;
+         *     &lt;li&gt;vNode: vNode that corresponds with domnode&lt;/li&gt;
+         *     &lt;li&gt;parcelTree: array with Parcels downto the parcel that holds vNode. Top down: the first item
+         *         is the parcel that was passed through as first argument&lt;/li&gt;
+         * &lt;/ul&gt;
+         * @since 0.0.1
+         */
+        instanceEvent._getPVnode = function(parcel, domnode) {
+            var pNode = parcel._pNode,
+                parcelTree = [pNode],
+                vNode, returnObject,
+                getChildPVnode = function(children) {
+                    var found;
+                    children.some(
+                        function(child) {
+                            var vChildren,
+                                ispNode;
+                            // only pNodes and vNodes can have a DOMnode bounded
+                            if (typeof child === &#x27;object&#x27;) {
+                                ispNode = (typeof ((child.parcel &amp;&amp; child.parcel.view) || child.view) === &#x27;function&#x27;);
+                                if (child.node===domnode) {
+                                    // the vNode&#x27;s node matches the searched domnode
+                                    found = child;
+                                }
+                                else {
+                                    // inspect its children
+                                    vChildren = child.children;
+                                    Array.isArray(vChildren) || (vChildren=[vChildren]);
+                                    ispNode &amp;&amp; parcelTree.push(child.parcel);
+                                    found = getChildPVnode(vChildren);
+                                    found || (ispNode &amp;&amp; parcelTree.splice(parcelTree.length-1, 1));
+                                }
+                                return found;
+                            }
+                        }
+                    );
+                    return found;
+                };
+
+            if (pNode &amp;&amp; pNode.children) {
+                vNode = getChildPVnode(pNode.children);
+                returnObject = vNode ? {vNode: vNode, parcelTree: parcelTree} : undefined;
+            }
+            return returnObject;
+        };
+
+        // now redefine Event._invokeSubs --&gt; it needs to work a bit differently when using Parcels combined with
+        // DOM-events because we have the dom-bubble chain
+        /**
+         * Does the actual invocation of a subscriber. Overrides _invokesSubs from &#x60;event-base&#x60;.
+         *
+         * @method _invokeSubs
+         * @param e {Object} event-object
+         * @param subscribers {Array} contains subscribers (objects) with these members:
+         * &lt;ul&gt;
+         *     &lt;li&gt;subscriber.o {Object} context of the callback&lt;/li&gt;
+         *     &lt;li&gt;subscriber.cb {Function} callback to be invoked&lt;/li&gt;
+         *     &lt;li&gt;subscriber.f {Function} filter to be applied&lt;/li&gt;
+         *     &lt;li&gt;subscriber.t {DOM-node|pNode|vNode} target for the specific selector, which will be set as e.target
+         *         only when event-dom is active and there are filter-selectors&lt;/li&gt;
+         *     &lt;li&gt;subscriber.n {DOM-node|pNode} highest dom-node that acts as the container for delegation.
+         *         only when core-event-dom is active and there are filter-selectors&lt;/li&gt;
+         * &lt;/ul&gt;
+         * @param [before] {Boolean} whether it concerns before subscribers
+         * @param [sort] {Function} a sort function to controll the order of execution.
+         *             Only applyable when working with DOM-events (bubble-order), provided by &#x60;core-event-dom&#x60;
+         * @private
+         * @since 0.0.1
+         */
+        //
+        // CAUTIOUS: When making changes here, you should look whether these changes also effect &#x60;_invokeSubs()&#x60;
+        // inside &#x60;event-base&#x60;
+        //
+        instanceEvent._invokeSubs = function (e, subscribers, before, sort) {
+            var instance = this,
+                subs, propagationStopped, targetnode, pvnode;
+
+            // if &#x60;sort&#x60; exists, we create a new sub-array with the items that passed the filter
+            // this subarray gets sorted. We ALWAYS need to do this on every event: the dom could have changed
+            if (sort) {
+                subs = subscribers.filter(
+                           function(subscriber) {
+                               return subscriber.f ? subscriber.f.call(subscriber.o, e) : (subscriber.parcel &amp;&amp; !!instance._getPVnode(subscriber.o, e.target));
+                           }
+                       );
+
+                // at this point, we need to find out what are the current node-refs. whenever there is
+                // a filter that starts with &#x60;#&#x60; --&gt; in those cases we have a bubble-chain, because the selector isn&#x27;t
+                // set up with &#x60;document&#x60; at its root.
+                // we couldn&#x27;t do this at time of subscribtion, for the nodes might not be there at that time.
+                // however, we only need to do this once: we store the value if we find them
+                // no problem when the nodes leave the dom later: the previous filter wouldn&#x27;t pass
+                subs.each(function(subscriber) {
+                    // the node-ref is specified with &#x60;subscriber.n&#x60;
+                    if (!subscriber.n) {
+                        if (subscriber.nId) {
+                            subscriber.n = DOCUMENT.getElementById(subscriber.nId);
+                            // careful: if the subscriber is a parcel, then we want the vNode instead of the domnode
+                            subscriber.parcel &amp;&amp; (pvnode=instance._getPVnode(subscriber.o, subscriber.n)) &amp;&amp; (subscriber.n=pvnode.vNode);
+                        }
+                        else if (subscriber.parcel) {
+                            subscriber.n = subscriber.o._pNode;
+                        }
+                    }
+                });
+
+                // now we sort, based upon the sortFn
+                subs.sort(sort);
+            }
+            else {
+                subs = subscribers;
+            }
+
+            // if &#x60;subs&#x60; was processed by the sort function, it also has only subscribers that passed their filter
+            // if not, the &#x60;subs&#x60; equals &#x60;subscribers&#x60; and we still need to check their filter before invoke them
+            subs.some(function(subscriber) {
+                // inside the aftersubscribers, we may need exit right away.
+                // this would be the case whenever stopPropagation or stopImmediatePropagation was called
+                if (sort) {
+                    // in case the subscribernode equals the node on which stopImmediatePropagation was called: return true
+                    targetnode = (subscriber.t || subscriber.n);
+
+                    if (e.status.immediatePropagationStopped===targetnode) {
+                        return true;
+                    }
+                    // in case the subscribernode does not fall within or equals the node on which stopPropagation was called: return true
+                    propagationStopped = e.status.propagationStopped;
+                    if (propagationStopped &amp;&amp; (propagationStopped!==targetnode) &amp;&amp; !instance._nodeContains(propagationStopped, targetnode)) {
+                        return true;
+                    }
+                }
+
+                // check: if &#x60;sort&#x60; exists, then the filter is already supplied, but we need to set e.currentTarget for every bubble-level
+                // is &#x60;sort&#x60; does not exists, then the filter is not yet supplied and we need to it here
+                if (sort ? (e.currentTarget=targetnode) : (!subscriber.f || subscriber.f.call(subscriber.o, e))) {
+                    // now we might need to set e.target to the right node:
+                    // the filterfunction might have found the true domnode that should act as e.target
+                    // and set it at subscriber.t
+                    // also, we need to backup the original e.target: this one should be reset when
+                    // we encounter a subscriber with its own filterfunction instead of selector
+                    if (subscriber.t) {
+                        e._originalTarget || (e._originalTarget=e.target);
+                        e.target = subscriber.t;
+                    }
+                    else {
+                        e._originalTarget &amp;&amp; (e.target=e._originalTarget);
+                    }
+                }
+
+                // finally: invoke subscriber
+                subscriber.cb.call(subscriber.o, e);
+
+                if (e.status.unSilencable &amp;&amp; e.silent) {
+                    console.warn(NAME, &#x27; event &#x27;+e.emitter+&#x27;:&#x27;+e.type+&#x27; cannot made silent: this customEvent is defined as unSilencable&#x27;);
+                    e.silent = false;
+                }
+
+                return e.silent ||
+                      (before &amp;&amp; (
+                              e.status.halted || (
+                                  sort &amp;&amp; (
+                                      ((propagationStopped=e.status.propagationStopped) &amp;&amp; (propagationStopped!==targetnode)) || e.status.immediatePropagationStopped
+                                  )
+                              )
+                          )
+                      );
+            });
+        };
+        /**
+         * Creates a filterfunction out of a css-selector. To be used for catching any dom-element
+         * that happens on domnodes within the parcel-instance. Makes e.target to reurn the vNode.
+         * also adds e.parcelTree which is the tree of all Parcel-instances between the Parcel that
+         * got the subscriber and the vNode that where there was a match with the selector.
+         *
+         * On &quot;non-outside&quot; events, subscriber.t is set to the node that first matches the selector
+         * so it can be used to set as e.target in the final subscriber
+         *
+         * @method _parcelSelToDom
+         * @param subscriber {Object} Subscriber-object
+         * @param selector {String} css-selector
+         * @param [outsideEvent] {Boolean} whetrer it is an outside-event (like &#x60;clickoutside&#x60;)
+         * @private
+         * @since 0.0.1
+         */
+        instanceEvent._parcelSelToVDom = function(subscriber, selector, outsideEvent) {
+            // CAUTIOUS: parcelinstance._pNode is undefined when the subscriber is set up within &#x60;init&#x60;
+            // therefore, we need to take its reference inside the filterfunction
+            // this stage is runned during subscription
+            var instance = this;
+            return function(e) {
+                // this stage is runned when the event happens
+                var node = e.target,
+                    parcelinstance = subscriber.o,
+                    pNode_node = parcelinstance._pNode &amp;&amp; parcelinstance._pNode.node,
+                    match = false,
+                    vnodeInfo;
+                // e.target is the most deeply node in the dom-tree that caught the event
+                // our listener uses &#x60;selector&#x60; which might be a node higher up the tree.
+                // we will reset e.target to this node (if there is a match)
+                // note that e.currentTarget will always be &#x60;document&#x60; --&gt; we&#x27;re not interested in that
+                // also, we don&#x27;t check for &#x60;node&#x60;, but for node.matchesSelector: the highest level &#x60;document&#x60;
+                // is not null, yet it doesn;t have .matchesSelector so it would fail
+                if (selector &amp;&amp; (vnodeInfo=instance._getPVnode(parcelinstance, node))) {
+                    while (!match) {
+                        match = node.matchesSelector(selector);
+                        // reset e.target to the target that matches the selector
+                        if (match) {
+                            if (!outsideEvent) {
+                                e.target===node || (vnodeInfo=instance._getPVnode(parcelinstance, node));
+                                subscriber.t = vnodeInfo.vNode;
+                                e.parcelTree = vnodeInfo.parcelTree;
+                            }
+                        }
+                        else {
+                            node = node.parentNode;
+                        }
+                    }
+                }
+                else {
+                    // only accept exact match at containernode
+                    match = (node===pNode_node);
+                    match || (subscriber.t=pNode_node);
+                }
+                return !outsideEvent ? match : !match;
+            };
+        };
+
+        /**
+         * Creates a filterfunction out of a css-selector.
+         * On &quot;non-outside&quot; events, subscriber.t is set to the node that first matches the selector
+         * so it can be used to set as e.target in the final subscriber
+         *
+         * @method _selToFunc
+         * @param subscriber {Object} Subscriber-object
+         * @param selector {String} css-selector
+         * @param [outsideEvent] {Boolean} whetrer it is an outside-event (like &#x60;clickoutside&#x60;)
+         * @private
+         * @since 0.0.1
+         */
+        instanceEvent._selToFunc = function(subscriber, selector, outsideEvent) {
+            // return &#x60;_domSelToFunc&#x60; by default
+            // Parcel.Event uses a different selectormethod.
+            var context = subscriber.o,
+                isParcel = context &amp;&amp; (typeof context.view===&#x27;function&#x27;) &amp;&amp; (typeof context.stamp===&#x27;function&#x27;);
+            return isParcel ? this._parcelSelToVDom(subscriber, selector, outsideEvent) : this._domSelToFunc(subscriber, selector, outsideEvent);
+        };
+
+/*  NOT GOING to use this. It would have been a quicker way, but we need vDOM-information
+        instanceEvent._parcelSelToDom = function(subscriber, selector, outsideEvent) {
+            // CAUTIOUS: parcelinstance._pNode is undefined when the subscriber is set up within &#x60;init&#x60;
+            // therefore, we need to take its reference inside the filterfunction
+            return function(e) {
+                var node = e.target,
+                    parcelinstance = subscriber.o,
+                    pNode_node = parcelinstance._pNode &amp;&amp; parcelinstance._pNode.node,
+                    match = false;
+                // e.target is the most deeply node in the dom-tree that caught the event
+                // our listener uses &#x60;selector&#x60; which might be a node higher up the tree.
+                // we will reset e.target to this node (if there is a match)
+                // note that e.currentTarget will always be &#x60;document&#x60; --&gt; we&#x27;re not interested in that
+                // also, we don&#x27;t check for &#x60;node&#x60;, but for node.matchesSelector: the highest level &#x60;document&#x60;
+                // is not null, yet it doesn;t have .matchesSelector so it would fail
+                if (selector &amp;&amp; pNode_node.contains(node)) {
+                    while (!match &amp;&amp; (pNode_node!==node)) {
+                        match = node.matchesSelector(selector);
+                        // reset e.target to the target that matches the selector
+                        if (match) {
+                            !outsideEvent || (subscriber.t=node);
+                        }
+                        else {
+                            node = node.parentNode;
+                        }
+                    }
+                }
+                else {
+                    // only accept exact match at containernode
+                    match = (node===pNode_node);
+                    match || (subscriber.t=pNode_node);
+                }
+                return !outsideEvent ? match : !match;
+            };
+        };
+*/
+
+            instanceEvent._vNodeContains = function(vNodeA, vNodeB) {
+                var findPVnode = function(vNode) {
+                    var found = false;
+                    vNode.children.some(
+                        function(child) {
+                            found = (child===vNodeB) || (child.children &amp;&amp; findPVnode(child));
+                            return found;
+                        }
+                    );
+                    return !!found;
+                };
+                return vNodeA.children ? findPVnode(vNodeA) : false;
+            };
+
+            /**
+             * Sort nodes conform the dom-tree by looking at their position inside the tree.
+             * overrules &#x27;_sortSubsDOM&#x27; from
+             *
+             * @method _sortSubsDOM
+             * @param customEvent {String}
+             * @private
+             * @return {Function} sortable function
+             * @since 0.0.1
+             */
+            instanceEvent._sortSubsDOM = function(subscriberOne, subscriberTwo) {
+                return this._nodeContains(subscriberOne.t || subscriberOne.n, subscriberTwo.t || subscriberTwo.n) ? 1 : -1;
+            };
+
+            instanceEvent._nodeContains = function(nodeA, nodeB) {
+                var aIsDomNode = nodeA.clientHeight,
+                    bIsDomNode = nodeB.clientHeight,
+                    a, b;
+                if (!aIsDomNode &amp;&amp; !bIsDomNode) {
+                    return this._vNodeContains(nodeA, nodeB);
+                }
+                else {
+                    a = aIsDomNode ? nodeA : nodeA.node;
+                    b = bIsDomNode ? nodeB : nodeB.node;
+                    return a.contains(b);
+                }
+            };
+
+        ParcelClass.mergePrototypes({
+
+            /**
+             * Defines an emitterName into the instance.
+             * This will add a protected property &#x60;_emitterName&#x60; to the instance. If you need an emitterName on
+             * the Class, you should use the Event.Emitter helper: &#x60;ClassName.mergePrototypes(Event.Emitter(emitterName));&#x60;
+             *
+             * @static
+             * @method defineEmitter
+             * @param emitterName {String} identifier that will be added when events are sent (&#x60;emitterName:eventName&#x60;)
+             * @since 0.0.1
+            */
+            defineEmitter: function(emitterName) {
+                 // force assign: there might be an emittername on the Class
+                this.merge(instanceEvent.Emitter(emitterName), true);
+            },
+
+            /**
+             * Subscribes to a customEvent on behalf of the object who calls this method.
+             * The callback will be executed &#x60;after&#x60; the defaultFn.
+             *
+             * @method after
+             * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
+             *        have the syntax: &#x60;emitterName:eventName&#x60;. Wildcard &#x60;*&#x60; may be used for both &#x60;emitterName&#x60; as well as &#x60;eventName&#x60;.
+             *        If &#x60;emitterName&#x60; is not defined, &#x60;UI&#x60; is assumed.
+             * @param callback {Function} subscriber:will be invoked when the event occurs. An &#x60;eventobject&#x60; will be passed
+             *        as its only argument.
+             * @param [filter] {String|Function} to filter the event.
+             *        Use a String if you want to filter DOM-events by a &#x60;selector&#x60;
+             *        Use a function if you want to filter by any other means. If the function returns a trully value, the
+             *        subscriber gets invoked. The function gets the &#x60;eventobject&#x60; as its only argument and the context is
+             *        the subscriber.
+             * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of after-subscribers.
+             * @return {Object} handler with a &#x60;detach()&#x60;-method which can be used to detach the subscriber
+             * @since 0.0.1
+            */
+            after: function (customEvent, callback, filter, prepend) {
+                return instanceEvent.after(customEvent, callback, this, filter, prepend);
+            },
+
+            /**
+             * Subscribes to a customEvent on behalf of the object who calls this method.
+             * The callback will be executed &#x60;before&#x60; the defaultFn.
+             *
+             * @method before
+             * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
+             *        have the syntax: &#x60;emitterName:eventName&#x60;. Wildcard &#x60;*&#x60; may be used for both &#x60;emitterName&#x60; as well as &#x60;eventName&#x60;.
+             *        If &#x60;emitterName&#x60; is not defined, &#x60;UI&#x60; is assumed.
+             * @param callback {Function} subscriber:will be invoked when the event occurs. An &#x60;eventobject&#x60; will be passed
+             *        as its only argument.
+             * @param [filter] {String|Function} to filter the event.
+             *        Use a String if you want to filter DOM-events by a &#x60;selector&#x60;
+             *        Use a function if you want to filter by any other means. If the function returns a trully value, the
+             *        subscriber gets invoked. The function gets the &#x60;eventobject&#x60; as its only argument and the context is
+             *        the subscriber.
+             * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of before-subscribers.
+             * @return {Object} handler with a &#x60;detach()&#x60;-method which can be used to detach the subscriber
+             * @since 0.0.1
+            */
+            before: function (customEvent, callback, filter, prepend) {
+                return instanceEvent.before(customEvent, callback, this, filter, prepend);
+            },
+
+            /**
+             * Detaches (unsubscribes) the listener from the specified customEvent,
+             * on behalf of the object who calls this method.
+             *
+             * @method detach
+             * @param customEvent {String} conform the syntax: &#x60;emitterName:eventName&#x60;, wildcard &#x60;*&#x60; may be used for both
+             *        &#x60;emitterName&#x60; as well as only &#x60;eventName&#x60;, in which case &#x27;UI&#x27; will become the emitterName.
+             * @since 0.0.1
+            */
+            detach: function(customEvent) {
+                instanceEvent.detach(this, customEvent);
+            },
+
+            /**
+             * Detaches (unsubscribes) the listener from all customevents,
+             * on behalf of the object who calls this method.
+             *
+             * @method detachAll
+             * @since 0.0.1
+            */
+            detachAll: function() {
+                instanceEvent.detachAll(this);
+            },
+
+            /**
+             * Alias for &#x60;after&#x60;.
+             *
+             * Subscribes to a customEvent on behalf of the object who calls this method.
+             * The callback will be executed &#x60;after&#x60; the defaultFn.
+             *
+             * @method on
+             * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
+             *        have the syntax: &#x60;emitterName:eventName&#x60;. Wildcard &#x60;*&#x60; may be used for both &#x60;emitterName&#x60; as well as &#x60;eventName&#x60;.
+             *        If &#x60;emitterName&#x60; is not defined, &#x60;UI&#x60; is assumed.
+             * @param callback {Function} subscriber:will be invoked when the event occurs. An &#x60;eventobject&#x60; will be passed
+             *        as its only argument.
+             * @param [filter] {String|Function} to filter the event.
+             *        Use a String if you want to filter DOM-events by a &#x60;selector&#x60;
+             *        Use a function if you want to filter by any other means. If the function returns a trully value, the
+             *        subscriber gets invoked. The function gets the &#x60;eventobject&#x60; as its only argument and the context is
+             *        the subscriber.
+             * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of after-subscribers.
+             * @return {Object} handler with a &#x60;detach()&#x60;-method which can be used to detach the subscriber
+             * @since 0.0.1
+            */
+            on: function (/* customEvent, callback, filter, prepend */) {
+                return this.after.apply(this, arguments);
+            },
+
+            /**
+             * Alias for &#x60;onceAfter&#x60;.
+             *
+             * Subscribes to a customEvent on behalf of the object who calls this method.
+             * The callback will be executed &#x60;after&#x60; the defaultFn.
+             * The subscriber will be automaticly removed once the callback executed the first time.
+             * No need to &#x60;detach()&#x60; (unless you want to undescribe before the first event)
+             *
+             * @method onceAfter
+             * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
+             *        have the syntax: &#x60;emitterName:eventName&#x60;. Wildcard &#x60;*&#x60; may be used for both &#x60;emitterName&#x60; as well as &#x60;eventName&#x60;.
+             *        If &#x60;emitterName&#x60; is not defined, &#x60;UI&#x60; is assumed.
+             * @param callback {Function} subscriber:will be invoked when the event occurs. An &#x60;eventobject&#x60; will be passed
+             *        as its only argument.
+             * @param [filter] {String|Function} to filter the event.
+             *        Use a String if you want to filter DOM-events by a &#x60;selector&#x60;
+             *        Use a function if you want to filter by any other means. If the function returns a trully value, the
+             *        subscriber gets invoked. The function gets the &#x60;eventobject&#x60; as its only argument and the context is
+             *        the subscriber.
+             * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of after-subscribers.
+             * @return {Object} handler with a &#x60;detach()&#x60;-method which can be used to detach the subscriber
+             * @since 0.0.1
+            */
+            once: function (/* customEvent, callback, filter, prepend */) {
+                return this.onceAfter.apply(this, arguments);
+            },
+
+            /**
+             * Subscribes to a customEvent on behalf of the object who calls this method.
+             * The callback will be executed &#x60;after&#x60; the defaultFn.
+             * The subscriber will be automaticly removed once the callback executed the first time.
+             * No need to &#x60;detach()&#x60; (unless you want to undescribe before the first event)
+             *
+             * @method onceAfter
+             * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
+             *        have the syntax: &#x60;emitterName:eventName&#x60;. Wildcard &#x60;*&#x60; may be used for both &#x60;emitterName&#x60; as well as &#x60;eventName&#x60;.
+             *        If &#x60;emitterName&#x60; is not defined, &#x60;UI&#x60; is assumed.
+             * @param callback {Function} subscriber:will be invoked when the event occurs. An &#x60;eventobject&#x60; will be passed
+             *        as its only argument.
+             * @param [filter] {String|Function} to filter the event.
+             *        Use a String if you want to filter DOM-events by a &#x60;selector&#x60;
+             *        Use a function if you want to filter by any other means. If the function returns a trully value, the
+             *        subscriber gets invoked. The function gets the &#x60;eventobject&#x60; as its only argument and the context is
+             *        the subscriber.
+             * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of after-subscribers.
+             * @return {Object} handler with a &#x60;detach()&#x60;-method which can be used to detach the subscriber
+             * @since 0.0.1
+            */
+            onceAfter: function (customEvent, callback, filter, prepend) {
+                return instanceEvent.onceAfter(customEvent, callback, this, filter, prepend);
+            },
+
+            /**
+             * Subscribes to a customEvent on behalf of the object who calls this method.
+             * The callback will be executed &#x60;before&#x60; the defaultFn.
+             * The subscriber will be automaticly removed once the callback executed the first time.
+             * No need to &#x60;detach()&#x60; (unless you want to undescribe before the first event)
+             *
+             * @method onceBefore
+             * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
+             *        have the syntax: &#x60;emitterName:eventName&#x60;. Wildcard &#x60;*&#x60; may be used for both &#x60;emitterName&#x60; as well as &#x60;eventName&#x60;.
+             *        If &#x60;emitterName&#x60; is not defined, &#x60;UI&#x60; is assumed.
+             * @param callback {Function} subscriber:will be invoked when the event occurs. An &#x60;eventobject&#x60; will be passed
+             *        as its only argument.
+             * @param [filter] {String|Function} to filter the event.
+             *        Use a String if you want to filter DOM-events by a &#x60;selector&#x60;
+             *        Use a function if you want to filter by any other means. If the function returns a trully value, the
+             *        subscriber gets invoked. The function gets the &#x60;eventobject&#x60; as its only argument and the context is
+             *        the subscriber.
+             * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of before-subscribers.
+             * @return {Object} handler with a &#x60;detach()&#x60;-method which can be used to detach the subscriber
+             * @since 0.0.1
+            */
+            onceBefore: function (customEvent, callback, filter, prepend) {
+                return instanceEvent.onceBefore(customEvent, callback, this, filter, prepend);
+            }
+        });
+    }
+};
+
+module.exports = createListener;
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

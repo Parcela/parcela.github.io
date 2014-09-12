@@ -9,7 +9,7 @@ github_username:  Parcela
 
 # Build settings
 highlighter: rouge
-markdown: redcarpet
+markdown: kramdown
 permalink: pretty
 
 redcarpet:

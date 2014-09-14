@@ -8,12 +8,12 @@ intro: "Each Parcel instance is responsible for handling its own little patch of
 
 Parcels are responsible for displaying information to the user.   Each should be responsible for a little section of the screen.  Parcels can contain other Parcels and a whole single page application will often be a single Parcel that has sub-Parcels that contain further sub-sub-Parcels and so on.  
 
-Parcels are lightweight and easy to nest, there is no reason to pack lots of power in a few Parcels, it is better to subdivide the job into several Parcels.  Thus, a Table might be build of a Parcel for the Table element itself plus sub-Parcels for each of the head, body and footer sections, each containin a Parcel for each of the rows.
+Parcels are lightweight and easy to nest, there is no reason to pack lots of power in a few Parcels, it is better to subdivide the job into several Parcels.  Thus, a Table might be build of a Parcel for the Table element itself plus sub-Parcels for each of the head, body and footer sections, each containing a Parcel for each of the rows.
 
 Parcels are created as subclasses of the `Parcel` class.
 
 ```js
-var Table = Parcel.subClass({
+var Table = Parcela.Parcel.subClass({
     init: function (config) {
 		// code to control state and behavior
 	},
@@ -21,6 +21,9 @@ var Table = Parcel.subClass({
 		// should return an updated image 
 		// of its parcel of virtual DOM.
 		return '';
+	},
+	destroy: function () {
+	    // free any resources taken in init.
 	}
 };
 ```
@@ -31,7 +34,7 @@ The `init` method is responsible for setting up the Parcel so it can respond to 
 
 * Setting the initial state of the Parcel.
 * Creating references to external data that the `view` might use.
-* Attaching events both to the UI and any other objects that might affect it.
+* Attaching events listeners to resources might affect it.
 
 The `init` method will receive at least the configuration options, a hash map of names and values for its initial state and options.  It will also receive, unmodified, any extra arguments the constructor might have received.
 
@@ -39,8 +42,8 @@ The configuration options are usually the first argument provided to the constru
 
 If a `defaultConfig` property is set, it will be merged with configuration options so as to ensure the `init` method will always receive an object with a minimal set of values, even if the constructor was passed none.
 
-```
-var Circle = Parcel.subClass({
+```js
+var Circle = Parcela.Parcel.subClass({
     init: function (config, extra) {
 	    console.log(config.x, config.y, config.r, extra);
 		console.log(this.x, this.y, this.r);
@@ -63,11 +66,15 @@ The constructor not only ensures `config` is an object and that it has a minimal
 
 The `init` method will still receive those configuration options and is free to do as it chooses.  Thus, if any of the options needs validation or resolving into some internal format, the `init` method can still do it.  Automatic setting can be prevented by simply having the property declared.  On the other hand, make sure **not** to declare properties that you might want to have set via the configuration options.  Set them in the `defaultConfig` instead.
 
+### Destructor
+
+Any external resources referenced or created in `init` should be destroyed in the `destroy` function.  Though JavaScript knows nothing about object destruction, Parcela calls the `destroy` method of a `Parcel` when replacing the root application be it via the [`rootApp`](../virtual-dom/index.html#rootapp) method or when the [routing](../routing/index.html) module navigates away from a page.
+
 ### Models
 
-The `init` method is responsible to attach to the models. In an MVC pattern, state is kept in the model.  We prefer to split it in two, which we call
+The `init` method is responsible to attach to the models. In an MVC pattern, state is kept in the model.  We prefer to split it in two, which we call:
 
-* *data* for data external to the Parcel instance, though acessible to it, that might be shared with others and is usually preserved in permanent, external storage.
+* *data* for models external to the Parcel instance, though accessible to it, that might be shared with others and is usually preserved in permanent, external storage.
 * *state* which is closely associated with this particular instance of the Parcel, it is usually initialized through the `config` argument of the constructor and it is kept in instance properties. 
 
 The *state* is thus just a small fraction of the overall model of the application which is closely associated to the Parcel instance.  Conceptually, it is just a part of the **M** in MVC.
@@ -76,9 +83,9 @@ Parcels will keep the *state* stored internally while it will keep references to
 
 ##View
 
-The `view` method is responsible of producing the image to be displayed.  It does so by returning an object or an array of objects describing the HTML to be displayed, expressed as `vNode`s
+The `view` method is responsible for producing the image of what is to be displayed.  It does so by returning an object or an array of objects describing the HTML to be displayed, expressed as `vNode`s
 
-A `vNode` is an abstract representation of a DOM element.  As such it will have:
+A `vNode` is an abstract representation of a DOM element.  As such it will have, amongst others, the following properties:
 
 * `tag`: the `tagName` or `nodeName` of the DOM element.
 * `attrs`: a hash map of attributes of this element.
@@ -86,8 +93,8 @@ A `vNode` is an abstract representation of a DOM element.  As such it will have:
 
 This is a valid, if rather pointless, Parcel:
 
-```
-var Hello = Parcel.subClass({
+```js
+var Hello = Parcela.Parcel.subClass({
     view: function () {
 	    return {tag:'p', attrs:{class:'greeting'}, children:['Hello World!']};
 	}
@@ -100,13 +107,13 @@ The children of a `vNode` can be plain values that will be displayed as strings,
 
 Though the view may return such an object directly, it is more convenient to use helpers to assemble them.  The `Parcel` class already contains the `vNode` static method that makes it easier to assemble them.
 
-```
-var Issues = Parcel.subClass({
+```js
+var v = Parcela.Parcel.vNode;
+var Issues = Parcela.Parcel.subClass({
     view: function () {
-	    var v = Parcel.vNode;
 	    return v('div#issues.help',[
-		   v('a', {href:'https://github.com/Parcela/docs/issues'}, 'Issues with docs'),
-		   v('a[href=https://github.com/Parcela/Parcel/issues]', 'Issues with Parcel')
+		   v('a', {href:'https://github.com/Parcela/parcela.github.io/issues'}, 'Issues with docs'),
+		   v('a[href=https://github.com/Parcela/parcel/issues]', 'Issues with Parcel')
 		]);
 	}
 });
@@ -115,8 +122,8 @@ The `Parcel.vNode` helper makes it easier to create a view by accepting various 
 
 * `tag`: which accepts a limited form of CSS selectors.  It will usually be composed of:
     * `tagName`: the name of the HTML element.  It defaults to a `<div>` but then it requires any of the following:
-	* `id`: a valid id preceeded by a `#`.
-	* `className`: one or more CSS classNames, each preceeded by a `.`.
+	* `id`: a valid id precededby a `#`.
+	* `className`: one or more CSS classNames, each precededby a `.`.
 	* `attributes`: each set enclosed in square brackets with the name of the attribute, an `=` sign and the value.  Only one attribute can be set per set of square brackets but any number of sets can follow.
 * `attrs`: a hash map with further attributes. The values given in this hash map will supplement or override those given as part of the tag, except for:
     * `class`: the `class` attribute can be given as a string or as an array of strings.  These will be concatenated to those specified as part of the `tag`, if any.
@@ -130,9 +137,9 @@ Both `attrs` and `children` are optional, `v('hr')` produces a valid `vNode`.
 
 ### Caching
 
-`Parcel.vNode` caches the nodes by their `tag`.  This improves performance.  In order to improve performance it is best to provide the `id` and `class` attributes as part of the `tag` but only if they remain constant.  For variable parts, it is best to use the second argument.  Thus:
+`Parcel.vNode` caches the nodes by their `tag`. In order to improve performance it is best to provide the `id` and `class` attributes as part of the `tag` but only if they remain constant.  For variable parts, it is best to use the second argument.  Thus:
 
-```
+```js
 v('h1#caching.main', 'Caching');
 
 // Is faster than;
@@ -142,9 +149,9 @@ v('h1', attrs: {id:'caching', class:'main'},'Caching');
 v('p#p' + count++);
 ```
 
-The last one, since in each occurrence would produce a different `tag`, it would fill the cache with `vNode`s that would never be recalled again.  In that case, it is better to do 
+The last one, since in each occurrence would produce a different `tag` due to the ever-changing `id`, it would fill the cache with `vNode`s that would never be recalled again.  In that case, it is better to do 
 
-```
+```js
 v('p', attrs:{id:'p' + count++})
 ```
 	
@@ -152,15 +159,16 @@ Thus, the general rule should be, if it is constant, append it to the `tag`, if 
 
 ### Parcel container
 
-Each Parcel instance will be contained in a DOM element.  This helps in keeping all its constituents together and handle them as a unit.  By default such container is a `<div class="parcel"></div>`.  This can be changed by using these two properties:
+Each Parcel instance will be contained in a DOM element.  This helps in keeping all its constituents together and handle them as a unit.  By default such container is a `<div class="parcel"></div>`.  This can be changed by using the following properties:
 
-* `containerType`: the tagName for the container.  Defaults to `'div'`.
+* `containerType`: the `tagName` for the container.  Defaults to `'div'`.
 * `className`: one or more CSS classNames to append to `parcel`.
+* `attributes`: a hash of additional attributes for the container.
 
 Thus, a Menu component might have:
 
-```
-var Menu = ITSA.Parcel.subClass({
+```js
+var Menu = Parcela.Parcel.subClass({
     containerType: 'ul',
 	className:'menu',
 	defaultConfig: {
@@ -169,7 +177,7 @@ var Menu = ITSA.Parcel.subClass({
 		]
 	},
 	view: function() {
-		var v = ITSA.Parcel.vNode;
+		var v = Parcela.Parcel.vNode;
 		return this.items.map(function(item) {
 			return v('li', [v('a', {href: '#' + item.url}, item.label)]);
 		});
@@ -186,24 +194,29 @@ var menu = new Menu({
 });
 ```
 
-There is no need for an `init` method in this example as the configuration options will be read by the constructor, suplemented with the `defaultConfig` and stored in this instance automatically, which makes them avaiable to the `view` as `this.items`.
+There is no need for an `init` method in this example as the configuration options will be read by the constructor, supplemented with the `defaultConfig` and stored in this instance automatically, which makes them available to the `view` as `this.items`.
 
 The individual `<li>` elements will be enclosed within the `<ul class="parcel menu">` element which serves as a container for the whole Parcel, as set in the `containerType` and `className` properties. 
 
+### preView and postView
+
+A Parcel is not immediately shown on the screen when created nor destroyed when hidden.  If the developer wants to keep a tighter control over its resources, the Parcel provides the `preView` and `postView` methods.  The `preView` method will be called just before the `view` method the fist time the Parcel will be shown.  The `postView` will be called after the Parcel was taken off the screen.
+
+They might be useful, for example, for starting and stopping a timer shown on screen, or an animation, that doesn't need to run while hidden.
 
 ## Nesting Parcels
 
 A `vNode` can have other Parcels as children.  For example, we might have broken down the previous into an overall `Menu` Parcel and several `MenuItem` parcels:
 
-```
-var MenuItem = ITSA.Parcel.subClass({
+```js
+var MenuItem = Parcela.Parcel.subClass({
 	containerType: 'li',
 	view: function () {
-		return ITSA.Parcel.vNode('a', {href: '#' + this.item.url}, this.item.label);
+		return Parcela.Parcel.vNode('a', {href: '#' + this.item.url}, this.item.label);
 	}
 });
 	
-var Menu = ITSA.Parcel.subClass({
+var Menu = Parcela.Parcel.subClass({
     containerType: 'ul',
 	className:'menu',
 	defaultConfig: {
@@ -239,7 +252,7 @@ Initially, `pNode.stamp` is set to `NaN` and the default `stamp` method also ret
 
 Strategies for the `stamp` function include:
 
-* For parcels that never change, for example, parcels that simply provide a layout for other parcels contained within, the `stamp` method can always return the same value, any value (except NaN) would do, however, to make the intent clearer, `return false` is suggested.
+* For parcels that never change, for example, parcels that simply provide a layout for other parcels contained within, the `stamp` method can always return the same value, any value (except `NaN`) would do, however, to make the intent clearer, `return false` is suggested.
 * The `stamp` method should visit every item, be it a state variable or data, that the parcel depends on and produce something that reflects its state. Obviously it should be cheaper than actually producing a render, otherwise, it is not worth the trouble. An example might be do a `JSON.stringify()` of an object that reflects the variables that affect the parcel. Note that the `pNode` will keep in `pNode.stamp` a copy of the previous state of such object so this option might not be wise.
 * Keep a `_stamp` property in the parcel. Every property setter in the parcel should increment it every time they change something. Make the `stamp` method return this property.
 * Keep a `_lastTimeStamp` property and set it with a new timestamp from the `Date` object on every change. This is not particularly better than the previous.

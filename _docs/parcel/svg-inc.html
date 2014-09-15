@@ -18,13 +18,13 @@
 		</div>
     <div class="pure-u-1-2"><div id="example"></div></div>
 </div>
-	<script src="../../assets/core.js"></script>
+	<script src="../../dist/parcela.js"></script>
 	<script>
-		ITSA = require('core');
-		ITSA.ready().then(
+		var Parcela = require('parcela');
+		Parcela.ready().then(
 			function () {
-				var v = ITSA.Parcel.vNode,
-					SVG = ITSA.Parcel.subClass({
+				var v = Parcela.Parcel.vNode,
+					SVG = Parcela.Parcel.subClass({
 						view: function () {
 							return [
 								v('h3','Parcel'),
@@ -48,7 +48,7 @@
 						}
 					});
 
-				ITSA.rootApp(new SVG(), document.getElementById('example'));
+				Parcela.rootApp(SVG, document.getElementById('example'));
 			}
 		);
 	</script>

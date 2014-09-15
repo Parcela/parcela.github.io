@@ -9,12 +9,12 @@
 
 <body>
 
-	<script src="../../assets/core.js"></script>
+	<script src="../../dist/parcela.js"></script>
 	<script>
-		ITSA = require('core');
-		ITSA.ready().then(
+		var Parcela = require('parcela');
+		Parcela.ready().then(
 			function() {
-				var Menu = ITSA.Parcel.subClass({
+				var Menu = Parcela.Parcel.subClass({
 					className:'pure-menu pure-menu-open pure-menu-horizontal',
 					defaultConfig: {
 						items: [
@@ -22,7 +22,7 @@
 						]
 					},
 					view: function() {
-						var v = ITSA.Parcel.vNode;
+						var v = Parcela.Parcel.vNode;
 						return v('ul',this.items.map(function(item) {
 							return v('li', [v('a', {href: '#' + item.url}, item.label)]);
 						}));
@@ -30,15 +30,14 @@
 				});
 
 				// Which can be called like this:
-				var menu = new Menu({
+
+				Parcela.rootApp(Menu, {
 					items:[
 						{url:'home', label: 'Home'},
 						{url:'users', label: 'Users'},
 						{url:'groups', label: 'Groups'}
 					]
 				});
-
-				ITSA.rootApp(menu);
 			}
 		);
 	</script>

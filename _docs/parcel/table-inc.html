@@ -3,20 +3,20 @@
 <html>
 
 <head>
-	<title>Active Menu</title>
+	<title>Nested Parcels</title>
 	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
 </head>
 
 <body>
-	<script src="../../assets/core.js"></script>
+	<script src="../../dist/parcela.js"></script>
 	<script>
-		ITSA = require('core');
-		ITSA.ready().then(
+		var Parcela = require('parcela');
+		Parcela.ready().then(
 			function () {
-				var v = ITSA.Parcel.vNode;
+				var v = Parcela.Parcel.vNode;
 
 
-				var DataRow = ITSA.Parcel.subClass({
+				var DataRow = Parcela.Parcel.subClass({
 					containerType: 'tr',
 					view: function () {
 						var tds = [];
@@ -27,7 +27,7 @@
 					}
 				});
 
-				var HeaderRow = ITSA.Parcel.subClass({
+				var HeaderRow = Parcela.Parcel.subClass({
 					containerType: 'thead',
 					init: function (config) {
 						var ths = [];
@@ -41,7 +41,7 @@
 					}
 				});
 
-				var BodySection = ITSA.Parcel.subClass({
+				var BodySection = Parcela.Parcel.subClass({
 					containerType: 'tbody',
 					init: function (config) {
 						this.dataRows = [];
@@ -56,7 +56,7 @@
 					}
 				});
 
-				var Table = ITSA.Parcel.subClass({
+				var Table = Parcela.Parcel.subClass({
 					containerType: 'table',
 					className: 'pure-table',
 					defaultConfig: {
@@ -77,13 +77,11 @@
 				});
 
 
-				var table = new Table({
+				Parcela.rootApp(Table, {
 					rows: 4,
 					cols: 5,
 					caption: 'this is the caption'
 				});
-
-				ITSA.rootApp(table);
 			}
 		);
 	</script>

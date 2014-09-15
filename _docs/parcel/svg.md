@@ -10,8 +10,8 @@ includeexample: true
 Parcela is aware of namespaced elements such as `<svg>` or `<math>` elements or the `xmlns` element attribute.  It will use the proper namespaced function (`createElementNS` instead of `createElement`) when it is within a namespaced element.
 
 ```js
-var v = ITSA.Parcel.vNode,
-	SVG = ITSA.Parcel.subClass({
+var v = Parcela.Parcel.vNode,
+	SVG = Parcela.Parcel.subClass({
 		view: function () {
 			return v(
 				'svg',
@@ -32,26 +32,22 @@ var v = ITSA.Parcel.vNode,
 		}
 	});
 
-ITSA.rootApp(new SVG());
+Parcela.rootApp(SVG);
 
 ```
 
 We create a `SVG` parcel inheriting from the `Parcel` class.  We can freely use the `'svg'` tagName.  The renderer will recognize it as one needing special handling through namespaced DOM methods and will handle it properly as well as its child elements, such as the circle.
-
-### Example
-
-This is the result of running the code shown above. Right below you can find the full code in one piece:
 
 ### Complete Code
 
 The full code for this example (the circle on the left hand side was generated via plain HTML):
 
 ```
-ITSA = require('core');
-ITSA.ready().then(
+var Parcela = require('parcela');
+Parcela.ready().then(
 	function () {
-		var v = ITSA.Parcel.vNode,
-			SVG = ITSA.Parcel.subClass({
+		var v = Parcela.Parcel.vNode,
+			SVG = Parcela.Parcel.subClass({
 				view: function () {
 					return [
 						v('h1','Generated via Parcel'),
@@ -75,7 +71,7 @@ ITSA.ready().then(
 				}
 			});
 
-		ITSA.rootApp(new SVG());
+		Parcela.rootApp(SVG);
 	}
 );
 ```

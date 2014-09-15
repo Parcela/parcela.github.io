@@ -10,7 +10,7 @@ includeexample: true
 We will build a simple menu using the [Pure CSS](http://purecss.io/menus/) horizontal menu.
 
 ```js
-var Menu = ITSA.Parcel.subClass({
+var Menu = Parcela.Parcel.subClass({
 	className:'pure-menu pure-menu-open pure-menu-horizontal',
 	defaultConfig: {
 		items: [
@@ -18,7 +18,7 @@ var Menu = ITSA.Parcel.subClass({
 		]
 	},
 	view: function() {
-		var v = ITSA.Parcel.vNode;
+		var v = Parcela.Parcel.vNode;
 		return v('ul', this.items.map(function(item) {
 			return v('li', [v('a', {href: '#' + item.url}, item.label)]);
 		}));
@@ -26,7 +26,7 @@ var Menu = ITSA.Parcel.subClass({
 });
 ```
 
-We create a `Menu` inheriting from the `Parcel` class.  The PureCSS menu requires an external `div` element with a series of classNames in it.  The default container for a Parcel is a `div` so we don't need to explicitly set that, but w have to set those class names in the `className` property.
+We create a `Menu` inheriting from the `Parcel` class.  The PureCSS menu requires an external `div` element with a series of classNames in it.  The default container for a Parcel is a `div` so we don't need to explicitly set that, but we do have to set those class names in the `className` property.
 
 In order not to be left with an empty menu we set a minimal default menu by setting the default `items` configuration option in the `defaultConfig` property.  Thus, even if no configuration options are specified when creating the menu instance, there will be at least something to show.
 
@@ -36,32 +36,27 @@ In the `view` we return a `ul` element that has an array of `li` elements which 
 
 To create a menu we execute the following:
 
-```
-var menu = new Menu({
+```js
+Parcela.rootApp(Menu, {
 	items:[
 		{url:'home', label: 'Home'},
 		{url:'users', label: 'Users'},
 		{url:'groups', label: 'Groups'}
 	]
 });
-
-ITSA.rootApp(menu);
 ```
 
-We create an instance of `Menu` providing an array with the menu items.   Then, we set that `menu` as the root application for our single-page application via the `rootApp` method.  We are not using the second argument of `ITSA.rootApp` which says where to render the application.  In this case, the application would be rendered into `document.body`.
-### Example
-
-This is the result of running the code shown above. Right below you can find the full code in one piece:
+We set the `Menu` class as the root parcel for our application via the `rootApp` method.  We are skipping on the second, optional argument of `Parcela.rootApp` which says where to render the application.  In this case, the application would be rendered into `document.body`.   The final argument is an object containing the configuration options for the `Menu` parcel, providing the menu items to be shown.
 
 ### Complete Code
 
 The full code for this example:
 
-```
-ITSA = require('core');
-ITSA.ready().then(
+```js
+var Parcela = require('parcela');
+Parcela.ready().then(
 	function() {
-		var Menu = ITSA.Parcel.subClass({
+		var Menu = Parcela.Parcel.subClass({
 			className:'pure-menu pure-menu-open pure-menu-horizontal',
 			defaultConfig: {
 				items: [
@@ -69,23 +64,20 @@ ITSA.ready().then(
 				]
 			},
 			view: function() {
-				var v = ITSA.Parcel.vNode;
+				var v = Parcela.Parcel.vNode;
 				return v('ul',this.items.map(function(item) {
 					return v('li', [v('a', {href: '#' + item.url}, item.label)]);
 				}));
 			}
 		});
 
-		// Which can be called like this:
-		var menu = new Menu({
+		Parcela.rootApp(Menu, {
 			items:[
 				{url:'home', label: 'Home'},
 				{url:'users', label: 'Users'},
 				{url:'groups', label: 'Groups'}
 			]
 		});
-
-		ITSA.rootApp(menu);
 	}
 );
 ```

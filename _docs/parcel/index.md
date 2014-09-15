@@ -6,7 +6,7 @@ intro: "Each Parcel instance is responsible for handling its own little patch of
 ---
 #The Basics#
 
-Parcels are responsible for displaying information to the user.   Each should be responsible for a little section of the screen.  Parcels can contain other Parcels and a whole single page application will often be a single Parcel that has sub-Parcels that contain further sub-sub-Parcels and so on.  
+Parcels are responsible for displaying information to the user.   Each should be responsible for a little section of the screen.  Parcels can contain other Parcels and a whole single page application will often be a single Parcel that has sub-Parcels that contain further sub-sub-Parcels and so on (see [Nesting Parcels](#nesting-parcels) below).
 
 Parcels are lightweight and easy to nest, there is no reason to pack lots of power in a few Parcels, it is better to subdivide the job into several Parcels.  Thus, a Table might be build of a Parcel for the Table element itself plus sub-Parcels for each of the head, body and footer sections, each containing a Parcel for each of the rows.
 
@@ -68,7 +68,9 @@ The `init` method will still receive those configuration options and is free to 
 
 ### Destructor
 
-Any external resources referenced or created in `init` should be destroyed in the `destroy` function.  Though JavaScript knows nothing about object destruction, Parcela calls the `destroy` method of a `Parcel` when replacing the root application be it via the [`rootApp`](../virtual-dom/index.html#rootapp) method or when the [routing](../routing/index.html) module navigates away from a page.
+Any external resources referenced or created in `init` should be destroyed in the `destroy` function.  Though JavaScript knows nothing about object destruction, Parcela calls the `destroy` method of a `Parcel` when replacing the root application, be it via the [`rootApp`](../virtual-dom/index.html#rootapp) method or when the [routing](../routing/index.html) module navigates away from a page.
+
+The default implementation of `destroy` in `Parcel` loops through all the properties of the instance and if it finds any property holding a reference to an instance of `Parcela`, that is, a sub-parcel, or an array of them, it will call their `destroy` method.  Be careful to maintain the inheritance chain when overriding `destroy` or replacing its default funcionality. If any sub-parcel is stored in any other place, the developer must ensure its `destroy` method is called.
 
 ### Models
 

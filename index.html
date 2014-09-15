@@ -6,82 +6,62 @@ contribution_url: "contribution/index.html"
 
 <h1 class="title"><img src="assets/logo-small.png" />{{ site.title }}</h1>
 
-<div class="highlight center"><pre><span class="ss">Isomorphic <span class="blue">modules</span> for building building ultrafast, robust and scalable webapplications</span></pre></div>
+<div class="highlight center"><pre><span class="ss">Isomorphic <span class="blue">modules</span> for building building fast, robust and scalable web applications</span></pre>
+</div>
 
 <div class="body-content-home">
-    <div class="after-intro">
-        <a class="pure-button pure-button-primary pure-button-bordered" href="{{ page.userguide_url }}">User guides</a>
-        <a class="pure-button pure-button-bordered" href="https://github.com/{{ site.github_username }}">View on Github</a>
-        <a class="pure-button pure-button-bordered" href="{{ page.contribution_url }}">Contribute</a>
-    </div>
+	<div class="after-intro">
+		<a class="pure-button pure-button-primary pure-button-bordered" href="{{ page.userguide_url }}">User guides</a>
+		<a class="pure-button pure-button-bordered" href="https://github.com/{{ site.github_username }}">View on Github</a>
+		<a class="pure-button pure-button-bordered" href="{{ page.contribution_url }}">Contribute</a>
+	</div>
 
-<p>The name Parcela comes from the Spanish (the mother tongue of one of the authors) for <span class="blue">parcel</span> in the sense of "a distinct, continuous portion or tract of land". A parcel in Parcela represents a small portion of a web page.</p>
+	<p>The name Parcela comes from the Spanish for <span class="blue">parcel</span> in the sense of "<i>a distinct, continuous portion or tract of land</i>". A parcel in Parcela represents a small portion of a web page. The logo is inspired by the colorful fields of tulips in The Netherlands.</p>
 
-<p>Parcela is a community-project. We develop basic commonjs-modules which can be used on both server and client (isomorphic). We demand this feature to be able to do serverside developing and rendering. All modules are highly tested, well documented and high performant. Among the modules are:
+	<p>Parcela is a community-project. We develop basic commonjs-modules which can be used on both server and client (isomorphic). We demand this feature to be able to do serverside developing and rendering. All modules are highly tested, well documented and highly performant.</p>
 
-<ul>
-   <li><span class="blue">Virtual DOM</span> (using Parcels) <i>work in progress</i></li>
-   <li><span class="blue">Promised IO</span></li>
-   <li><span class="blue">Rich Event system</span></li>
-   <li><span class="blue">I-tags</span> (isomorphic custom elements) <i>work in progress</i></li>
-</ul>
+	<p>Parcela is designed with the following goals in mind:
+		<ul>
+			<li>Completely modular. Its different parts can be mixed and matched to suit any production site, however</li>
+			<li>A <i>standard distribution</i> is provided to make it easy to get started</li>
+			<li>Rendering is via a <a href="./docs/virtual-dom/index.html">Virtual DOM</a> that tries to minimize the costly access to the browser's DOM, to make fast and responsive updates.</li>
+			<li>Client side routing designed for single-page applications.</li>
+			<li>Isomorphic. All modules must be able to run both on the client and the server.</li>
+			<li>Unidirectional flow of data: the screen is a faithful representation of the state of the data in the application, conveniently transformed for the user.</li>
+			<li>Dynamic module loading: only a minimal bundle has to be loaded initially, extra modules can be loaded on-demand.</li>
+			<li>Rich set of ready-made components.</li>
+		</ul>
+	</p>
+	<div class="started">Getting Started</div>
 
-<div class="started">Get Started</div>
+	<p>Parcela provides a <i>standard distribution</i> which aggregates the various modules that make up Parcela into one convenient Browserify bundle to be used in clients and an npm package to be used server-side. The <i>standard distribution</i> is rooted in the <a href="./docs/parcela/index.html">parcela</a> module.</p>
 
-Creating a webapplication or server-application is just a matter of:
+	<p>To start using Parcela, the following resources are available:
+		<ul>
+			<li>Client side Browserify bundle: <a href="./dist/parcela.js">parcela.js</a>
+			</li>
+			<li>Client side, minified Browserify bundle: <a href="./dist/parcela-min.js">parcela-min.js</a>
+			</li>
+			<li>Npm `package.json` file to install via `npm install`: <a href="./dist/package.json">package.json</a>
+			</li>
+		</ul>
+	</p>
 
-<ul>
-   <li>Setup package.json for your project</li>
-   <li>For browserenvironments: create a buildfile</li>
-   <li>Create your code reqquireing the modules</li>
-</ul>
+	<p>Creating a client-side web application is just a matter of loading the client side bundle and then using <code>require</code> to get a reference to the root namespace of the <i>standard distribution</i>.</p>
 
-You are free to mix Parcela modules with other npm-modules.
-</p>
+	{% highlight html %}
+	<script src=" /*....*/ parcela.js"></script>
+	<script>
+		var Parcela = require('parcela');
+	</script>
+	{% endhighlight %}
 
-<h1>Example package.json</h1>
-{% highlight json %}
-{
-    "name": "my-project",
-    "version": "0.0.1",
-    "dependencies": {
-        "io": "Parcela/io",
-        "io-transfer": "Parcela/io-transfer"
-    }
-}
-{% endhighlight %}
+	<p>For a server-side application, download the <a href="./dist/package.json">package.json</a> file and run <code>npm install</code> to download the <i>standard distribution</i> installed. Then, in your application, you can simply do:</p>
 
-<h1>With nodejs:</h1>
-{% highlight js %}
-var IO = require('io'),
-    IOtransfer = require('io-transfer'); // delivers the method 'get'
+	{% highlight js %} 
+	var Parcela = require('parcela'); 
+	{% endhighlight %}
 
-IOtransfer.mergeInto(IO);
-
-IO.get('http://somedomain.com/getInfo?q=something').then(
-    function(response) {
-        // `response` holds the remotedata
-    }
-);
-{% endhighlight %}
-
-<h1>In the browser:</h1>
-{% include loader.html %}
-
-{% highlight js %}
-<script>
-    var IO = require('io'),
-        IOtransfer = require('io-transfer'); // delivers the method 'get'
-
-    IOtransfer.mergeInto(IO);
-
-    IO.get('/getInfo?q=something').then(
-        function(response) {
-            // `response` holds the remotedata
-        }
-    );
-
-</script>
-{% endhighlight %}
+	<p>Please continue to the  <a href="./docs/parcel/index.html">parcel</a> module and its examples which are a good starting point to start getting aquainted with Parcela.</p>
 
 </div>

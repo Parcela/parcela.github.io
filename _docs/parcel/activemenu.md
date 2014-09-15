@@ -15,7 +15,7 @@ when applied to one of the `<li>` items that make up the menu, will highlight it
 it is the current menu.
 
 ```js
-var Menu = ITSA.Parcel.subClass({
+var Menu = Parcela.Parcel.subClass({
 	className: 'pure-menu pure-menu-open pure-menu-horizontal',
 	defaultConfig: {
 		items: [
@@ -27,7 +27,7 @@ var Menu = ITSA.Parcel.subClass({
 	},
 	view: function () {
 		var self = this,
-			v = ITSA.Parcel.vNode;
+			v = Parcela.Parcel.vNode;
 		return v('ul', this.items.map(function (item) {
 			return v(
 				'li', {
@@ -40,7 +40,7 @@ var Menu = ITSA.Parcel.subClass({
 					),
 					onclick: function (ev) {
 						self.selected = ev.target.hash.substr(1);
-						ITSA.render();
+						Parcela.render();
 						return false;
 					}
 				}, [v('a', {href: '#' + item.url}, item.label)]);
@@ -50,27 +50,24 @@ var Menu = ITSA.Parcel.subClass({
 
 ```
 
-Our `Menu` class is now slightly larger.  We have added an `init`. The `init` function is called automatically by the constructor. The reason for this is that if we initialized `disabled` in the `defaultConfig`, and we had several menus in the same page at once, all the menus would point to the same, shared array and all would get the same items disabled.  This may be a desired behavior but, most likely, it wouldn't.
+Our `Menu` class is now slightly larger.  We have added an `init` method. The `init` function is called automatically by the constructor. The reason for this is that if we initialized `disabled` in the `defaultConfig`, and we had several menus in the same page at once, all the menus would point to the same, shared array and all would get the same items disabled.  This may be a desired behavior but, most likely, it wouldn't.
 
 The other addition is the `view`.  Now, the `<li>` element gets a couple of attributes.  One is the `class` attribute which sets it to the values `pure-menu-disabled` or `pure-menu-selected` depending on whether the URL for the menu item is in the `disabled` array or is the `selected` item.
 
-The other attribute is an event listener for the `click` event on the link.  This is not a good way to do it and usage of Parcela's own event system is a much better alternative but, for the purpose of this example, this is good enough.  Basically, it takes the URL from the clicked anchor and stores it in the `selected` property.  Then it calls `ITSA.render` method so the whole page is rendered again.  This is something Parcela's own event system would do automatically for you.
+The other attribute is an event listener for the `click` event on the link.  This is not a good way to do it and usage of Parcela's own event system is a much better alternative but, for the purpose of this example, this is good enough.  Basically, it takes the URL from the clicked anchor and stores it in the `selected` property.  Then it calls `Parcela.render` method so the whole page is rendered again.  This is something Parcela's own event system would do automatically for you.
 
-One notable think that someone might miss is that we are not unsetting the `pure-menu-selected` class name from the previously selected item.  Usually, there would have been some `previousSelectedItem` property somewhere in that class.   This is not necessary with Parcela because you render the whole virtual DOM for the view from scratch.  However, this is not expensive.  Due to Parcela's virtualDOM manager, the actual DOM only receives two commands, one to take out the `pure-menu-selected` class name from one DOM node, the other to add it to the new selected item.
+One notable thing that someone might miss is that we are not unsetting the `pure-menu-selected` class name from the previously selected item.  Usually, there would have been some `previousSelectedItem` property somewhere in that class.   This is not necessary with Parcela because you render the whole virtual DOM for the view from scratch.  However, this is not expensive.  Due to Parcela's virtualDOM manager, the actual DOM only receives two commands, one to take out the `pure-menu-selected` class name from one DOM node, the other to add it to the new selected item.
 
-### Live example
-
-This is the result of running the code shown above. Right below you can find the full code in one piece:
 
 ### Complete Code
 
 The full code for this example:
 
 ```
-ITSA = require('core');
-ITSA.ready().then(
+var Parcela = require('parcela');
+Parcela.ready().then(
 	function () {
-		var Menu = ITSA.Parcel.subClass({
+		var Menu = Parcela.Parcel.subClass({
 			className: 'pure-menu pure-menu-open pure-menu-horizontal',
 			defaultConfig: {
 				items: [
@@ -82,7 +79,7 @@ ITSA.ready().then(
 			},
 			view: function () {
 				var self = this,
-					v = ITSA.Parcel.vNode;
+					v = Parcela.Parcel.vNode;
 				return v('ul', this.items.map(function (item) {
 					return v(
 						'li', {
@@ -95,7 +92,7 @@ ITSA.ready().then(
 							),
 							onclick: function (ev) {
 								self.selected = ev.target.hash.substr(1);
-								ITSA.render();
+								Parcela.render();
 								return false;
 							}
 						}, [v('a', {href: '#' + item.url}, item.label)]);
@@ -103,8 +100,7 @@ ITSA.ready().then(
 			}
 		});
 
-		// Which can be called like this:
-		var menu = new Menu({
+		Parcela.rootApp(Menu({
 			items: [
 				{url: 'home', label: 'Home'},
 				{url: 'users', label: 'Users'},
@@ -112,8 +108,6 @@ ITSA.ready().then(
 			],
 			selected: 'users'
 		});
-
-		ITSA.rootApp(menu);
 	}
 );
 ```

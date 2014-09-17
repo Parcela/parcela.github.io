@@ -51,6 +51,8 @@
             
                 <li><a href="../classes/IO.html">IO</a></li>
             
+                <li><a href="../classes/ITSA.html">ITSA</a></li>
+            
                 <li><a href="../classes/Object.html">Object</a></li>
             
                 <li><a href="../classes/Parcel.html">Parcel</a></li>
@@ -59,7 +61,11 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
+            
+                <li><a href="../classes/Promise.Resolver.html">Promise.Resolver</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
             
@@ -75,7 +81,17 @@
             
                 <li><a href="../modules/core.html">core</a></li>
             
+                <li><a href="../modules/core-event.html">core-event</a></li>
+            
+                <li><a href="../modules/core-event-base.html">core-event-base</a></li>
+            
                 <li><a href="../modules/core-routing.html">core-routing</a></li>
+            
+                <li><a href="../modules/core-timers.html">core-timers</a></li>
+            
+                <li><a href="../modules/core-utils.html">core-utils</a></li>
+            
+                <li><a href="../modules/core-vdom.html">core-vdom</a></li>
             
                 <li><a href="../modules/event.html">event</a></li>
             
@@ -108,6 +124,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -166,7 +184,8 @@
 
     
         
-            Module: <a href="../modules/utils.html">utils</a>
+            Module: <a href="../modules/core-vdom.html">core-vdom</a><br>
+            Parent Module: <a href="../modules/utils.html">utils</a>
         
     
 
@@ -213,6 +232,15 @@
                                 
                             </li>
                         
+                            <li class="index-item method private">
+                                <a href="#method__asynchronizer">_asynchronizer</a>
+
+                                
+                                    <span class="flag static">static</span>
+                                
+                                
+                            </li>
+                        
                             <li class="index-item method">
                                 <a href="#method_async">async</a>
 
@@ -228,8 +256,24 @@
                             </li>
                         
                             <li class="index-item method">
+                                <a href="#method_idGenerator">idGenerator</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
                                 <a href="#method_later">later</a>
 
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_typeOf">typeOf</a>
+
+                                
+                                    <span class="flag static">static</span>
                                 
                                 
                             </li>
@@ -297,6 +341,104 @@
     <div class="meta">
         
             
+                
+                    <p>Provided by the <a href="../modules/core-timers.html">core-timers</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l4100"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:4100</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Forces a function to be run asynchronously, but as fast as possible. In Node.js
+this is achieved using <code>setImmediate</code> or <code>process.nextTick</code>.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">callbackFn</code>
+                        <span class="type"><a href="../classes/Function.html" class="crosslink">Function</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The function to call asynchronously</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method__asynchronizer" class="method item private">
+    <h3 class="name"><code>_asynchronizer</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>callbackFn</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+        <span class="flag private">private</span>
+    
+
+    
+
+    
+        <span class="flag static">static</span>
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/utils.html">utils</a> module.</p>
                 
                 <p>
                 
@@ -397,6 +539,8 @@ this is achieved using <code>setImmediate</code> or <code>process.nextTick</code
     <div class="meta">
         
             
+                
+                    <p>Provided by the <a href="../modules/utils.html">utils</a> module.</p>
                 
                 <p>
                 
@@ -530,6 +674,159 @@ called before the callback function, the callback function won&#39;t be called.<
     <div class="meta">
         
             
+                
+                    <p>Provided by the <a href="../modules/core-utils.html">core-utils</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l4048"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:4048</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Generates an unique id with the signature: &quot;namespace-follownr&quot;</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[namespace]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>namespace to prepend the generated id.
+       When ignored, the generator just returns a number.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[start]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>startvalue for the next generated id. Any further generated id&#39;s will preceed this id.
+       If <code>start</code> is lower or equal than the last generated id, it will be ignored.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>:
+                    
+                    <p>an unique id. Either a number, or a String (digit prepended with &quot;namespace-&quot;)</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <pre class="code prettyprint"><code>var generator = require(&#39;core-utils-idgenerator&#39;);
+
+console.log(generator()); // --&gt; 1
+console.log(generator()); // --&gt; 2
+console.log(generator(1000)); // --&gt; 1000
+console.log(generator()); // --&gt; 1001
+console.log(generator(&#39;Parcel, 500&#39;)); // --&gt;&quot;Parcel-500&quot;
+console.log(generator(&#39;Parcel&#39;)); // --&gt;&quot;Parcel-501&quot;</code></pre>
+
+            </div>
+        </div>
+    
+</div>
+
+                
+                    <div id="method_idGenerator" class="method item">
+    <h3 class="name"><code>idGenerator</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[namespace]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[start]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/utils.html">utils</a> module.</p>
                 
                 <p>
                 
@@ -691,6 +988,8 @@ console.log(generator(&#39;Parcel&#39;)); // --&gt;&quot;Parcel-501&quot;</code>
     <div class="meta">
         
             
+                
+                    <p>Provided by the <a href="../modules/utils.html">utils</a> module.</p>
                 
                 <p>
                 
@@ -860,6 +1159,131 @@ The interval executes until canceled.</p>
     <div class="meta">
         
             
+                
+                    <p>Provided by the <a href="../modules/core-utils.html">core-utils</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l4237"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:4237</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Improved version of the <code>typeof</code> operator, distinguishes Arrays, Date and nulls from Object.</p>
+<p>Returns one of the following strings, representing the type of the item passed in:</p>
+<p>&quot;array&quot;
+&quot;boolean&quot;
+&quot;date&quot;
+&quot;error&quot;
+&quot;function&quot;
+&quot;null&quot;
+&quot;number&quot;
+&quot;object&quot;
+&quot;regexp&quot;
+&quot;string&quot;
+&quot;undefined&quot;</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">o</code>
+                        <span class="type">Any</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>the item to test.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>:
+                    
+                    <p>the detected type.</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_typeOf" class="method item">
+    <h3 class="name"><code>typeOf</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>o</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+        <span class="flag static">static</span>
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/utils.html">utils</a> module.</p>
                 
                 <p>
                 

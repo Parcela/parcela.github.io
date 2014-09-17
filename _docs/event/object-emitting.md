@@ -17,67 +17,67 @@ Code-example:
 ```
 
 ```js
-// first create prototype-object and merge Event.Emitter to the prototype:
-var profileproto = Event.Emitter('PersonalProfile');
-    profiles = [],
-    i, myProfile;
+<script src="parcela-min.js"></script>
+<script>
+    var Parcela = require('parcela');
+    // first create prototype-object and merge Parcela.Event.Emitter to the prototype:
+    var profileproto = Parcela.Event.Emitter('PersonalProfile'),
+        profiles = [],
+        i, myProfile;
 
-// create 100 profiles which all can emit through their prototype:
-for (i=0; i<100; i++) {
-    myProfile = Object.create(profileproto);
-    myProfile.name = 'Marco '+i;
-    profiles.push(myProfile);
-}
-
-Event.after(
-    'PersonalProfile:save',
-    function(e) {
-        alert(e.target.name+' got saved');
+    // create 100 profiles which all can emit through their prototype:
+    for (i=0; i<100; i++) {
+        myProfile = Object.create(profileproto);
+        myProfile.name = 'Marco '+i;
+        profiles.push(myProfile);
     }
-);
 
-Event.after(
-    'click',
-    function() {
-        // we make the 10'th element to emit the save-event:
-        profiles[9].emit('save');
-    },
-    '#buttongo'
-);
+    Parcela.Event.after(
+        'PersonalProfile:save',
+        function(e) {
+            alert(e.target.name+' got saved');
+        }
+    );
+
+    Parcela.Event.after(
+        'click',
+        function() {
+            // we make the 11'th element to emit the save-event:
+            profiles[10].emit('save');
+        },
+        '#buttongo'
+    );
+</script>
 ```
 
-<script src="../../assets/core.js"></script>
+<script src="../../dist/parcela-min.js"></script>
 <script>
-    ITSA = require('core');
-    ITSA.ready().then(
-        function() {
-            // first create prototype-object and merge ITSA.Event.Emitter to the prototype:
-            var profileproto = ITSA.Event.Emitter('PersonalProfile'),
-                profiles = [],
-                i, myProfile;
+    var Parcela = require('parcela');
+    // first create prototype-object and merge Parcela.Event.Emitter to the prototype:
+    var profileproto = Parcela.Event.Emitter('PersonalProfile'),
+        profiles = [],
+        i, myProfile;
 
-            // create 100 profiles which all can emit through their prototype:
-            for (i=0; i<100; i++) {
-                myProfile = Object.create(profileproto);
-                myProfile.name = 'Marco '+i;
-                profiles.push(myProfile);
-            }
+    // create 100 profiles which all can emit through their prototype:
+    for (i=0; i<100; i++) {
+        myProfile = Object.create(profileproto);
+        myProfile.name = 'Marco '+i;
+        profiles.push(myProfile);
+    }
 
-            ITSA.Event.after(
-                'PersonalProfile:save',
-                function(e) {
-                    alert(e.target.name+' got saved');
-                }
-            );
-
-            ITSA.Event.after(
-                'click',
-                function() {
-                    // we make the 11'th element to emit the save-event:
-                    profiles[10].emit('save');
-                },
-                '#buttongo'
-            );
+    Parcela.Event.after(
+        'PersonalProfile:save',
+        function(e) {
+            alert(e.target.name+' got saved');
         }
+    );
+
+    Parcela.Event.after(
+        'click',
+        function() {
+            // we make the 11'th element to emit the save-event:
+            profiles[10].emit('save');
+        },
+        '#buttongo'
     );
 </script>

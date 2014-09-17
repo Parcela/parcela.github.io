@@ -51,6 +51,8 @@
             
                 <li><a href="../classes/IO.html">IO</a></li>
             
+                <li><a href="../classes/ITSA.html">ITSA</a></li>
+            
                 <li><a href="../classes/Object.html">Object</a></li>
             
                 <li><a href="../classes/Parcel.html">Parcel</a></li>
@@ -59,7 +61,11 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
+            
+                <li><a href="../classes/Promise.Resolver.html">Promise.Resolver</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
             
@@ -75,7 +81,17 @@
             
                 <li><a href="../modules/core.html">core</a></li>
             
+                <li><a href="../modules/core-event.html">core-event</a></li>
+            
+                <li><a href="../modules/core-event-base.html">core-event-base</a></li>
+            
                 <li><a href="../modules/core-routing.html">core-routing</a></li>
+            
+                <li><a href="../modules/core-timers.html">core-timers</a></li>
+            
+                <li><a href="../modules/core-utils.html">core-utils</a></li>
+            
+                <li><a href="../modules/core-vdom.html">core-vdom</a></li>
             
                 <li><a href="../modules/event.html">event</a></li>
             
@@ -108,6 +124,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -160,13 +178,13 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/src_parcel_parcel.js.html#l7"><code>src&#x2F;parcel&#x2F;parcel.js:7</code></a>
+            Defined in: <a href="../files/src_parcela.github.io_assets_core.js.html#l7205"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:7205</code></a>
         </div>
     
 
     
         
-            Module: <a href="../modules/parcel.html">parcel</a><br>
+            Module: <a href="../modules/core-routing.html">core-routing</a><br>
             Parent Module: <a href="../modules/core.html">core</a>
         
     
@@ -221,7 +239,7 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
             
         
         
-        <a href="../files/src_parcel_parcel.js.html#l7"><code>src&#x2F;parcel&#x2F;parcel.js:7</code></a>
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l7205"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:7205</code></a>
         
         </p>
 
@@ -270,7 +288,42 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
                     <ul class="index-list methods">
                         
                             <li class="index-item method">
+                                <a href="#method_destroy">destroy</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
                                 <a href="#method_init">init</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_init">init</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_postView">postView</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_preView">preView</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_stamp">stamp</a>
 
                                 
                                 
@@ -285,6 +338,13 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
                         
                             <li class="index-item method">
                                 <a href="#method_unload">unload</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_view">view</a>
 
                                 
                                 
@@ -315,7 +375,28 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
                             </li>
                         
                             <li class="index-item property">
+                                <a href="#property_className">className</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
                                 <a href="#property_containerType">containerType</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_containerType">containerType</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_defaultConfig">defaultConfig</a>
 
                                 
                                 
@@ -349,6 +430,66 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
                 <h2 class="off-left">Methods</h2>
 
                 
+                    <div id="method_destroy" class="method item">
+    <h3 class="name"><code>destroy</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcel_parcel.js.html#l40"><code>src&#x2F;parcel&#x2F;parcel.js:40</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Destructor.  </p>
+<p>The provided method checks all the instance properties and if any of them are 
+instances of Parcel or arrays of Parcel instances, 
+it will call the <code>destroy</code> method on each of the child parcels.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="method_init" class="method item">
     <h3 class="name"><code>init</code></h3>
 
@@ -374,6 +515,8 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
         
             
                 
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
                 <p>
                 
                 Defined in
@@ -393,8 +536,187 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
 
     <div class="description">
         <p>Provides the initialization of the parcel, called by the constructor of the parcel with all its arguments.</p>
+<p>The provided method is empty, it can be overriden by each Parcela app.</p>
+<p>Set up event listeners, initialize variables and models and prepare for operation.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_init" class="method item">
+    <h3 class="name"><code>init</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l7227"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:7227</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Provides the initialization of the parcel, called by the constructor of the parcel with all its arguments.</p>
 <p>Can be overriden by each Parcela app.</p>
 <p>Set up event listeners, initialize variables and models and prepare for operation.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_postView" class="method item">
+    <h3 class="name"><code>postView</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcel_parcel.js.html#l80"><code>src&#x2F;parcel&#x2F;parcel.js:80</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Called by the renderer after this Parcel is hidden.</p>
+<p>It is a good place to deactivate resources that are only usefull while the 
+parcel is visible such as animations.</p>
+<p>The provided method is empty, it can be overriden by each Parcela app.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_preView" class="method item">
+    <h3 class="name"><code>preView</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcel_parcel.js.html#l69"><code>src&#x2F;parcel&#x2F;parcel.js:69</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Called by the renderer before this Parcel is shown for the first time.
+It is a good place to activate resources that are only usefull while the 
+parcel is visible such as animations.</p>
+<p>The provided method is empty, it can be overriden by each Parcela app.</p>
 
     </div>
 
@@ -435,6 +757,8 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
         
             
                 
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
                 <p>
                 
                 Defined in
@@ -442,7 +766,86 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
             
         
         
-        <a href="../files/src_parcel_parcel.js.html#l88"><code>src&#x2F;parcel&#x2F;parcel.js:88</code></a>
+        <a href="../files/src_parcel_parcel.js.html#l132"><code>src&#x2F;parcel&#x2F;parcel.js:132</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Returns a value representative of the state of this parcel.
+The system will compare it with the previous state and if they match,
+it will assume the view has not changed.</p>
+<p>The default function returns <code>NaN</code> which is always different than itself.
+It may be overriden for optimization purposes.</p>
+
+    </div>
+
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">Value</span>:
+                    
+                    <p>any simple value (no objects or such) that reflects the state of this view</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_stamp" class="method item">
+    <h3 class="name"><code>stamp</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">Value</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l7286"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:7286</code></a>
         
         </p>
 
@@ -512,6 +915,8 @@ It may be overriden for optimization purposes.</p>
         
             
                 
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
                 <p>
                 
                 Defined in
@@ -519,7 +924,7 @@ It may be overriden for optimization purposes.</p>
             
         
         
-        <a href="../files/src_parcel_parcel.js.html#l40"><code>src&#x2F;parcel&#x2F;parcel.js:40</code></a>
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l7238"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:7238</code></a>
         
         </p>
 
@@ -585,6 +990,8 @@ It may be overriden for optimization purposes.</p>
         
             
                 
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
                 <p>
                 
                 Defined in
@@ -592,7 +999,116 @@ It may be overriden for optimization purposes.</p>
             
         
         
-        <a href="../files/src_parcel_parcel.js.html#l49"><code>src&#x2F;parcel&#x2F;parcel.js:49</code></a>
+        <a href="../files/src_parcel_parcel.js.html#l93"><code>src&#x2F;parcel&#x2F;parcel.js:93</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Returns the virtual DOM for this parcel.</p>
+<p>Must be overriden by each Parcela app.</p>
+<p>A virtual DOM node is composed of the following elements:</p>
+<ul>
+<li><code>tag</code> {String}:  Name of the HTML tag for the node to be created.</li>
+<li><code>attrs</code> {Object}: Collection of HTML attributes to be added to the node.</li>
+<li><code>children</code> {Array}: Array of virtual DOM nodes that will become children of the created node.</li>
+</ul>
+<p>This method will usually use the <a href="ITSA.html#method_vNode"><code>ITSA.vNode</code></a>
+helper function to produce the virtual DOM node.</p>
+
+    </div>
+
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">VNode</span>:
+                    
+                    <p>The expected virtual DOM for this parcel.</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                <pre class="code prettyprint"><code>view: function () {
+    var v = I.Parcel.vNode;
+    return v(&#39;div&#39;, [
+        v(&#39;p.joyful&#39;,&#39;Hello Workd!&#39;),
+        v(&#39;hr&#39;),
+        v(&#39;p&#39;,&#39;(Not very original, really)&#39;)
+    ]);
+}
+
+// Equivalent to:
+view: function () {
+    return {tag:&#39;div&#39;, attrs:{},children: [
+        {tag:&#39;p&#39;, attrs:{class:&#39;joyful&#39;}, children:[&#39;Hellow World!&#39;]},
+        {tag:&#39;hr&#39;, attrs: {}, children: []},
+        {tag:&#39;p&#39;, attrs:{}, children:[&#39;(Not very original, really)&#39;]}
+    ]};
+}</code></pre>
+
+            </div>
+        </div>
+    
+</div>
+
+                
+                    <div id="method_view" class="method item">
+    <h3 class="name"><code>view</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">VNode</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l7247"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:7247</code></a>
         
         </p>
 
@@ -687,6 +1203,8 @@ view: function () {
         
             
                 
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
                 <p>
                 
                 Defined in
@@ -694,7 +1212,58 @@ view: function () {
             
         
         
-        <a href="../files/src_parcel_parcel.js.html#l125"><code>src&#x2F;parcel&#x2F;parcel.js:125</code></a>
+        <a href="../files/src_parcel_parcel.js.html#l169"><code>src&#x2F;parcel&#x2F;parcel.js:169</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>CSS className to add to the container for this parcel.
+This is in addition to the className of <code>parcel</code> which is
+automatically added to all Parcel containers.</p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> &#x27;&#x27;</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_className" class="property item">
+    <h3 class="name"><code>className</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l7323"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:7323</code></a>
         
         </p>
 
@@ -736,6 +1305,8 @@ automatically added to all Parcel containers.</p>
         
             
                 
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
                 <p>
                 
                 Defined in
@@ -743,7 +1314,57 @@ automatically added to all Parcel containers.</p>
             
         
         
-        <a href="../files/src_parcel_parcel.js.html#l115"><code>src&#x2F;parcel&#x2F;parcel.js:115</code></a>
+        <a href="../files/src_parcel_parcel.js.html#l159"><code>src&#x2F;parcel&#x2F;parcel.js:159</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Type of DOM element that will be created to serve as a container for this Parcel.
+Defaults to a <code>DIV</code></p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> DIV</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_containerType" class="property item">
+    <h3 class="name"><code>containerType</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l7313"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:7313</code></a>
         
         </p>
 
@@ -784,6 +1405,8 @@ Defaults to a <code>DIV</code></p>
         
             
                 
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
                 <p>
                 
                 Defined in
@@ -791,7 +1414,61 @@ Defaults to a <code>DIV</code></p>
             
         
         
-        <a href="../files/src_parcel_parcel.js.html#l101"><code>src&#x2F;parcel&#x2F;parcel.js:101</code></a>
+        <a href="../files/src_parcel_parcel.js.html#l145"><code>src&#x2F;parcel&#x2F;parcel.js:145</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Provides default initialization values for the configuration of this Parcel.
+It is used by the constructor to merge it with the <code>config</code> values it might have
+received.</p>
+<p>The constructor only makes a shallow copy of the values in the hash.
+Object references must be initialized in the <a href="#method_init"><code>init</code></a> method,
+otherwise they would all point to the very same copy.</p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> undefined</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_defaultConfig" class="property item">
+    <h3 class="name"><code>defaultConfig</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/parcel.html">parcel</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l7299"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:7299</code></a>
         
         </p>
 
@@ -845,7 +1522,7 @@ otherwise they would all point to the very same copy.</p>
             
         
         
-        <a href="../files/src_parcel_events.js.html#l34"><code>src&#x2F;parcel&#x2F;events.js:34</code></a>
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l7710"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:7710</code></a>
         
         </p>
 

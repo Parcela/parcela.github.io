@@ -51,6 +51,8 @@
             
                 <li><a href="../classes/IO.html">IO</a></li>
             
+                <li><a href="../classes/ITSA.html">ITSA</a></li>
+            
                 <li><a href="../classes/Object.html">Object</a></li>
             
                 <li><a href="../classes/Parcel.html">Parcel</a></li>
@@ -59,7 +61,11 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
+            
+                <li><a href="../classes/Promise.Resolver.html">Promise.Resolver</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
             
@@ -75,7 +81,17 @@
             
                 <li><a href="../modules/core.html">core</a></li>
             
+                <li><a href="../modules/core-event.html">core-event</a></li>
+            
+                <li><a href="../modules/core-event-base.html">core-event-base</a></li>
+            
                 <li><a href="../modules/core-routing.html">core-routing</a></li>
+            
+                <li><a href="../modules/core-timers.html">core-timers</a></li>
+            
+                <li><a href="../modules/core-utils.html">core-utils</a></li>
+            
+                <li><a href="../modules/core-vdom.html">core-vdom</a></li>
             
                 <li><a href="../modules/event.html">event</a></li>
             
@@ -108,6 +124,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -187,7 +205,7 @@ var Parcel = Object.createClass(function (config) {
     /**
     Provides the initialization of the parcel, called by the constructor of the parcel with all its arguments.
 
-    Can be overriden by each Parcela app.
+    The provided method is empty, it can be overriden by each Parcela app.
 
     Set up event listeners, initialize variables and models and prepare for operation.
     @method init
@@ -196,12 +214,56 @@ var Parcel = Object.createClass(function (config) {
 
 
     /**
-    Called by the page manager before unloading the parcel, for example, when switching pages.
+    Destructor.  
 
-    @method unload
-    @return {Boolean}  If it returns exactly &#x60;false&#x60;, page switching will be prevented.
+    The provided method checks all the instance properties and if any of them are 
+    instances of Parcel or arrays of Parcel instances, 
+    it will call the &#x60;destroy&#x60; method on each of the child parcels.
+
+    @method destroy
     */
-    unload: function () {},
+    destroy: function () {
+        this.each(function (member) {
+            if (member instanceof Parcel) member.destroy.call(member);
+            if (typeof member == &#x27;object&#x27; &amp;&amp; member.length) {
+                member.some(function (item) {
+                    if (item) {
+                        if (item instanceof Parcel) {
+                            item.destroy.call(item);
+                        } else {
+                            // If the first non-emtpy item is not a Parcel instance, 
+                            // it doesn&#x27;t bother checking the rest.
+                            return true;
+                        }
+                    }
+                });
+            }
+                        
+        }, this);
+    },
+
+    /**
+    Called by the renderer before this Parcel is shown for the first time.
+    It is a good place to activate resources that are only usefull while the 
+    parcel is visible such as animations.
+    
+    The provided method is empty, it can be overriden by each Parcela app.
+    
+    @method preView
+    */
+    preView: function () {},
+    
+    /**
+    Called by the renderer after this Parcel is hidden.
+    
+    It is a good place to deactivate resources that are only usefull while the 
+    parcel is visible such as animations.
+    
+    The provided method is empty, it can be overriden by each Parcela app.
+    
+    @method postView
+    */
+    postView: function () {},
 
 
     /**
@@ -240,7 +302,7 @@ var Parcel = Object.createClass(function (config) {
     @return {vNode} The expected virtual DOM for this parcel.
     */
     view: function () {
-        return {};
+        return &#x27;&#x27;;
     },
 
     /**

@@ -51,6 +51,8 @@
             
                 <li><a href="../classes/IO.html">IO</a></li>
             
+                <li><a href="../classes/ITSA.html">ITSA</a></li>
+            
                 <li><a href="../classes/Object.html">Object</a></li>
             
                 <li><a href="../classes/Parcel.html">Parcel</a></li>
@@ -59,7 +61,11 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
+            
+                <li><a href="../classes/Promise.Resolver.html">Promise.Resolver</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
             
@@ -75,7 +81,17 @@
             
                 <li><a href="../modules/core.html">core</a></li>
             
+                <li><a href="../modules/core-event.html">core-event</a></li>
+            
+                <li><a href="../modules/core-event-base.html">core-event-base</a></li>
+            
                 <li><a href="../modules/core-routing.html">core-routing</a></li>
+            
+                <li><a href="../modules/core-timers.html">core-timers</a></li>
+            
+                <li><a href="../modules/core-utils.html">core-utils</a></li>
+            
+                <li><a href="../modules/core-vdom.html">core-vdom</a></li>
             
                 <li><a href="../modules/event.html">event</a></li>
             
@@ -108,6 +124,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -160,13 +178,13 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/src_event_event-emitter.js.html#l3"><code>src&#x2F;event&#x2F;event-emitter.js:3</code></a>
+            Defined in: <a href="../files/src_parcela.github.io_assets_core.js.html#l2989"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:2989</code></a>
         </div>
     
 
     
         
-            Module: <a href="../modules/event-emitter.html">event-emitter</a><br>
+            Module: <a href="../modules/event-listener.html">event-listener</a><br>
             Parent Module: <a href="../modules/event.html">event</a>
         
     
@@ -177,12 +195,12 @@
 
 
 <div class="box intro">
-    <p>Extends the Event-instance by adding the method <code>Emitter</code> to it.
-The <code>Emitter-method</code> returns an object that should be merged into any Class-instance or object you
-want to extend with the emit-methods, so the appropriate methods can be invoked on the instance.</p>
-<p><i>Copyright (c) 2014 Parcela - <a href="https://github.com/Parcela">https://github.com/Parcela</a></i>
-New BSD License - <a href="https://github.com/ItsAsbreuk/itsa-library/blob/master/LICENSE">https://github.com/ItsAsbreuk/itsa-library/blob/master/LICENSE</a></p>
-<p>Should be called using  the provided <code>extend</code>-method like this:</p>
+    <p>This object should be merged into any Class-instance or object that you want to provide
+event-emitter methods. This way, the appropriate methods can be invoked on the instance.
+instead of using the static Event-methods.</p>
+<p>When merging, you need to merge a method with the <code>emitterName</code> as its only argument. f.e:
+Event.Emitter(&#39;PersonalProfile&#39;)</p>
+<p>It is highly recommendable to merge on the prototype instead of the instance. See the docs.</p>
 
 </div>
 
@@ -218,6 +236,20 @@ New BSD License - <a href="https://github.com/ItsAsbreuk/itsa-library/blob/maste
                             </li>
                         
                             <li class="index-item method">
+                                <a href="#method_defineEvent">defineEvent</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_emit">emit</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
                                 <a href="#method_emit">emit</a>
 
                                 
@@ -226,6 +258,20 @@ New BSD License - <a href="https://github.com/ItsAsbreuk/itsa-library/blob/maste
                         
                             <li class="index-item method">
                                 <a href="#method_undefAllEvents">undefAllEvents</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_undefAllEvents">undefAllEvents</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_undefEvent">undefEvent</a>
 
                                 
                                 
@@ -293,6 +339,8 @@ New BSD License - <a href="https://github.com/ItsAsbreuk/itsa-library/blob/maste
         
             
                 
+                    <p>Provided by the <a href="../modules/event-emitter.html">event-emitter</a> module.</p>
+                
                 <p>
                 
                 Defined in
@@ -301,6 +349,136 @@ New BSD License - <a href="https://github.com/ItsAsbreuk/itsa-library/blob/maste
         
         
         <a href="../files/src_event_event-emitter.js.html#l37"><code>src&#x2F;event&#x2F;event-emitter.js:37</code></a>
+        
+        </p>
+
+
+        
+
+        
+            <p>Available since 0.0.1</p>
+        
+    </div>
+
+    <div class="description">
+        <p>Defines a CustomEvent. If the eventtype already exists, it will not be overridden,
+unless you force to assign with <code>.forceAssign()</code></p>
+<p>The returned object comes with 4 methods which can be invoked chainable:</p>
+<ul>
+    <li>defaultFn() --&gt; the default-function of the event</li>
+    <li>preventedFn() --&gt; the function that should be invoked when the event is defaultPrevented</li>
+    <li>forceAssign() --&gt; overrides any previous definition</li>
+    <li>unHaltable() --&gt; makes the customEvent cannot be halted</li>
+    <li>unPreventable() --&gt; makes the customEvent&#39;s defaultFn cannot be prevented</li>
+    <li>unSilencable() --&gt; makes that emitters cannot make this event to perform silently (using e.silent)</li>
+    <li>unRenderPreventable() --&gt; makes that the customEvent&#39;s render cannot be prevented</li>
+    <li>noRender() --&gt; prevents this customEvent from render the dom. Overrules unRenderPreventable()</li>
+</ul>
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">eventName</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>name of the customEvent, without <code>emitterName</code>.
+       The final event that will be created has the syntax: <code>emitterName:eventName</code>,
+       where <code>emitterName:</code> is automaticly prepended.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>:
+                    
+                    <p>with extra methods that can be chained:</p>
+<ul>
+     <li>unPreventable() --&gt; makes the customEvent&#39;s defaultFn cannot be prevented</li>
+     <li>unRenderPreventable() --&gt; makes that the customEvent&#39;s render cannot be prevented</li>
+     <li>forceAssign() --&gt; overrides any previous definition</li>
+     <li>defaultFn() --&gt; the default-function of the event</li>
+     <li>preventedFn() --&gt; the function that should be invoked when the event is defaultPrevented</li>
+</ul>
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_defineEvent" class="method item">
+    <h3 class="name"><code>defineEvent</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>eventName</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/event-emitter.html">event-emitter</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l3012"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:3012</code></a>
         
         </p>
 
@@ -427,6 +605,8 @@ unless you force to assign with <code>.forceAssign()</code></p>
         
             
                 
+                    <p>Provided by the <a href="../modules/event-emitter.html">event-emitter</a> module.</p>
+                
                 <p>
                 
                 Defined in
@@ -435,6 +615,143 @@ unless you force to assign with <code>.forceAssign()</code></p>
         
         
         <a href="../files/src_event_event-emitter.js.html#l72"><code>src&#x2F;event&#x2F;event-emitter.js:72</code></a>
+        
+        </p>
+
+
+        
+
+        
+            <p>Available since 0.0.1</p>
+        
+    </div>
+
+    <div class="description">
+        <p>Emits the event <code>eventName</code> on behalf of the instance holding this method.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">eventName</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>name of the event to be sent (available as e.type)
+       you could pass a customEvent here &#39;emitterName:eventName&#39;, which would
+       overrule the <code>instance-emitterName</code></p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">payload</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>extra payload to be added to the event-object</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type"><a href="../classes/Promise.html" class="crosslink">Promise</a></span>:
+                    
+                    <ul>
+    <li>on success: returnValue {Any} of the defaultFn</li>
+    <li>on error: reason {Any} Either: description &#39;event was halted&#39;, &#39;event was defaultPrevented&#39; or the returnvalue of the preventedFn</li>
+</ul>
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_emit" class="method item">
+    <h3 class="name"><code>emit</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>eventName</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>payload</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type"><a href="../classes/Promise.html" class="crosslink">Promise</a></span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/event-emitter.html">event-emitter</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l3047"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:3047</code></a>
         
         </p>
 
@@ -542,6 +859,8 @@ unless you force to assign with <code>.forceAssign()</code></p>
         
             
                 
+                    <p>Provided by the <a href="../modules/event-emitter.html">event-emitter</a> module.</p>
+                
                 <p>
                 
                 Defined in
@@ -550,6 +869,65 @@ unless you force to assign with <code>.forceAssign()</code></p>
         
         
         <a href="../files/src_event_event-emitter.js.html#l91"><code>src&#x2F;event&#x2F;event-emitter.js:91</code></a>
+        
+        </p>
+
+
+        
+
+        
+            <p>Available since 0.0.1</p>
+        
+    </div>
+
+    <div class="description">
+        <p>Removes all event-definitions of the instance holding this method.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_undefAllEvents" class="method item">
+    <h3 class="name"><code>undefAllEvents</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/event-emitter.html">event-emitter</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l3066"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:3066</code></a>
         
         </p>
 
@@ -609,6 +987,8 @@ unless you force to assign with <code>.forceAssign()</code></p>
         
             
                 
+                    <p>Provided by the <a href="../modules/event-emitter.html">event-emitter</a> module.</p>
+                
                 <p>
                 
                 Defined in
@@ -617,6 +997,101 @@ unless you force to assign with <code>.forceAssign()</code></p>
         
         
         <a href="../files/src_event_event-emitter.js.html#l101"><code>src&#x2F;event&#x2F;event-emitter.js:101</code></a>
+        
+        </p>
+
+
+        
+
+        
+            <p>Available since 0.0.1</p>
+        
+    </div>
+
+    <div class="description">
+        <p>Removes the event-definition of the specified customEvent.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">eventName</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>name of the customEvent, without <code>emitterName</code>.
+       The calculated customEvent which will be undefined, will have the syntax: <code>emitterName:eventName</code>.
+       where <code>emitterName:</code> is automaticly prepended.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_undefEvent" class="method item">
+    <h3 class="name"><code>undefEvent</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>eventName</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                    <p>Provided by the <a href="../modules/event-emitter.html">event-emitter</a> module.</p>
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela.github.io_assets_core.js.html#l3076"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:3076</code></a>
         
         </p>
 

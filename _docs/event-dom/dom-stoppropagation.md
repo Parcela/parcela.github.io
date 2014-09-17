@@ -53,7 +53,9 @@ Code-example:
 ```
 
 ```js
+<script src="parcela-min.js"></script>
 <script>
+    var Parcela = require('parcela');
     var container = document.getElementById('container'),
         addText = function(text) {
             var div = document.createElement('div');
@@ -63,131 +65,127 @@ Code-example:
 
     //====================================================
 
-    Event.after('click', function() {
+    Parcela.Event.after('click', function() {
         addText('after click --> document');
-    }, 'button:not(.clear)');
+    });
 
-    Event.after('click', function() {
+    Parcela.Event.after('click', function() {
         addText('after click --> master-container');
-    }, '#master-container button:not(.clear)');
+    }, '#master-container');
 
-    Event.after('click', function() {
+    Parcela.Event.after('click', function() {
         addText('after click --> child-container');
-    }, '#child-container button:not(.clear)');
+    }, '#child-container');
 
-    Event.after('click', function() {
+    Parcela.Event.after('click', function() {
         addText('after click --> child-child-container');
-    }, '#child-child-container button:not(.clear)');
+    }, '#child-child-container');
 
     //====================================================
 
-    Event.before('click', function() {
+    Parcela.Event.before('click', function() {
         addText('before click --> document before');
-    }, 'button:not(.clear)');
+    });
 
-    Event.before('click', function() {
+    Parcela.Event.before('click', function() {
         addText('before click --> master-container');
-    }, '#master-container button:not(.clear)');
+    }, '#master-container');
 
-    Event.before('click', function(e) {
+    Parcela.Event.before('click', function(e) {
         addText('before click --> child-container first subscriber');
-    }, '#child-container button:not(.clear)');
+    }, '#child-container');
 
-    Event.before('click', function(e) {
-        if (e.target.id==='stop') {
+    Parcela.Event.before('click', function(e) {
+        if (e.sourceTarget.id==='stop') {
             e.stopPropagation();
         }
-        if (e.target.id==='stopImmediate') {
+        if (e.sourceTarget.id==='stopImmediate') {
             e.stopImmediatePropagation();
         }
         addText('before click --> child-container second subscriber');
-    }, '#child-container button:not(.clear)');
+    }, '#child-container');
 
-    Event.before('click', function(e) {
+    Parcela.Event.before('click', function(e) {
         addText('before click --> child-container third subscriber');
-    }, '#child-container button:not(.clear)');
+    }, '#child-container');
 
-    Event.before('click', function(e) {
+    Parcela.Event.before('click', function(e) {
         addText('before click --> child-child-container');
-    }, '#child-child-container button:not(.clear)');
+    }, '#child-child-container');
 
     //====================================================
 
-    Event.before('click', function(e) {
+    Parcela.Event.before('click', function(e) {
         container.innerHTML = '';
+        e.halt();
     }, 'button.clear');
-
 </script>
 ```
 
-<script src="../../assets/core.js"></script>
+<script src="../../dist/parcela-min.js"></script>
 <script>
-    ITSA = require('core');
-    ITSA.ready().then(
-        function() {
-            var container = document.getElementById('container'),
-                addText = function(text) {
-                    var div = document.createElement('div');
-                    div.innerHTML = text;
-                    container.appendChild(div);
-                };
+    var Parcela = require('parcela');
+    var container = document.getElementById('container'),
+        addText = function(text) {
+            var div = document.createElement('div');
+            div.innerHTML = text;
+            container.appendChild(div);
+        };
 
-            //====================================================
+    //====================================================
 
-            ITSA.Event.after('click', function() {
-                addText('after click --> document');
-            }, 'button:not(.clear)');
+    Parcela.Event.after('click', function() {
+        addText('after click --> document');
+    });
 
-            ITSA.Event.after('click', function() {
-                addText('after click --> master-container');
-            }, '#master-container button:not(.clear)');
+    Parcela.Event.after('click', function() {
+        addText('after click --> master-container');
+    }, '#master-container');
 
-            ITSA.Event.after('click', function() {
-                addText('after click --> child-container');
-            }, '#child-container button:not(.clear)');
+    Parcela.Event.after('click', function() {
+        addText('after click --> child-container');
+    }, '#child-container');
 
-            ITSA.Event.after('click', function() {
-                addText('after click --> child-child-container');
-            }, '#child-child-container button:not(.clear)');
+    Parcela.Event.after('click', function() {
+        addText('after click --> child-child-container');
+    }, '#child-child-container');
 
-            //====================================================
+    //====================================================
 
-            ITSA.Event.before('click', function() {
-                addText('before click --> document before');
-            }, 'button:not(.clear)');
+    Parcela.Event.before('click', function() {
+        addText('before click --> document before');
+    });
 
-            ITSA.Event.before('click', function() {
-                addText('before click --> master-container');
-            }, '#master-container button:not(.clear)');
+    Parcela.Event.before('click', function() {
+        addText('before click --> master-container');
+    }, '#master-container');
 
-            ITSA.Event.before('click', function(e) {
-                addText('before click --> child-container first subscriber');
-            }, '#child-container button:not(.clear)');
+    Parcela.Event.before('click', function(e) {
+        addText('before click --> child-container first subscriber');
+    }, '#child-container');
 
-            ITSA.Event.before('click', function(e) {
-                if (e.target.id==='stop') {
-                    e.stopPropagation();
-                }
-                if (e.target.id==='stopImmediate') {
-                    e.stopImmediatePropagation();
-                }
-                addText('before click --> child-container second subscriber');
-            }, '#child-container button:not(.clear)');
-
-            ITSA.Event.before('click', function(e) {
-                addText('before click --> child-container third subscriber');
-            }, '#child-container button:not(.clear)');
-
-            ITSA.Event.before('click', function(e) {
-                addText('before click --> child-child-container');
-            }, '#child-child-container button:not(.clear)');
-
-            //====================================================
-
-            ITSA.Event.before('click', function(e) {
-                container.innerHTML = '';
-            }, 'button.clear');
-
+    Parcela.Event.before('click', function(e) {
+        if (e.sourceTarget.id==='stop') {
+            e.stopPropagation();
         }
-    );
+        if (e.sourceTarget.id==='stopImmediate') {
+            e.stopImmediatePropagation();
+        }
+        addText('before click --> child-container second subscriber');
+    }, '#child-container');
+
+    Parcela.Event.before('click', function(e) {
+        addText('before click --> child-container third subscriber');
+    }, '#child-container');
+
+    Parcela.Event.before('click', function(e) {
+        addText('before click --> child-child-container');
+    }, '#child-child-container');
+
+    //====================================================
+
+    Parcela.Event.before('click', function(e) {
+        container.innerHTML = '';
+        e.halt();
+    }, 'button.clear');
 </script>

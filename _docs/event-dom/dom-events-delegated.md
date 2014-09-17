@@ -37,7 +37,9 @@ Code-example:
 ```
 
 ```js
+<script src="parcela-min.js"></script>
 <script>
+    var Parcela = require('parcela');
     var count, container, addNewButton, showButtonText;
 
     count = 0;
@@ -55,8 +57,8 @@ Code-example:
         alert(e.target.innerHTML);
     };
 
-    Event.after('click', addNewButton, '#addbtn');
-    Event.after('click', showButtonText, '#container button');
+    Parcela.Event.after('click', addNewButton, '#addbtn');
+    Parcela.Event.after('click', showButtonText, '#container button');
 
     setTimeout(function() {
         var button = document.createElement('button');
@@ -69,39 +71,35 @@ Code-example:
 </script>
 ```
 
-<script src="../../assets/core.js"></script>
+<script src="../../dist/parcela-min.js"></script>
 <script>
-    ITSA = require('core');
-    ITSA.ready().then(
-        function() {
-            var count, container, addNewButton, showButtonText;
+    var Parcela = require('parcela');
+    var count, container, addNewButton, showButtonText;
 
-            count = 0;
-            container = document.getElementById('container');
+    count = 0;
+    container = document.getElementById('container');
 
-            addNewButton = function(e) {
-                var button = document.createElement('button');
-                count++;
-                button.className = 'pure-button pure-button-primary pure-button-bordered';
-                button.innerHTML = 'Click me '+count;
-                container.appendChild(button);
-            };
+    addNewButton = function(e) {
+        var button = document.createElement('button');
+        count++;
+        button.className = 'pure-button pure-button-primary pure-button-bordered';
+        button.innerHTML = 'Click me '+count;
+        container.appendChild(button);
+    };
 
-            showButtonText = function(e) {
-                alert(e.target.innerHTML);
-            };
+    showButtonText = function(e) {
+        alert(e.target.innerHTML);
+    };
 
-            ITSA.Event.after('click', addNewButton, '#addbtn');
-            ITSA.Event.after('click', showButtonText, '#container button');
+    Parcela.Event.after('click', addNewButton, '#addbtn');
+    Parcela.Event.after('click', showButtonText, '#container button');
 
-            setTimeout(function() {
-                var button = document.createElement('button');
-                button.id = 'addbtn';
-                button.className = 'pure-button pure-button-primary pure-button-bordered';
-                button.innerHTML = 'Add button';
-                document.getElementById('addbtn-container').appendChild(button);
-            }, 500);
+    setTimeout(function() {
+        var button = document.createElement('button');
+        button.id = 'addbtn';
+        button.className = 'pure-button pure-button-primary pure-button-bordered';
+        button.innerHTML = 'Add button';
+        document.getElementById('addbtn-container').appendChild(button);
+    }, 500);
 
-        }
-    );
 </script>

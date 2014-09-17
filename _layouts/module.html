@@ -40,7 +40,7 @@
                 {% endif %}
             {% endif %}
 
-            {% if page.example %}
+            {% if page.includeexample %}
                 {% assign fragments = page.url | split: '/' %}
                 {% assign shorterfilename = fragments.last | remove: ".html" %}
                 <iframe id="iframeexample" src="{{ shorterfilename }}-inc.html"></iframe>

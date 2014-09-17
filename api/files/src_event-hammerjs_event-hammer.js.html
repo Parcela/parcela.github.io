@@ -51,6 +51,8 @@
             
                 <li><a href="../classes/IO.html">IO</a></li>
             
+                <li><a href="../classes/ITSA.html">ITSA</a></li>
+            
                 <li><a href="../classes/Object.html">Object</a></li>
             
                 <li><a href="../classes/Parcel.html">Parcel</a></li>
@@ -59,7 +61,11 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
+            
+                <li><a href="../classes/Promise.Resolver.html">Promise.Resolver</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
             
@@ -75,7 +81,17 @@
             
                 <li><a href="../modules/core.html">core</a></li>
             
+                <li><a href="../modules/core-event.html">core-event</a></li>
+            
+                <li><a href="../modules/core-event-base.html">core-event-base</a></li>
+            
                 <li><a href="../modules/core-routing.html">core-routing</a></li>
+            
+                <li><a href="../modules/core-timers.html">core-timers</a></li>
+            
+                <li><a href="../modules/core-utils.html">core-utils</a></li>
+            
+                <li><a href="../modules/core-vdom.html">core-vdom</a></li>
             
                 <li><a href="../modules/event.html">event</a></li>
             
@@ -108,6 +124,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -182,106 +200,82 @@
 */
 
 var NAME = &#x27;[event-hammer]: &#x27;,
-    Hammer = require(&#x27;hammerjs&#x27;),
+    Hammer = require(&#x27;hammerjs&#x27;);
 
-Hammer_Events = {
-    /*
-     * Inititialization-method to extend &#x60;Event&#x60; which comes from &#x60;core-event-base&#x60;.
+
+module.exports = function (window) {
+    /**
+     * The (only) Hammer-instance that &#x60;Event&#x60; uses. It is bound to the &#x60;body&#x60;-element.
      *
-     * Should be called using  the provided &#x60;init&#x60;-method like this:
-     *
-     * @example
-     * DOMEvent = require(&#x27;core-event-dom&#x27;);
-     * DOMEvent.init(Event);
-     *
-     * @method mergeInto
-     * @param instanceEvent {Object} The Event-system
-     * @param [emitHammerInputEvent=false] {Boolean} Whether to emit a &#x60;hammerinput&#x60; event before every gesture
+     * @property hammertime
+     * @type Hammer-instance
      * @since 0.0.1
      */
-    mergeInto: function (instanceEvent, emitHammerInputEvent) {
-        // build up hammerjs to support mobile devices
-        // Hammer cannot be set to &#x60;document&#x60;, we have to set it to &#x60;document.body&#x60;
+    var Event = require(&#x27;event-dom&#x27;)(window),
+        document = window.document,
+        hammertime = Event.hammertime = new Hammer(document.body),
+        singletap, doubletap, tripletap;
+
+    // create reference to the HammerClass:
+    /**
+     * Adds the &#x60;Hammer&#x60;-class to Event, so it can be used from within Event.
+     *
+     * @property Hammer
+     * @type Hammer
+     * @since 0.0.1
+     */
+    Event.Hammer = Hammer;
+
+    // now we extend HammerJS with 2 events: doubletap and tripletap:
+    doubletap = new Hammer.Tap({ event: &#x27;doubletap&#x27;, taps: 2 });
+    tripletap = new Hammer.Tap({ event: &#x27;tripletap&#x27;, taps: 3 });
+    hammertime.add([
+        doubletap,
+        tripletap
+    ]);
+
+    // we want to recognize this simulatenous, so a doubletap and trippletap will be detected even while a tap has been recognized.
+    // the tap event will be emitted on every tap
+    singletap = hammertime.get(&#x27;tap&#x27;);
+    doubletap.recognizeWith(singletap);
+    tripletap.recognizeWith([doubletap, singletap]);
+
+    // patch Hammer.Manager.prototype.emit --&gt; it shouldn&#x27;t emit to its own listeners,
+    // but to our eventsystem. Inspired from Jorik Tangelder&#x27;s own jquery plugin: https://github.com/hammerjs/jquery.hammer.js
+    Hammer.Manager.prototype.emit = function(type, data) {
+        if (type===&#x27;hammer.input&#x27;) {
+            return;
+        }
+        console.log(NAME, &#x27;emit &#x27;+type);
+        // label the eventobject by being a Hammer-event
+        // is not being used internally, but we would like
+        // to inform the subscribers
+        data._isHammer = true;
+        data.type = type;
+
+        // Emitting &#x27;ParcelaEvent:eventmobile&#x27; --&gt; its defaultFn is defined inside &#x60;event-dom&#x60;
+        // which will transport the event through the special dom-cycle
         /**
-         * The (only) Hammer-instance that &#x60;Event&#x60; uses. It is bound to the &#x60;body&#x60;-element.
+         * Is emitted whenever hammerjs detects a gestureevent.
+         * By emitting its original event through ParcelaEvent:eventmobile, &#x60;event-dom&#x60;
+         * will catch it and process it through the dom-event cycle.
          *
-         * @property hammertime
-         * @type Hammer-instance
-         * @since 0.0.1
-         */
-        var hammertime = instanceEvent.hammertime = new Hammer(document.body),
-            singletap, doubletap, tripletap;
+         * @event ParcelaEvent:eventmobile
+         * @param e {Object} eventobject
+         * @since 0.1
+        **/
+        Event._domCallback(data);
+    };
 
-        // create reference to the HammerClass:
-        /**
-         * Adds the &#x60;Hammer&#x60;-class to Event, so it can be used from within Event.
-         *
-         * @property Hammer
-         * @type Hammer
-         * @since 0.0.1
-         */
-        instanceEvent.Hammer = Hammer;
-
-        // set _emitHammerInput which defines wheter HammerJS will emit an &#x27;hammerinput&#x27; event before ALL events
-        // which is handy when debugging
-        /**
-         * Flag to tell wether to emit an &#x27;hammerinput&#x27; event before ALL events
-         * which is handy when debugging
-         *
-         * @property _emitHammerInput
-         * @type Boolean
-         * @default false
-         * @private
-         * @since 0.0.1
-         */
-        hammertime._emitHammerInput = emitHammerInputEvent;
-
-        // now we extend HammerJS with 2 events: doubletap and tripletap:
-        doubletap = new Hammer.Tap({ event: &#x27;doubletap&#x27;, taps: 2 });
-        tripletap = new Hammer.Tap({ event: &#x27;tripletap&#x27;, taps: 3 });
-        hammertime.add([
-            doubletap,
-            tripletap
-        ]);
-
-        // we want to recognize this simulatenous, so a doubletap and trippletap will be detected even while a tap has been recognized.
-        // the tap event will be emitted on every tap
-        singletap = hammertime.get(&#x27;tap&#x27;);
-        doubletap.recognizeWith(singletap);
-        tripletap.recognizeWith([doubletap, singletap]);
-
-        // patch Hammer.Manager.prototype.emit --&gt; it shouldn&#x27;t emit to its own listeners,
-        // but to our eventsystem. Inspired from Jorik Tangelder&#x27;s own jquery plugin: https://github.com/hammerjs/jquery.hammer.js
-        Hammer.Manager.prototype.emit = function(type, data) {
-            if (!instanceEvent._evCallback) {
-                console.warn(NAME, &#x27; cannot emit event: need module \&#x27;event-dom\&#x27; to work&#x27;);
-                return;
-            }
-            if (type===&#x27;hammer.input&#x27;) {
-                if (!this._emitHammerInput) {
-                    return;
-                }
-                // transform &#x27;hammer.input&#x27; into &#x27;hammerinput&#x27;, because our eventsystem only accepts \w+
-                type = &#x27;hammerinput&#x27;;
-            }
-            console.log(NAME, &#x27;emit &#x27;+type);
-            // label the eventobject by being a Hammer-event
-            // is not being used internally, but we would like
-            // to inform the subscribers
-            data._isHammer = true;
-            instanceEvent._evCallback.call(instanceEvent, &#x27;UI:&#x27;+type, data);
+    Hammer.Manager.prototype.set = (function(originalSet) {
+        return function(options) {
+            delete options.domEvents; // we don&#x27;t want the user make Hammer fire domevents
+            originalSet.call(this, options);
         };
+    })(Hammer.Manager.prototype.set);
 
-        Hammer.Manager.prototype.set = (function(originalSet) {
-            return function(options) {
-                delete options.domEvents; // we don&#x27;t want the user make Hammer fire domevents
-                originalSet.call(this, options);
-            };
-        })(Hammer.Manager.prototype.set);
-    }
+    return Event;
 };
-
-module.exports = Hammer_Events;
 
     </pre>
 </div>

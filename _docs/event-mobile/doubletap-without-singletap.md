@@ -1,5 +1,5 @@
 ---
-module: event-hammer
+module: event-mobile
 maintainer: Marco Asbreuk
 title: doubletap without singletap
 intro: "Normally, doubletap will emit a doubletap event and two singletap events. To prevent this, use Event.Hammer.requireFailure on both doubletap and tripletap. Not however, that a tap-event (single) will always wait until it is sure there was no double or tripletap. Therefore the userexperience will be slowered down."
@@ -27,7 +27,9 @@ Code-example:
 ```
 
 ```js
+<script src="parcela-min.js"></script>
 <script>
+    var Parcela = require('parcela');
     var showMsgSingle = function(e) {
         alert('Button was single tapped');
     };
@@ -35,39 +37,33 @@ Code-example:
         alert('Button was double tapped');
     };
 
-    var singletap = Event.Hammer.get('tap');
-    var doubletap = Event.Hammer.get('doubletap');
-    var tripletap = Event.Hammer.get('tripletap');
+    var singletap = Parcela.Event.Hammer.get('tap');
+    var doubletap = Parcela.Event.Hammer.get('doubletap');
+    var tripletap = Parcela.Event.Hammer.get('tripletap');
 
     singletap.requireFailure([tripletap, doubletap]);
 
-    Event.after('tap', showMsgSingle, '#buttongo');
-    Event.after('doubletap', showMsgDouble, '#buttongo');
+    Parcela.Event.after('tap', showMsgSingle, '#buttongo');
+    Parcela.Event.after('doubletap', showMsgDouble, '#buttongo');
 </script>
 ```
 
-
-<script src="../../assets/core.js"></script>
+<script src="../../dist/parcela-min.js"></script>
 <script>
-    ITSA = require('core');
-    ITSA.ready().then(
-        function() {
-            var showMsgSingle = function(e) {
-                alert('Button was single tapped');
-            };
-            var showMsgDouble = function(e) {
-                alert('Button was double tapped');
-            };
+    var Parcela = require('parcela');
+    var showMsgSingle = function(e) {
+        alert('Button was single tapped');
+    };
+    var showMsgDouble = function(e) {
+        alert('Button was double tapped');
+    };
 
-            var singletap = ITSA.Event.Hammer.get('tap');
-            var doubletap = ITSA.Event.Hammer.get('doubletap');
-            var tripletap = ITSA.Event.Hammer.get('tripletap');
+    var singletap = Parcela.Event.hammertime.get('tap');
+    var doubletap = Parcela.Event.hammertime.get('doubletap');
+    var tripletap = Parcela.Event.hammertime.get('tripletap');
 
-            singletap.requireFailure([tripletap, doubletap]);
+    singletap.requireFailure([tripletap, doubletap]);
 
-            ITSA.Event.after('tap', showMsgSingle, '#buttongo');
-            ITSA.Event.after('doubletap', showMsgDouble, '#buttongo');
-
-        }
-    );
+    Parcela.Event.after('tap', showMsgSingle, '#buttongo');
+    Parcela.Event.after('doubletap', showMsgDouble, '#buttongo');
 </script>

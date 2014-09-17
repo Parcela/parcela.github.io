@@ -92,7 +92,9 @@ Code-example:
 ```
 
 ```js
+<script src="parcela-min.js"></script>
 <script>
+    var Parcela = require('parcela');
     var blurContainer, focusContainer, showMsgBlur, showMsgFocus;
 
     blurContainer = document.getElementById('msg-blur');
@@ -105,41 +107,36 @@ Code-example:
         focusContainer.innerHTML = 'The element <b>'+ e.target.id + '</b> got focussed';
     };
 
-    Event.after('blur', showMsgBlur, '#form-container input, #form-container button');
-    Event.after('focus', showMsgFocus, '#form-container input, #form-container button');
+    Parcela.Event.after('blur', showMsgBlur, '#form-container input, #form-container button');
+    Parcela.Event.after('focus', showMsgFocus, '#form-container input, #form-container button');
 
-    Event.before('click', function(e) {
+    Parcela.Event.before('click', function(e) {
         e.preventDefault();
         e.target.focus();
     }, '#submit-button');
-
 </script>
 ```
 
-<script src="../../assets/core.js"></script>
+<script src="../../dist/parcela-min.js"></script>
 <script>
-    ITSA = require('core');
-    ITSA.ready().then(
-        function() {
-            var blurContainer, focusContainer, showMsgBlur, showMsgFocus;
+    var Parcela = require('parcela');
+    var blurContainer, focusContainer, showMsgBlur, showMsgFocus;
 
-            blurContainer = document.getElementById('msg-blur');
-            focusContainer = document.getElementById('msg-focus');
+    blurContainer = document.getElementById('msg-blur');
+    focusContainer = document.getElementById('msg-focus');
 
-            showMsgBlur = function(e) {
-                blurContainer.innerHTML = 'The element <b>'+ e.target.id + '</b> got blurred';
-            };
-            showMsgFocus = function(e) {
-                focusContainer.innerHTML = 'The element <b>'+ e.target.id + '</b> got focussed';
-            };
+    showMsgBlur = function(e) {
+        blurContainer.innerHTML = 'The element <b>'+ e.target.id + '</b> got blurred';
+    };
+    showMsgFocus = function(e) {
+        focusContainer.innerHTML = 'The element <b>'+ e.target.id + '</b> got focussed';
+    };
 
-            ITSA.Event.after('blur', showMsgBlur, '#form-container input, #form-container button');
-            ITSA.Event.after('focus', showMsgFocus, '#form-container input, #form-container button');
+    Parcela.Event.after('blur', showMsgBlur, '#form-container input, #form-container button');
+    Parcela.Event.after('focus', showMsgFocus, '#form-container input, #form-container button');
 
-            ITSA.Event.before('click', function(e) {
-                e.preventDefault();
-                e.target.focus();
-            }, '#submit-button');
-        }
-    );
+    Parcela.Event.before('click', function(e) {
+        e.preventDefault();
+        e.target.focus();
+    }, '#submit-button');
 </script>

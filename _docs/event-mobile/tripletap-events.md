@@ -1,5 +1,5 @@
 ---
-module: event-hammer
+module: event-mobile
 maintainer: Marco Asbreuk
 title: tripletap-events
 intro: "Gesture-events can be listened by without an emitterName. By using the `filter`-argument you specify which node to listen to. Because the filter (selector) is a String, we can pass it as 3rd parameter."
@@ -27,26 +27,24 @@ Code-example:
 ```
 
 ```js
+<script src="parcela-min.js"></script>
 <script>
+    var Parcela = require('parcela');
     var showMsg = function(e) {
         alert('Button was triple tapped');
     };
 
-    Event.after('tripletap', showMsg, '#buttongo');
+    Parcela.Event.after('tripletap', showMsg, '#buttongo');
 </script>
 ```
 
 
-<script src="../../assets/core.js"></script>
+<script src="../../dist/parcela-min.js"></script>
 <script>
-    ITSA = require('core');
-    ITSA.ready().then(
-        function() {
-            var showMsg = function(e) {
-                alert('Button was triple tapped');
-            };
+    var Parcela = require('parcela');
+    var showMsg = function(e) {
+        alert('Button was triple tapped');
+    };
 
-            ITSA.Event.after('tripletap', showMsg, '#buttongo');
-        }
-    );
+    Parcela.Event.after('tripletap', showMsg, '#buttongo');
 </script>

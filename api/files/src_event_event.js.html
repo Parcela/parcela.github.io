@@ -51,6 +51,8 @@
             
                 <li><a href="../classes/IO.html">IO</a></li>
             
+                <li><a href="../classes/ITSA.html">ITSA</a></li>
+            
                 <li><a href="../classes/Object.html">Object</a></li>
             
                 <li><a href="../classes/Parcel.html">Parcel</a></li>
@@ -59,7 +61,11 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
+            
+                <li><a href="../classes/Promise.Resolver.html">Promise.Resolver</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
             
@@ -75,7 +81,17 @@
             
                 <li><a href="../modules/core.html">core</a></li>
             
+                <li><a href="../modules/core-event.html">core-event</a></li>
+            
+                <li><a href="../modules/core-event-base.html">core-event-base</a></li>
+            
                 <li><a href="../modules/core-routing.html">core-routing</a></li>
+            
+                <li><a href="../modules/core-timers.html">core-timers</a></li>
+            
+                <li><a href="../modules/core-utils.html">core-utils</a></li>
+            
+                <li><a href="../modules/core-vdom.html">core-vdom</a></li>
             
                 <li><a href="../modules/event.html">event</a></li>
             
@@ -108,6 +124,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -156,10 +174,6 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-/* globals window:true */
-
-&quot;use strict&quot;;
-
 /**
  * Defines the Event-Class, which should be instantiated to get its functionality
  *
@@ -172,56 +186,68 @@
  * @since 0.0.1
 */
 
-
 require(&#x27;lang-ext&#x27;);
-require(&#x27;ypromise&#x27;);
 
-var NAME = &#x27;[core-event]: &#x27;,
-    REGEXP_CUSTOMEVENT = /^((?:\w|-)+):((?:\w|-)+)$/,
-    REGEXP_WILDCARD_CUSTOMEVENT = /^(?:((?:(?:\w|-)+)|\*):)?((?:(?:\w|-)+)|\*)$/,
-    /* REGEXP_WILDCARD_CUSTOMEVENT :
-     *
-     * valid:
-     * &#x27;red:save&#x27;
-     * &#x27;red:*&#x27;
-     * &#x27;*:save&#x27;
-     * &#x27;*:*&#x27;
-     * &#x27;save&#x27;
-     *
-     * invalid:
-     * &#x27;*red:save&#x27;
-     * &#x27;re*d:save&#x27;
-     * &#x27;red*:save&#x27;
-     * &#x27;red:*save&#x27;
-     * &#x27;red:sa*ve&#x27;
-     * &#x27;red:save*&#x27;
-     * &#x27;:save&#x27;
-     */
-    REGEXP_EVENTNAME_WITH_SEMICOLON = /:((?:\w|-)+)$/,
-    MSG_HALTED = &#x27;event was halted&#x27;,
-    MSG_PREVENTED = &#x27;event was defaultPrevented&#x27;,
-    REGEXP_UI_OUTSIDE = /^UI:.+outside$/,
-    DEFINE_IMMUTAL_PROPERTY = function (obj, property, value) {
-        Object.defineProperty(obj, property, {
+// to prevent multiple Event instances
+// (which might happen: http://nodejs.org/docs/latest/api/modules.html#modules_module_caching_caveats)
+// we make sure Event is defined only once. Therefore we bind it to &#x60;global&#x60; and return it if created before
+
+(function (global, factory) {
+
+    &quot;use strict&quot;;
+
+    if (!global._parcelaModules) {
+        Object.defineProperty(global, &#x27;_parcelaModules&#x27;, {
             configurable: false,
             enumerable: false,
             writable: false,
-            value: value // &#x60;writable&#x60; is false means we cannot chance the value-reference, but we can change {} or [] its members
+            value: {} // &#x60;writable&#x60; is false means we cannot chance the value-reference, but we can change {} its members
         });
-    },
-    Event;
+    }
+    global._parcelaModules.Event || (global._parcelaModules.Event = factory());
 
-// define &#x60;global&#x60; in browser-environment, this way we can access &#x60;global&#x60; on nodejs as well as in the browser:
-if (window &amp;&amp; !window.global) {
-    window.global = window;
-}
+    module.exports = global._parcelaModules.Event;
 
-// to prevent multiple Event instances (which might happen: http://nodejs.org/docs/latest/api/modules.html#modules_module_caching_caveats)
-// we make sure Event is defined only once:
-global.Parcela || (global.Parcela={});
-global.Parcela.modules || (global.Parcela.modules={});
+}(typeof global !== &#x27;undefined&#x27; ? global : /* istanbul ignore next */ this, function () {
 
-if (!global.Parcela.modules.Event) {
+    &quot;use strict&quot;;
+
+    var NAME = &#x27;[core-event]: &#x27;,
+        PARCELA_EMITTER = &#x27;ParcelaEvent&#x27;,
+        REGEXP_PARCELA_EMITTER = new RegExp(&#x27;^&#x27;+PARCELA_EMITTER),
+        REGEXP_CUSTOMEVENT = /^((?:\w|-)+):((?:\w|-)+)$/,
+        REGEXP_WILDCARD_CUSTOMEVENT = /^(?:((?:(?:\w|-)+)|\*):)?((?:(?:\w|-)+)|\*)$/,
+        /* REGEXP_WILDCARD_CUSTOMEVENT :
+         *
+         * valid:
+         * &#x27;red:save&#x27;
+         * &#x27;red:*&#x27;
+         * &#x27;*:save&#x27;
+         * &#x27;*:*&#x27;
+         * &#x27;save&#x27;
+         *
+         * invalid:
+         * &#x27;*red:save&#x27;
+         * &#x27;re*d:save&#x27;
+         * &#x27;red*:save&#x27;
+         * &#x27;red:*save&#x27;
+         * &#x27;red:sa*ve&#x27;
+         * &#x27;red:save*&#x27;
+         * &#x27;:save&#x27;
+         */
+        REGEXP_EVENTNAME_WITH_SEMICOLON = /:((?:\w|-)+)$/,
+        MSG_HALTED = &#x27;event was halted&#x27;,
+        MSG_PREVENTED = &#x27;event was defaultPrevented&#x27;,
+        DEFINE_IMMUTAL_PROPERTY = function (obj, property, value) {
+            Object.defineProperty(obj, property, {
+                configurable: false,
+                enumerable: false,
+                writable: false,
+                value: value // &#x60;writable&#x60; is false means we cannot chance the value-reference, but we can change {} or [] its members
+            });
+        },
+        Event;
+
     Event = {
         /**
          * Subscribes to a customEvent. The callback will be executed &#x60;after&#x60; the defaultFn.
@@ -246,8 +272,8 @@ if (!global.Parcela.modules.Event) {
          * @since 0.0.1
         */
         after: function(customEvent, callback, context, filter, prepend) {
-            console.log(&#x27;add after subscriber to: &#x27;+customEvent);
-            if (typeof context === &#x27;string&#x27;) {
+            console.log(NAME, &#x27;add after subscriber to: &#x27;+customEvent);
+            if ((typeof context === &#x27;string&#x27;) || (typeof context === &#x27;function&#x27;)) {
                 prepend = filter;
                 filter = context;
                 context = null;
@@ -283,8 +309,8 @@ if (!global.Parcela.modules.Event) {
          * @since 0.0.1
         */
         before: function(customEvent, callback, context, filter, prepend) {
-            console.log(&#x27;add before subscriber to: &#x27;+customEvent);
-            if (typeof context === &#x27;string&#x27;) {
+            console.log(NAME, &#x27;add before subscriber to: &#x27;+customEvent);
+            if ((typeof context === &#x27;string&#x27;) || (typeof context === &#x27;function&#x27;)) {
                 prepend = filter;
                 filter = context;
                 context = null;
@@ -308,7 +334,7 @@ if (!global.Parcela.modules.Event) {
          * @since 0.0.1
          */
         defineEmitter: function (emitter, emitterName) {
-            console.log(&#x27;defineEmitter: &#x27;+emitterName);
+            console.log(NAME, &#x27;defineEmitter: &#x27;+emitterName);
             // ennumerable MUST be set &#x60;true&#x60; to enable merging
             Object.defineProperty(emitter, &#x27;_emitterName&#x27;, {
                 configurable: false,
@@ -349,7 +375,7 @@ if (!global.Parcela.modules.Event) {
          * @since 0.0.1
          */
         defineEvent: function (customEvent) {
-            console.log(&#x27;Events.defineEvent: &#x27;+customEvent);
+            console.log(NAME, &#x27;Events.defineEvent: &#x27;+customEvent);
             var instance = this,
                 customevents = instance._ce,
                 extract, exists, newCustomEvent;
@@ -439,7 +465,7 @@ if (!global.Parcela.modules.Event) {
          * @since 0.0.1
         */
         detachAll: function(listener) {
-            console.log(&#x27;detach &#x27;+(listener ? &#x27;all instance-&#x27; : &#x27;ALL&#x27;)+&#x27; subscribers&#x27;);
+            console.log(NAME, &#x27;detach &#x27;+(listener ? &#x27;all instance-&#x27; : &#x27;ALL&#x27;)+&#x27; subscribers&#x27;);
             var instance = this;
             if (listener) {
                 instance._removeSubscribers(listener, &#x27;*:*&#x27;);
@@ -448,7 +474,10 @@ if (!global.Parcela.modules.Event) {
                 // we cannot just redefine _subs, for it is set as readonly
                 instance._subs.each(
                     function(value, key) {
-                        delete instance._subs[key];
+                        // remove only subscribers that are not subscribed to systemevents of Parcela (emitterName==&#x27;ParcelaEvent&#x27;):
+                        if (!REGEXP_PARCELA_EMITTER.test(key)) {
+                            delete instance._subs[key];
+                        }
                     }
                 );
             }
@@ -504,130 +533,7 @@ if (!global.Parcela.modules.Event) {
          * @since 0.0.1
          */
         emit: function (emitter, customEvent, payload) {
-            // NOTE: emit() needs to be synchronous! otherwise we wouldn&#x27;t be able
-            // to preventDefault DOM-events in time.
-            var instance = this,
-                allCustomEvents = instance._ce,
-                allSubscribers = instance._subs,
-                customEventDefinition, extract, emitterName, eventName, subs, wildcard_named_subs,
-                named_wildcard_subs, wildcard_wildcard_subs, e, sort;
-            if (typeof emitter === &#x27;string&#x27;) {
-                // emit is called with signature emit(customEvent, payload)
-                // thus the source-emitter is the Event-instance
-                payload = customEvent;
-                customEvent = emitter;
-                emitter = instance;
-            }
-            (customEvent.indexOf(&#x27;:&#x27;) !== -1) || (customEvent = emitter._emitterName+&#x27;:&#x27;+customEvent);
-            console.log(NAME, &#x27;customEvent.emit: &#x27;+customEvent);
-
-            extract = customEvent.match(REGEXP_CUSTOMEVENT);
-            if (!extract) {
-                console.error(NAME, &#x27;defined emit-event does not match pattern&#x27;);
-                return;
-            }
-            emitterName = extract[1];
-            eventName = extract[2];
-            customEventDefinition = allCustomEvents[customEvent];
-            sort = instance._sortSubs(customEvent);
-
-            subs = allSubscribers[customEvent];
-            wildcard_named_subs = allSubscribers[&#x27;*:&#x27;+eventName];
-            named_wildcard_subs = allSubscribers[emitterName+&#x27;:*&#x27;];
-            wildcard_wildcard_subs = allSubscribers[&#x27;*:*&#x27;];
-
-            e = Object.create(instance._defaultEventObj, {
-                target: {
-                    configurable: false,
-                    enumerable: true,
-                    writable: true, // cautious: needs to be writable: event-dom resets e.target
-                    value: emitter
-                },
-                type: {
-                    configurable: false,
-                    enumerable: true,
-                    writable: false,
-                    value: eventName
-                },
-                emitter: {
-                    configurable: false,
-                    enumerable: true,
-                    writable: false,
-                    value: emitterName
-                },
-                status: {
-                    configurable: false,
-                    enumerable: true,
-                    writable: false,
-                    value: {}
-                },
-                _unPreventable: {
-                    configurable: false,
-                    enumerable: false,
-                    writable: false,
-                    value: customEventDefinition &amp;&amp; customEventDefinition.unPreventable
-                },
-                _unHaltable: {
-                    configurable: false,
-                    enumerable: false,
-                    writable: false,
-                    value: customEventDefinition &amp;&amp; customEventDefinition.unHaltable
-                },
-                _unRenderPreventable: {
-                    configurable: false,
-                    enumerable: false,
-                    writable: false,
-                    value: customEventDefinition &amp;&amp; customEventDefinition.unRenderPreventable
-                }
-            });
-            if (customEventDefinition) {
-                customEventDefinition.unSilencable &amp;&amp; (e.status.unSilencable = true);
-            }
-            if (payload) {
-                // e.merge(payload); is not enough --&gt; DOM-eventobject has many properties that are not &quot;own&quot;-properties
-                for (var key in payload) {
-                    e[key] || (e[key]=payload[key]);
-                }
-            }
-            if (e.status.unSilencable &amp;&amp; e.silent) {
-                console.warn(NAME, &#x27; event &#x27;+e.emitter+&#x27;:&#x27;+e.type+&#x27; cannot made silent: this customEvent is defined as unSilencable&#x27;);
-                e.silent = false;
-            }
-            !e.silent &amp;&amp; subs &amp;&amp; subs.b &amp;&amp; instance._invokeSubs(e, subs.b, true, sort);
-            !e.status.halted &amp;&amp; !e.silent &amp;&amp; named_wildcard_subs &amp;&amp; named_wildcard_subs.b &amp;&amp; instance._invokeSubs(e, named_wildcard_subs.b, true);
-            !e.status.halted &amp;&amp; !e.silent &amp;&amp; wildcard_named_subs &amp;&amp; wildcard_named_subs.b &amp;&amp; instance._invokeSubs(e, wildcard_named_subs.b, true);
-            !e.status.halted &amp;&amp; !e.silent &amp;&amp; wildcard_wildcard_subs &amp;&amp; wildcard_wildcard_subs.b &amp;&amp; instance._invokeSubs(e, wildcard_wildcard_subs.b, true);
-            e.status.ok = !e.status.halted &amp;&amp; !e.status.defaultPrevented;
-            // in case any subscriber changed e.target inside its filter (event-dom does this),
-            // then we reset e.target to its original:
-            e._originalTarget &amp;&amp; (e.target=e._originalTarget);
-            if (customEventDefinition &amp;&amp; !e.status.halted) {
-                // now invoke defFn
-                e.returnValue = e.status.defaultPrevented ?
-                                (customEventDefinition.preventedFn &amp;&amp; (e.status.preventedFn=true) &amp;&amp; customEventDefinition.preventedFn.call(e.target, e)) :
-                                (customEventDefinition.defaultFn &amp;&amp; (e.status.defaultFn=true) &amp;&amp; customEventDefinition.defaultFn.call(e.target, e));
-            }
-
-            if (e.status.ok) {
-                !e.silent &amp;&amp; subs &amp;&amp; subs.a &amp;&amp; instance._invokeSubs(e, subs.a, false, sort);
-                !e.silent &amp;&amp; named_wildcard_subs &amp;&amp; named_wildcard_subs.a &amp;&amp; instance._invokeSubs(e, named_wildcard_subs.a);
-                !e.silent &amp;&amp; wildcard_named_subs &amp;&amp; wildcard_named_subs.a &amp;&amp; instance._invokeSubs(e, wildcard_named_subs.a);
-                !e.silent &amp;&amp; wildcard_wildcard_subs &amp;&amp; wildcard_wildcard_subs.a &amp;&amp; instance._invokeSubs(e, wildcard_wildcard_subs.a);
-                if (!e.silent) {
-                    // in case any subscriber changed e.target inside its filter (event-dom does this),
-                    // then we reset e.target to its original:
-                    e._originalTarget &amp;&amp; (e.target=e._originalTarget);
-                    instance._final.some(function(finallySubscriber) {
-                        !e.silent &amp;&amp; finallySubscriber(e);
-                        if (e.status.unSilencable &amp;&amp; e.silent) {
-                            console.warn(NAME, &#x27; event &#x27;+e.emitter+&#x27;:&#x27;+e.type+&#x27; cannot made silent: this customEvent is defined as unSilencable&#x27;);
-                            e.silent = false;
-                        }
-                        return e.silent;
-                    });
-                }
-            }
-            return e;
+            return this._emit.apply(this, arguments);
         },
 
         /**
@@ -769,7 +675,7 @@ if (!global.Parcela.modules.Event) {
         onceAfter: function(customEvent, callback, context, filter, prepend) {
             var instance = this,
                 handler, wrapperFn;
-            console.log(&#x27;add onceAfter subscriber to: &#x27;+customEvent);
+            console.log(NAME, &#x27;add onceAfter subscriber to: &#x27;+customEvent);
             wrapperFn = function(e) {
                 // CAUTIOUS: removeing the handler right now would lead into a mismatch of the dispatcher
                 // who loops through the array of subscribers!
@@ -782,7 +688,7 @@ if (!global.Parcela.modules.Event) {
                 handler._detached = true;
                 setTimeout(function() {handler.detach();}, 0);
             };
-            if (typeof context === &#x27;string&#x27;) {
+            if ((typeof context === &#x27;string&#x27;) || (typeof context === &#x27;function&#x27;)) {
                 prepend = filter;
                 filter = context;
                 context = null;
@@ -823,7 +729,7 @@ if (!global.Parcela.modules.Event) {
         onceBefore: function(customEvent, callback, context, filter, prepend) {
             var instance = this,
                 handler, wrapperFn;
-            console.log(&#x27;add onceBefore subscriber to: &#x27;+customEvent);
+            console.log(NAME, &#x27;add onceBefore subscriber to: &#x27;+customEvent);
             wrapperFn = function(e) {
                 // CAUTIOUS: removeing the handler right now would lead into a mismatch of the dispatcher
                 // who loops through the array of subscribers!
@@ -836,7 +742,7 @@ if (!global.Parcela.modules.Event) {
                 handler._detached = true;
                 setTimeout(function() {handler.detach();}, 0);
             };
-            if (typeof context === &#x27;string&#x27;) {
+            if ((typeof context === &#x27;string&#x27;) || (typeof context === &#x27;function&#x27;)) {
                 prepend = filter;
                 filter = context;
                 context = null;
@@ -860,14 +766,26 @@ if (!global.Parcela.modules.Event) {
          * @since 0.0.1
          */
         undefAllEvents: function (emitterName) {
+            console.log(NAME, &#x27;undefAllEvents&#x27;);
             var instance = this,
-                stringpattern = emitterName ? emitterName+&#x27;:&#x27; : &#x27;(?!UI:)&#x27;,
-                pattern = new RegExp(&#x27;^&#x27;+stringpattern);
-            instance._ce.each(
-                function(value, key, object) {
-                    key.match(pattern) &amp;&amp; (delete instance._ce[key]);
-                }
-            );
+                pattern;
+            if (emitterName) {
+                pattern = new RegExp(&#x27;^&#x27;+emitterName+&#x27;:&#x27;);
+                instance._ce.each(
+                    function(value, key, object) {
+                        key.match(pattern) &amp;&amp; (delete instance._ce[key]);
+                    }
+                );
+            }
+            else {
+                instance._ce.each(
+                    function(value, key, object) {
+                        if ((key.substring(0,3)!==&#x27;UI:&#x27;) &amp;&amp; (key.substring(0,13)!==&#x27;ParcelaEvent:&#x27;)) {
+                            delete instance._ce[key];
+                        }
+                    }
+                );
+            }
         },
 
         /**
@@ -952,7 +870,7 @@ if (!global.Parcela.modules.Event) {
          * @since 0.0.1
         */
         _addMultiSubs: function(listener, before, customEvent, callback, filter, prepend) {
-            console.log(&#x27;_addMultiSubs&#x27;);
+            console.log(NAME, &#x27;_addMultiSubs&#x27;);
             var instance = this;
             if (!Array.isArray(customEvent)) {
                 return instance._addSubscriber(listener, before, customEvent, callback, filter, prepend);
@@ -1010,7 +928,7 @@ if (!global.Parcela.modules.Event) {
             var instance = this,
                 allSubscribers = instance._subs,
                 extract = customEvent.match(REGEXP_WILDCARD_CUSTOMEVENT),
-                hashtable, item, notifier, customEventWildcardEventName, outsideEvent;
+                hashtable, item, notifier, customEventWildcardEventName;
 
             if (!extract) {
                 console.error(NAME, &#x27;subscribe-error: eventname does not match pattern&#x27;);
@@ -1024,16 +942,23 @@ if (!global.Parcela.modules.Event) {
             // if extract[1] is undefined, a simple customEvent is going to subscribe (without :)
             // therefore: recomposite customEvent:
             extract[1] || (customEvent=&#x27;UI:&#x27;+customEvent);
-            outsideEvent = REGEXP_UI_OUTSIDE.test(customEvent);
-            outsideEvent &amp;&amp; (customEvent=customEvent.substring(0, customEvent.length-7));
-            allSubscribers[customEvent] || (allSubscribers[customEvent]={b:[], a:[]});
+
+
+            allSubscribers[customEvent] || (allSubscribers[customEvent]={});
+            if (before) {
+                allSubscribers[customEvent].b || (allSubscribers[customEvent].b=[]);
+            }
+            else {
+                allSubscribers[customEvent].a || (allSubscribers[customEvent].a=[]);
+            }
+
             hashtable = allSubscribers[customEvent][before ? &#x27;b&#x27; : &#x27;a&#x27;];
             // we need to be able to process an array of customevents
             item = {
                 o: listener || instance,
-                cb: callback
+                cb: callback,
+                f: filter
             };
-            instance._createFilter(item, filter, customEvent, outsideEvent);
 
             // in case of a defined subscription (no wildcard), we should look for notifiers
             if ((extract[1]!==&#x27;*&#x27;) &amp;&amp; (extract[2]!==&#x27;*&#x27;)) {
@@ -1048,8 +973,25 @@ if (!global.Parcela.modules.Event) {
                 (customEventWildcardEventName !== customEvent) &amp;&amp; (notifier=instance._notifiers[customEventWildcardEventName]) &amp;&amp; notifier.cb.call(notifier.o, customEvent);
             }
 
-            console.log(&#x27;_addSubscriber to customEvent: &#x27;+customEvent);
+            console.log(NAME, &#x27;_addSubscriber to customEvent: &#x27;+customEvent);
             prepend ? hashtable.unshift(item) : hashtable.push(item);
+            // in case of &#x60;UI&#x60;, other modules (like event-dom) might need to change properties of the subscriber:
+            if (customEvent.substring(0, 3)===&#x27;UI:&#x27;) {
+                /**
+                 * Is emitted whenever an UI-event gets subscribed
+                 * By emitting this event, &#x60;event-dom&#x60; can catch it and process the filter-selector
+                 *
+                 * @event ParcelaEvent:selectorsubs
+                 * @param customEvent {String}
+                 * @param subscriber {Object}
+                 * @param subscriber.o {Object} context for the callbackFn
+                 * @param subscriber.cb {Object} callbackFn
+                 * @param subscriber.f {String|Function} filterfunction or selector
+                 * @since 0.1
+                **/
+                instance.emit(PARCELA_EMITTER+&#x27;:selectorsubs&#x27;, {customEvent: customEvent, subscriber: item});
+            }
+
             return {
                 detach: function() {
                     instance._removeSubscriber(listener, before, customEvent, callback);
@@ -1058,20 +1000,208 @@ if (!global.Parcela.modules.Event) {
         },
 
         /**
-         * Creates the filter-function on the subscriber.
-         * Inside core-event-base this means: just set the filter, but core-event-dom overrides this method
-         * (because dom-filters could be css-selectors)
+         * Emits the event &#x60;eventName&#x60; on behalf of &#x60;emitter&#x60;, which becomes e.target in the eventobject.
+         * During this process, all subscribers and the defaultFn/preventedFn get an eventobject passed through.
+         * The eventobject is created with at least these properties:
          *
-         * @method _createFilter
-         * @param filter {Function|String}
-         * @param customEvent {String}
-         * @param [outsideEvent] {Boolean} whetrer it is an outside-event (like &#x60;clickoutside&#x60;)
-         * @private
+         * &lt;ul&gt;
+         *     &lt;li&gt;e.target --&gt; source that triggered the event (instance or DOM-node), specified by &#x60;emitter&#x60;&lt;/li&gt;
+         *     &lt;li&gt;e.type --&gt; eventName&lt;/li&gt;
+         *     &lt;li&gt;e.emitter --&gt; emitterName&lt;/li&gt;
+         *     &lt;li&gt;e.status --&gt; status-information:
+         *          &lt;ul&gt;
+         *               &lt;li&gt;e.status.ok --&gt; &#x60;true|false&#x60; whether the event got executed (not halted or defaultPrevented)&lt;/li&gt;
+         *               &lt;li&gt;e.status.defaultFn (optional) --&gt; &#x60;true&#x60; if any defaultFn got invoked&lt;/li&gt;
+         *               &lt;li&gt;e.status.preventedFn (optional) --&gt; &#x60;true&#x60; if any preventedFn got invoked&lt;/li&gt;
+         *               &lt;li&gt;e.status.rendered (optional) --&gt; &#x60;true&#x60; the vDOM rendered the dom&lt;/li&gt;
+         *               &lt;li&gt;e.status.halted (optional) --&gt; &#x60;reason|true&#x60; if the event got halted and optional the why&lt;/li&gt;
+         *               &lt;li&gt;e.status.defaultPrevented (optional) --&gt;  &#x60;reason|true&#x60; if the event got defaultPrevented and optional the why&lt;/li&gt;
+         *               &lt;li&gt;e.status.renderPrevented (optional) --&gt;  &#x60;reason|true&#x60; if the event got renderPrevented and optional the why&lt;/li&gt;
+         *          &lt;/ul&gt;
+         *     &lt;/li&gt;
+         * &lt;/ul&gt;
+         *
+         * The optional &#x60;payload&#x60; is merged into the eventobject and could be used by the subscribers and the defaultFn/preventedFn.
+         * If payload.silent is set true, the subscribers are not getting invoked: only the defaultFn.
+         *
+         * The eventobject also has these methods:
+         *
+         * &lt;ul&gt;
+         *     &lt;li&gt;e.halt() --&gt; stops immediate all actions: no mer subscribers are invoked, no defaultFn/preventedFn&lt;/li&gt;
+         *     &lt;li&gt;e.preventDefault() --&gt; instead of invoking defaultFn, preventedFn will be invoked. No aftersubscribers&lt;/li&gt;
+         *     &lt;li&gt;e.preventRender() --&gt; by default, any event will trigger the vDOM (if exists) to re-render, this can be prevented by calling e.preventRender()&lt;/li&gt;
+         * &lt;/ul&gt;
+         *
+         * &lt;ul&gt;
+         *     &lt;li&gt;First, before-subscribers are invoked: this is the place where you might call &#x60;e.halt()&#x60;, &#x60;a.preventDefault()&#x60; or &#x60;e.preventRender()&#x60;&lt;/li&gt;
+         *     &lt;li&gt;Next, defaultFn or preventedFn gets invoked, depending on whether e.halt() or a.preventDefault() has been called&lt;/li&gt;
+         *     &lt;li&gt;Next, after-subscribers get invoked (unless e.halt() or a.preventDefault() has been called)&lt;/li&gt;
+         *     &lt;li&gt;Finally, the finalization takes place: any subscribers are invoked, unless e.halt() or a.preventDefault() has been called&lt;/li&gt;
+         * &lt;ul&gt;
+         *
+         * @static
+         * @method emit
+         * @param [emitter] {Object} instance that emits the events
+         * @param customEvent {String} Full customEvent conform syntax &#x60;emitterName:eventName&#x60;.
+         *        &#x60;emitterName&#x60; is available as **e.emitter**, &#x60;eventName&#x60; as **e.type**.
+         * @param payload {Object} extra payload to be added to the event-object
+         * @param [beforeSubscribers] {Array} array of functions to act as beforesubscribers. &lt;b&gt;should not be used&lt;/b&gt; other than
+         *                            by any submodule like &#x60;event-dom&#x60;. If used, than this list of subscribers gets invoked instead
+         *                            of the subscribers that actually subscribed to the event.
+         * @param [afterSubscribers] {Array} array of functions to act as afterSubscribers. &lt;b&gt;should not be used&lt;/b&gt; other than
+         *                            by any submodule like &#x60;event-dom&#x60;. If used, than this list of subscribers gets invoked instead
+         *                            of the subscribers that actually subscribed to the event.
+         * @param [preProcessor] {Function} if passed, this function will be invoked before every single subscriber
+         *                       It is meant to manipulate the eventobject, something that &#x60;event-dom&#x60; needs to do
+         *                       This function expects 2 arguments: &#x60;subscriber&#x60; and &#x60;eventobject&#x60;.
+         *                       &lt;b&gt;should not be used&lt;/b&gt; other than by any submodule like &#x60;event-dom&#x60;.
+         * @param [keepPayload] {Boolean} whether &#x60;payload&#x60; should be used as the ventobject instead of creating a new
+         *                      eventobject and merge payload. &lt;b&gt;should not be used&lt;/b&gt; other than by any submodule like &#x60;event-dom&#x60;.
+         * @return {Object|undefined} eventobject or undefined when the event was halted or preventDefaulted.
          * @since 0.0.1
          */
-        _createFilter: function(subscriber, filter /*, customEvent, outsideEvent */) {
-            console.log(NAME, &#x27;_createFilter&#x27;);
-            subscriber.f = filter;
+        _emit: function (emitter, customEvent, payload, beforeSubscribers, afterSubscribers, preProcessor, keepPayload) {
+            // NOTE: emit() needs to be synchronous! otherwise we wouldn&#x27;t be able
+            // to preventDefault DOM-events in time.
+            var instance = this,
+                allCustomEvents = instance._ce,
+                allSubscribers = instance._subs,
+                customEventDefinition, extract, emitterName, eventName, subs, wildcard_named_subs,
+                named_wildcard_subs, wildcard_wildcard_subs, e;
+            if (typeof emitter === &#x27;string&#x27;) {
+                // emit is called with signature emit(customEvent, payload)
+                // thus the source-emitter is the Event-instance
+                preProcessor = afterSubscribers;
+                afterSubscribers = beforeSubscribers;
+                beforeSubscribers = payload;
+                payload = customEvent;
+                customEvent = emitter;
+                emitter = instance;
+            }
+            (customEvent.indexOf(&#x27;:&#x27;) !== -1) || (customEvent = emitter._emitterName+&#x27;:&#x27;+customEvent);
+            console.log(NAME, &#x27;customEvent.emit: &#x27;+customEvent);
+
+            extract = customEvent.match(REGEXP_CUSTOMEVENT);
+            if (!extract) {
+                console.error(NAME, &#x27;defined emit-event does not match pattern&#x27;);
+                return;
+            }
+            emitterName = extract[1];
+            eventName = extract[2];
+            customEventDefinition = allCustomEvents[customEvent];
+
+            subs = allSubscribers[customEvent];
+            wildcard_named_subs = allSubscribers[&#x27;*:&#x27;+eventName];
+            named_wildcard_subs = allSubscribers[emitterName+&#x27;:*&#x27;];
+            wildcard_wildcard_subs = allSubscribers[&#x27;*:*&#x27;];
+
+            if (keepPayload) {
+                e = payload;
+            }
+            else {
+                e = Object.create(instance._defaultEventObj, {
+                    target: {
+                        configurable: false,
+                        enumerable: true,
+                        writable: true, // cautious: needs to be writable: event-dom resets e.target
+                        value: emitter
+                    },
+                    type: {
+                        configurable: false,
+                        enumerable: true,
+                        writable: false,
+                        value: eventName
+                    },
+                    emitter: {
+                        configurable: false,
+                        enumerable: true,
+                        writable: false,
+                        value: emitterName
+                    },
+                    status: {
+                        configurable: false,
+                        enumerable: true,
+                        writable: false,
+                        value: {}
+                    },
+                    _unPreventable: {
+                        configurable: false,
+                        enumerable: false,
+                        writable: false,
+                        value: customEventDefinition &amp;&amp; customEventDefinition.unPreventable
+                    },
+                    _unHaltable: {
+                        configurable: false,
+                        enumerable: false,
+                        writable: false,
+                        value: customEventDefinition &amp;&amp; customEventDefinition.unHaltable
+                    },
+                    _unRenderPreventable: {
+                        configurable: false,
+                        enumerable: false,
+                        writable: false,
+                        value: customEventDefinition &amp;&amp; customEventDefinition.unRenderPreventable
+                    }
+                });
+                if (customEventDefinition) {
+                    customEventDefinition.unSilencable &amp;&amp; (e.status.unSilencable = true);
+                }
+                if (payload) {
+                    // e.merge(payload); is not enough --&gt; DOM-eventobject has many properties that are not &quot;own&quot;-properties
+                    for (var key in payload) {
+                        e[key] || (e[key]=payload[key]);
+                    }
+                }
+                if (e.status.unSilencable &amp;&amp; e.silent) {
+                    console.warn(NAME, &#x27; event &#x27;+e.emitter+&#x27;:&#x27;+e.type+&#x27; cannot made silent: this customEvent is defined as unSilencable&#x27;);
+                    e.silent = false;
+                }
+            }
+            if (beforeSubscribers) {
+                instance._invokeSubs(e, beforeSubscribers, false, true, preProcessor);
+            }
+            else {
+                subs &amp;&amp; subs.b &amp;&amp; instance._invokeSubs(e, subs.b, true, true);
+                named_wildcard_subs &amp;&amp; named_wildcard_subs.b &amp;&amp; instance._invokeSubs(e, named_wildcard_subs.b, true, true);
+                wildcard_named_subs &amp;&amp; wildcard_named_subs.b &amp;&amp; instance._invokeSubs(e, wildcard_named_subs.b, true, true);
+                wildcard_wildcard_subs &amp;&amp; wildcard_wildcard_subs.b &amp;&amp; instance._invokeSubs(e, wildcard_wildcard_subs.b, true, true);
+            }
+            e.status.ok = !e.status.halted &amp;&amp; !e.status.defaultPrevented;
+            // in case any subscriber changed e.target inside its filter (event-dom does this),
+            // then we reset e.target to its original:
+            e.sourceTarget &amp;&amp; (e.target=e.sourceTarget);
+            if (customEventDefinition &amp;&amp; !e.status.halted) {
+                // now invoke defFn
+                e.returnValue = e.status.defaultPrevented ?
+                                (customEventDefinition.preventedFn &amp;&amp; (e.status.preventedFn=true) &amp;&amp; customEventDefinition.preventedFn.call(e.target, e)) :
+                                (customEventDefinition.defaultFn &amp;&amp; (e.status.defaultFn=true) &amp;&amp; customEventDefinition.defaultFn.call(e.target, e));
+            }
+
+            if (e.status.ok) {
+                if (afterSubscribers) {
+                    instance._invokeSubs(e, afterSubscribers, false, false, preProcessor);
+                }
+                else {
+                    subs &amp;&amp; subs.a &amp;&amp; instance._invokeSubs(e, subs.a, true);
+                    named_wildcard_subs &amp;&amp; named_wildcard_subs.a &amp;&amp; instance._invokeSubs(e, named_wildcard_subs.a, true);
+                    wildcard_named_subs &amp;&amp; wildcard_named_subs.a &amp;&amp; instance._invokeSubs(e, wildcard_named_subs.a, true);
+                    wildcard_wildcard_subs &amp;&amp; wildcard_wildcard_subs.a &amp;&amp; instance._invokeSubs(e, wildcard_wildcard_subs.a, true);
+                }
+                if (!e.silent) {
+                    // in case any subscriber changed e.target inside its filter (event-dom does this),
+                    // then we reset e.target to its original:
+                    e.sourceTarget &amp;&amp; (e.target=e.sourceTarget);
+                    instance._final.some(function(finallySubscriber) {
+                        !e.silent &amp;&amp; finallySubscriber(e);
+                        if (e.status.unSilencable &amp;&amp; e.silent) {
+                            console.warn(NAME, &#x27; event &#x27;+e.emitter+&#x27;:&#x27;+e.type+&#x27; cannot made silent: this customEvent is defined as unSilencable&#x27;);
+                            e.silent = false;
+                        }
+                        return e.silent;
+                    });
+                }
+            }
+            return e;
         },
 
         /**
@@ -1090,27 +1220,30 @@ if (!global.Parcela.modules.Event) {
          *         only when event-dom is active and there are filter-selectors&lt;/li&gt;
          * &lt;/ul&gt;
          * @param [before] {Boolean} whether it concerns before subscribers
-         * @param [sort] {Function} a sort function to controll the order of execution.
-         *             Only applyable when working with DOM-events (bubble-order), provided by &#x60;core-event-dom&#x60;
          * @private
          * @since 0.0.1
          */
-        //
-        // CAUTIOUS: When making changes here, you should look whether these changes also effect &#x60;_invokeSubs()&#x60;
-        // inside &#x60;core-event-dom&#x60;
-        //
-        _invokeSubs: function (e, subscribers, before /*, sort */) { // subscribers, plural
+        _invokeSubs: function (e, subscribers, checkFilter, before, preProcessor) { // subscribers, plural
             console.log(NAME, &#x27;_invokeSubs&#x27;);
-            subscribers.some(function(subscriber) {
-                console.log(NAME, &#x27;_invokeSubs for single subscriber&#x27;);
-                (!subscriber.f || subscriber.f.call(subscriber.o, e)) &amp;&amp; // check: does it pass the filter
-                subscriber.cb.call(subscriber.o, e); // finally: invoke subscriber
-                if (e.status.unSilencable &amp;&amp; e.silent) {
-                    console.warn(NAME, &#x27; event &#x27;+e.emitter+&#x27;:&#x27;+e.type+&#x27; cannot made silent: this customEvent is defined as unSilencable&#x27;);
-                    e.silent = false;
-                }
-                return e.silent || (before &amp;&amp; e.status.halted);  // remember to check whether it was halted for any reason
-            });
+            if (!e.status.halted &amp;&amp; !e.silent) {
+                subscribers.some(function(subscriber) {
+                    console.log(NAME, &#x27;_invokeSubs checking invokation for single subscriber&#x27;);
+                    if (preProcessor &amp;&amp; preProcessor(subscriber, e)) {
+                        return true;
+                    }
+                    // check: does it pass the filter
+                    if (!checkFilter || !subscriber.f || subscriber.f.call(subscriber.o, e)) {
+                        // finally: invoke subscriber
+                        console.log(NAME, &#x27;_invokeSubs is going to invoke subscriber&#x27;);
+                        subscriber.cb.call(subscriber.o, e);
+                    }
+                    if (e.status.unSilencable &amp;&amp; e.silent) {
+                        console.warn(NAME, &#x27; event &#x27;+e.emitter+&#x27;:&#x27;+e.type+&#x27; cannot made silent: this customEvent is defined as unSilencable&#x27;);
+                        e.silent = false;
+                    }
+                    return e.silent || (before &amp;&amp; e.status.halted);  // remember to check whether it was halted for any reason
+                });
+            }
         },
 
         /**
@@ -1133,8 +1266,9 @@ if (!global.Parcela.modules.Event) {
             var instance = this,
                 eventSubscribers = instance._subs[customEvent],
                 hashtable = eventSubscribers &amp;&amp; eventSubscribers[before ? &#x27;b&#x27; : &#x27;a&#x27;],
-                i, subscriber;
-            if (hashtable) {
+                i, subscriber, beforeUsed, afterUsed;
+            // remove only subscribers that are not subscribed to systemevents of Parcela (emitterName==&#x27;ParcelaEvent&#x27;):
+            if (hashtable &amp;&amp; !REGEXP_PARCELA_EMITTER.test(customEvent)) {
                 // unfortunatly we cannot search by reference, because the array has composed objects
                 // also: can&#x27;t use native Array.forEach: removing items within its callback change the array
                 // during runtime, making it to skip the next item of the one that&#x27;s being removed
@@ -1149,7 +1283,13 @@ if (!global.Parcela.modules.Event) {
             }
             // After removal subscriber: check whether both eventSubscribers.a and eventSubscribers.b are empty
             // if so, remove the member from Event._subs to cleanup memory
-            eventSubscribers &amp;&amp; (eventSubscribers.a.length===0) &amp;&amp; (eventSubscribers.b.length===0) &amp;&amp; (delete instance._subs[customEvent]);
+            if (eventSubscribers) {
+                beforeUsed = eventSubscribers.b &amp;&amp; (eventSubscribers.b.length&gt;0);
+                afterUsed = eventSubscribers.a &amp;&amp; (eventSubscribers.a.length&gt;0);
+                if (!beforeUsed &amp;&amp; !afterUsed) {
+                    delete instance._subs[customEvent];
+                }
+            }
         },
 
         /**
@@ -1223,21 +1363,6 @@ if (!global.Parcela.modules.Event) {
             console.log(NAME, &#x27;_setEventObjProperty&#x27;);
             DEFINE_IMMUTAL_PROPERTY(this._defaultEventObj, property, value);
             return this;
-        },
-
-        /**
-         * Generates a sort-function. By default NOOP, however core-event-dom will return
-         * a valid function when it needs to sort nodes conform the dom-tree
-         *
-         * @method _sortSubs
-         * @param customEvent {String}
-         * @private
-         * @return {Function|undefined} sortable function
-         * @since 0.0.1
-         */
-        _sortSubs: function(/* customEvent */) {
-            console.log(NAME, &#x27;_sortSubs NOOP&#x27;);
-            /* NOOP */
         }
 
     };
@@ -1280,39 +1405,39 @@ if (!global.Parcela.modules.Event) {
      * Every item that gets in the array consist by itself of 3 properties:
      *                                                          subscriberitem = {
      *                                                              o: listener,
-     *                                                              cb: callback,
+     *                                                              cb: callbackFn(e),
      *                                                              f: filter
      *                                                          };
      *
      * _subs = {
      *     &#x27;UI:click&#x27;: {
      *         b: [
-     *             function() {},
-     *             function() {}
+     *             item,
+     *             item
      *         ],
      *         a: [
-     *             function() {},
-     *             function() {}
+     *             item,
+     *             item
      *         ]
      *     },
      *     &#x27;*:click&#x27;: {
      *         b: [
-     *             function() {},
-     *             function() {}
+     *             item,
+     *             item
      *         ],
      *         a: [
-     *             function() {},
-     *             function() {}
+     *             item,
+     *             item
      *         ]
      *     },
      *     &#x27;redmodel:save&#x27;: {
      *         b: [
-     *             function() {},
-     *             function() {}
+     *             item,
+     *             item
      *         ],
      *         a: [
-     *             function() {},
-     *             function() {}
+     *             item,
+     *             item
      *         ]
      *     }
      * }
@@ -1384,11 +1509,8 @@ if (!global.Parcela.modules.Event) {
          ._setEventObjProperty(&#x27;preventDefault&#x27;, function(reason) {this.status.ok || this._unPreventable || (this.status.defaultPrevented = (reason || true));})
          ._setEventObjProperty(&#x27;preventRender&#x27;, function(reason) {this.status.ok || this._unRenderPreventable || (this.status.renderPrevented = (reason || true));});
 
-    global.Parcela.modules.Event = Event;
-}
-
-module.exports = global.Parcela.modules.Event;
-
+    return Event;
+}));
     </pre>
 </div>
 

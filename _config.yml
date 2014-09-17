@@ -6,6 +6,7 @@ baseurl: ""
 url: "http://parcela.github.io"
 twitter_username: ParcelaLib
 github_username:  Parcela
+version: v0.0.6
 
 # Build settings
 highlighter: rouge

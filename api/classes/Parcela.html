@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>vNode - Parcela</title>
+    <title>Parcela - Parcela</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -156,7 +156,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>vNode Class</h1>
+                        <h1>Parcela Class</h1>
 <div class="box meta">
     
 
@@ -164,13 +164,13 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/src_virtual-dom_virtual-dom.js.html#l718"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:718</code></a>
+            Defined in: <a href="../files/src_parcela_parcela.js.html#l13"><code>src&#x2F;parcela&#x2F;parcela.js:13</code></a>
         </div>
     
 
     
         
-            Module: <a href="../modules/virtual-dom.html">virtual-dom</a>
+            Module: <a href="../modules/Parcela.html">Parcela</a>
         
     
 
@@ -180,19 +180,38 @@
 
 
 <div class="box intro">
-    <p>Internal, virtual representation of an actual DOM node.
-There are two sub-versions of it.</p>
-<ul>
-<li>For text nodes, the vNode will be an instance of String
-with an extra <code>node</code> property.</li>
-<li>For nodes corresponding to Parcel containers, the node
-will have the extra <code>parcel</code> and <code>stamp</code> properties.</li>
-</ul>
-<p>The virtual DOM version differs from that produced by the
-<a href="Parcel.html#method_view">Parcel.view</a> method in that it has the <code>node</code>
-property set.</p>
-<p>This entry is just for documentation purposes.
-There is no actual code for this class.  It is created as an object literal.</p>
+    <p>The Parcela class provides the core functionality for the Parcela library
+and is the root namespace for all the additional modules.</p>
+<p>The Parcela class cannot be instantiated.
+Instead, the Parcela function takes a configuration object to allow for tailoring of the library.
+The Parcela function returns itself to allow for further chaining.</p>
+<p>Calling the Parcela function is optional. If the default configuration is acceptable,
+the Parcela class can be used directly.</p>
+<p>The Parcela name is usually used only once in an application, when configuring it
+and when calling the <a href="#method_ready"><code>ready</code></a> or <a href="#method_require"><code>require</code></a> methods.
+The callback to these two methods provide a reference to Parcela itself as their argument.
+These methods allow the developer to rename Parcela to a shorter name, usually <code>P</code>,
+for use within the local scope.</p>
+<p> Parcela( config )
+     .require(&#39;dialog&#39;, &#39;event&#39;, ...)
+     .then(function (P) {
+         // P is an alias of Parcela
+     });</p>
+<p> // If the default configuration is acceptable, you can simply do:
+ Parcela.require(&#39;dialog&#39;, &#39;event&#39;, ...)
+     .then(function (P) {
+         // P is an alias of Parcela
+     });</p>
+<p> // If extra modules are to be loaded later, you can simply do:
+ Parcela( config ).ready
+     .then(function (P) {
+         // P is an alias of Parcela
+     });</p>
+<p> // And if no configuration is needed:
+ Parcela.ready
+     .then(function (P) {
+         // P is an alias of Parcela
+     });</p>
 
 </div>
 
@@ -222,35 +241,15 @@ There is no actual code for this class.  It is created as an object literal.</p>
 
                     <ul class="index-list properties">
                         
-                            <li class="index-item property">
-                                <a href="#property_attrs">attrs</a>
-
-                                
-                                    <span class="flag static">static</span>
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
-                                <a href="#property_children">children</a>
-
-                                
-                                    <span class="flag static">static</span>
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
-                                <a href="#property_namespace">namespace</a>
-
-                                
-                                    <span class="flag static">static</span>
-                                
-                                
-                            </li>
-                        
                             <li class="index-item property private">
-                                <a href="#property_node">node</a>
+                                <a href="#property__config">_config</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_Event">Event</a>
 
                                 
                                     <span class="flag static">static</span>
@@ -259,7 +258,7 @@ There is no actual code for this class.  It is created as an object literal.</p>
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_parcel">parcel</a>
+                                <a href="#property_idGenerator">idGenerator</a>
 
                                 
                                     <span class="flag static">static</span>
@@ -268,7 +267,7 @@ There is no actual code for this class.  It is created as an object literal.</p>
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_stamp">stamp</a>
+                                <a href="#property_IO">IO</a>
 
                                 
                                     <span class="flag static">static</span>
@@ -277,7 +276,41 @@ There is no actual code for this class.  It is created as an object literal.</p>
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_tag">tag</a>
+                                <a href="#property_Parcel">Parcel</a>
+
+                                
+                                    <span class="flag static">static</span>
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_ready">ready</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_render">render</a>
+
+                                
+                                    <span class="flag static">static</span>
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_Router">Router</a>
+
+                                
+                                    <span class="flag static">static</span>
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_typeOf">typeOf</a>
 
                                 
                                     <span class="flag static">static</span>
@@ -301,8 +334,151 @@ There is no actual code for this class.  It is created as an object literal.</p>
                 <h2 class="off-left">Properties</h2>
 
                 
-                    <div id="property_attrs" class="property item">
-    <h3 class="name"><code>attrs</code></h3>
+                    <div id="property__config" class="property item private">
+    <h3 class="name"><code>_config</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+    
+
+    
+        <span class="flag private">private</span>
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela_parcela.js.html#l68"><code>src&#x2F;parcela&#x2F;parcela.js:68</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Global configuration properties for the Parcela object.
+It can only be set on initialization via the <a href="#docs-main"><code>Parcela</code></a> function.</p>
+<p>The config is set at a default-configutation</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_Event" class="property item">
+    <h3 class="name"><code>Event</code></h3>
+    <span class="type"><a href="../classes/Event.html" class="crosslink">Event</a></span>
+
+    
+
+    
+
+    
+
+    
+        <span class="flag static">static</span>
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela_parcela.js.html#l127"><code>src&#x2F;parcela&#x2F;parcela.js:127</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p><a href="Event.html">Event</a>-instance</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_idGenerator" class="property item">
+    <h3 class="name"><code>idGenerator</code></h3>
+    <span class="type"><a href="../classes/Function.html" class="crosslink">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+        <span class="flag static">static</span>
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela_parcela.js.html#l100"><code>src&#x2F;parcela&#x2F;parcela.js:100</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Reference to the <code>idGenerator</code> function in <a href="../modules/utils.html">utils</a></p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_IO" class="property item">
+    <h3 class="name"><code>IO</code></h3>
     <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
 
     
@@ -326,7 +502,7 @@ There is no actual code for this class.  It is created as an object literal.</p>
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l768"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:768</code></a>
+        <a href="../files/src_parcela_parcela.js.html#l117"><code>src&#x2F;parcela&#x2F;parcela.js:117</code></a>
         
         </p>
 
@@ -336,166 +512,7 @@ There is no actual code for this class.  It is created as an object literal.</p>
     </div>
 
     <div class="description">
-        <p>Collection of the attributes of the DOM element.
-It is an hash map of attribute names to attribute values.</p>
-
-    </div>
-
-    
-        <p><strong>Default:</strong> {}</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_children" class="property item">
-    <h3 class="name"><code>children</code></h3>
-    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
-
-    
-
-    
-
-    
-
-    
-        <span class="flag static">static</span>
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l778"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:778</code></a>
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Array of children nodes of this node.
-The children can be either</p>
-<ul>
-<li>further vNodes,</li>
-<li>pNodes</li>
-<li>plain values which will be converted to strings or tNodes</li>
-</ul>
-
-    </div>
-
-    
-        <p><strong>Default:</strong> undefined</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_namespace" class="property item">
-    <h3 class="name"><code>namespace</code></h3>
-    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
-
-    
-
-    
-
-    
-
-    
-        <span class="flag static">static</span>
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l749"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:749</code></a>
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>The value of the <code>xmlns</code> attribute for namespaced elements
-such as <code>svg</code>.</p>
-
-    </div>
-
-    
-        <p><strong>Default:</strong> undefined</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_node" class="property item private">
-    <h3 class="name"><code>node</code></h3>
-    <span class="type">DOM element</span>
-
-    
-
-    
-        <span class="flag private">private</span>
-    
-
-    
-
-    
-        <span class="flag static">static</span>
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l758"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:758</code></a>
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>DOM node corresponding to the virtual node.
-It is only present in the internal vDOM and only assigned
-after the DOM has been rendered.</p>
+        <p>Reference to the <a href="io.html">IO</a> object</p>
 
     </div>
 
@@ -507,8 +524,8 @@ after the DOM has been rendered.</p>
 </div>
 
                 
-                    <div id="property_parcel" class="property item">
-    <h3 class="name"><code>parcel</code></h3>
+                    <div id="property_Parcel" class="property item">
+    <h3 class="name"><code>Parcel</code></h3>
     <span class="type"><a href="../classes/Parcel.html" class="crosslink">Parcel</a></span>
 
     
@@ -532,7 +549,7 @@ after the DOM has been rendered.</p>
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l790"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:790</code></a>
+        <a href="../files/src_parcela_parcela.js.html#l155"><code>src&#x2F;parcela&#x2F;parcela.js:155</code></a>
         
         </p>
 
@@ -542,8 +559,7 @@ after the DOM has been rendered.</p>
     </div>
 
     <div class="description">
-        <p>Reference to the <a href="Parcel.html">Parcel</a> instance that has produced this pNode
-and its descendants.</p>
+        <p>Reference to the <a href="Parcel.html">Parcel</a> static class</p>
 
     </div>
 
@@ -555,9 +571,76 @@ and its descendants.</p>
 </div>
 
                 
-                    <div id="property_stamp" class="property item">
-    <h3 class="name"><code>stamp</code></h3>
-    <span class="type">Any</span>
+                    <div id="property_ready" class="property item">
+    <h3 class="name"><code>ready</code></h3>
+    <span class="type"><a href="../classes/Promise.html" class="crosslink">Promise</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela_parcela.js.html#l193"><code>src&#x2F;parcela&#x2F;parcela.js:193</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Returns a promise when the DOM and Parcela library are ready.</p>
+<p>The callback receives a copy of <code>Parcela</code> as its only argument so that the developer can use a shorter name within the application.
+It is often called simply <code>P</code>.</p>
+<p>Calling the Parcela function is optional. If the default configuration is acceptable,
+the Parcela class can be used directly.</p>
+
+    </div>
+
+    
+
+    
+        <div class="example">
+            <h4>Example:</h4>
+
+            <div class="example-content">
+                 <script>
+     Parcela.ready
+     .then(function (P) {
+         // P is an alias of Parcela
+     });
+ </script> <script>
+     Parcela({base: '/build'}).ready
+     .then(function (P) {
+         // P is an alias of Parcela
+     });
+ </script>
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="property_render" class="property item">
+    <h3 class="name"><code>render</code></h3>
+    <span class="type"><a href="../classes/Function.html" class="crosslink">Function</a></span>
 
     
 
@@ -580,7 +663,7 @@ and its descendants.</p>
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l798"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:798</code></a>
+        <a href="../files/src_parcela_parcela.js.html#l165"><code>src&#x2F;parcela&#x2F;parcela.js:165</code></a>
         
         </p>
 
@@ -590,13 +673,10 @@ and its descendants.</p>
     </div>
 
     <div class="description">
-        <p>Value returned by the <a href="Parcel.html#method_stamp"><code>stamp()</code></a> method
-to compare whether the parcel contents has changed</p>
+        <p>Reference to the virtual DOM <a href="vDOM.html#method_render">render</a> method</p>
 
     </div>
 
-    
-        <p><strong>Default:</strong> NaN</p>
     
 
     
@@ -605,9 +685,9 @@ to compare whether the parcel contents has changed</p>
 </div>
 
                 
-                    <div id="property_tag" class="property item">
-    <h3 class="name"><code>tag</code></h3>
-    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                    <div id="property_Router" class="property item">
+    <h3 class="name"><code>Router</code></h3>
+    <span class="type"><a href="../classes/Function.html" class="crosslink">Function</a></span>
 
     
 
@@ -630,7 +710,7 @@ to compare whether the parcel contents has changed</p>
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l740"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:740</code></a>
+        <a href="../files/src_parcela_parcela.js.html#l176"><code>src&#x2F;parcela&#x2F;parcela.js:176</code></a>
         
         </p>
 
@@ -640,13 +720,57 @@ to compare whether the parcel contents has changed</p>
     </div>
 
     <div class="description">
-        <p>Represents the DOM <code>tagName</code> or node type.
-Corresponds to the HTML element type.</p>
+        <p>Reference to the <a href="Router.html">routing module</a>.</p>
 
     </div>
 
     
-        <p><strong>Default:</strong> &quot;DIV&quot;</p>
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_typeOf" class="property item">
+    <h3 class="name"><code>typeOf</code></h3>
+    <span class="type"><a href="../classes/Function.html" class="crosslink">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+        <span class="flag static">static</span>
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcela_parcela.js.html#l107"><code>src&#x2F;parcela&#x2F;parcela.js:107</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Reference to the <code>typeOf</code> function in <a href="../modules/utils.html">utils</a></p>
+
+    </div>
+
     
 
     

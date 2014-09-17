@@ -59,6 +59,8 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
@@ -108,6 +110,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -190,6 +194,7 @@ Pollyfils for often used functionality for objects and Functions
             defineProperty(object, name, map[name], force);
         }
     };
+    var NOOP = function () {};
     // -------------------
     var _each = function (obj, fn, context) {
         var keys = Object.keys(obj),
@@ -422,10 +427,10 @@ Pollyfils for often used functionality for Function
          * By default, this method will not override existing prototype members, 
          * unless the second argument &#x60;force&#x60; is true.
          *
-         * When the replaced member is a function, the original version is 
-         * preserved in the &#x60;$orig&#x60; (original) static property
-         * and can be called from the overriding method. If the same method is overriden more than once
-         * only the last one will be kept.
+         * When &#x60;force&#x60; is true and the replacement is a function, 
+         * the original method is prepended to the list of arguments of the new method.
+         * It is the responsibility of the developer to call the original 
+         * to preserve the inheritance chain.
          *
          * @method mergePrototypes
          * @param map {Object} Hash map of properties to add to the prototype of this object
@@ -443,12 +448,24 @@ Pollyfils for often used functionality for Function
                 name = names[i];
                 if (!force &amp;&amp; name in proto) continue;
                 
-                if (typeof proto[name] === &#x27;function&#x27;) {
-                    this.$orig[name] = proto[name];
+                if (typeof map[name] === &#x27;function&#x27;) {
+                    /* jshint -W083 */
+                    proto[name] = (function (original) {
+                        return function () {
+                            /*jshint +W083 */
+                            var a = Array.prototype.slice.call(arguments, 0);
+                            a.unshift(original || NOOP);
+                            return map[name].apply(this, a);
+                        };
+                    })(proto[name]);
+                } else {
+                    proto[name] = map[name];
                 }
-                proto[name] = map[name];
+                
+                        
             }
             return this;
+            
         },
         /**
          * Returns a newly created class inheriting from this class
@@ -505,7 +522,12 @@ Pollyfils for often used functionality for Function
             constructor.$orig = {};
 
             // add prototype overrides
-            constructor.mergePrototypes(prototypes, true);
+            
+            if (prototypes) {
+                prototypes.each(function (method, name) {
+                    constructor.prototype[name] = method;
+                });
+            }
             return constructor;
         },
 

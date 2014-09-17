@@ -10,6 +10,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "Parcel",
         "Parcel.EventListener",
         "Parcel.Listener",
+        "Parcela",
         "Promise",
         "Router",
         "Utils",
@@ -18,6 +19,7 @@ YUI.add("yuidoc-meta", function(Y) {
     ],
     "modules": [
         "Object",
+        "Parcela",
         "Promise",
         "core",
         "core-routing",
@@ -128,6 +130,11 @@ YUI.add("yuidoc-meta", function(Y) {
             "displayName": "parcel-event-listener",
             "name": "parcel-event-listener",
             "description": "Extends the Event-instance by adding the object `listener` to it.\nThe returned object should be merged into any Class-instance or object you want to\nextend with the listener-methods, so the appropriate methods can be invoked on the instance.\n\nShould be called using  the provided `extend`-method like this:"
+        },
+        {
+            "displayName": "Parcela",
+            "name": "Parcela",
+            "description": "The Parcela module is an aggregator for all the individual modules that the library uses.\nThe developer is free to use it as it is or tailor it to contain whatever modules\nhe/she might need in the global namespace.  \n\nThe modules themselves work quite well independent of this module and can be used\nseparately without the need of them being integrated under one globa namespace."
         },
         {
             "displayName": "Promise",

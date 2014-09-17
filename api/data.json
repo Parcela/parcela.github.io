@@ -14,7 +14,9 @@
             "classes": {
                 "Event.Emitter": 1
             },
-            "fors": {},
+            "fors": {
+                "Event": 1
+            },
             "namespaces": {}
         },
         "src/event/event-listener.js": {
@@ -25,7 +27,9 @@
             "classes": {
                 "Event.Listener": 1
             },
-            "fors": {},
+            "fors": {
+                "Event": 1
+            },
             "namespaces": {}
         },
         "src/event/event.js": {
@@ -168,6 +172,17 @@
             "fors": {},
             "namespaces": {}
         },
+        "src/parcela/parcela.js": {
+            "name": "src/parcela/parcela.js",
+            "modules": {
+                "Parcela": 1
+            },
+            "classes": {
+                "Parcela": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "src/promise-ext/promise-ext.js": {
             "name": "src/promise-ext/promise-ext.js",
             "modules": {
@@ -239,14 +254,16 @@
             },
             "classes": {
                 "Event.Emitter": 1,
-                "Event.Listener": 1,
+                "Event": 1,
+                "Event.Listener": 1
+            },
+            "fors": {
                 "Event": 1
             },
-            "fors": {},
             "namespaces": {},
             "tag": "module",
-            "file": "src/event-hammerjs/event-hammer.js",
-            "line": 5,
+            "file": "src/event/event-listener.js",
+            "line": 54,
             "description": "Defines the Event-Class, which should be instantiated to get its functionality\n\n<i>Copyright (c) 2014 Parcela - https://github.com/Parcela</i>\nNew BSD License - https://github.com/ItsAsbreuk/itsa-library/blob/master/LICENSE",
             "is_constructor": 1,
             "since": "0.0.1"
@@ -257,13 +274,15 @@
             "classes": {
                 "Event.Emitter": 1
             },
-            "fors": {},
+            "fors": {
+                "Event": 1
+            },
             "is_submodule": 1,
             "namespaces": {},
             "module": "event",
             "namespace": "",
             "file": "src/event/event-emitter.js",
-            "line": 3,
+            "line": 53,
             "description": "Extends the Event-instance by adding the method `Emitter` to it.\nThe `Emitter-method` returns an object that should be merged into any Class-instance or object you\nwant to extend with the emit-methods, so the appropriate methods can be invoked on the instance.\n\n<i>Copyright (c) 2014 Parcela - https://github.com/Parcela</i>\nNew BSD License - https://github.com/ItsAsbreuk/itsa-library/blob/master/LICENSE\n\nShould be called using  the provided `extend`-method like this:",
             "example": [
                 "\n    var Event = require('event');<br>\n    var EventEmitter = require('event-emitter');<br>\n    EventEmitter.mergeInto(Event);"
@@ -276,13 +295,15 @@
             "classes": {
                 "Event.Listener": 1
             },
-            "fors": {},
+            "fors": {
+                "Event": 1
+            },
             "is_submodule": 1,
             "namespaces": {},
             "module": "event",
             "namespace": "",
             "file": "src/event/event-listener.js",
-            "line": 3,
+            "line": 54,
             "description": "Extends the Event-instance by adding the object `Listener` to it.\nThe returned object should be merged into any Class-instance or object you want to\nextend with the listener-methods, so the appropriate methods can be invoked on the instance.\n\n<i>Copyright (c) 2014 Parcela - https://github.com/Parcela</i>\nNew BSD License - https://github.com/ItsAsbreuk/itsa-library/blob/master/LICENSE\n\nShould be called using  the provided `extend`-method like this:",
             "example": [
                 "\n    var Event = require('event');<br>\n    var EventListener = require('event-listener');<br>\n    EventListener.mergeInto(Event);"
@@ -470,7 +491,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/lang-ext/lang-ext.js",
-            "line": 251,
+            "line": 252,
             "description": "Pollyfils for often used functionality for objects and Functions"
         },
         "parcel": {
@@ -527,6 +548,19 @@
             "namespaces": {},
             "file": "src/routing/routing.js",
             "line": 25
+        },
+        "Parcela": {
+            "name": "Parcela",
+            "submodules": {},
+            "classes": {
+                "Parcela": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/parcela/parcela.js",
+            "line": 13,
+            "description": "The Parcela module is an aggregator for all the individual modules that the library uses.\nThe developer is free to use it as it is or tailor it to contain whatever modules\nhe/she might need in the global namespace.  \n\nThe modules themselves work quite well independent of this module and can be used\nseparately without the need of them being integrated under one globa namespace."
         },
         "Promise": {
             "name": "Promise",
@@ -596,7 +630,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 704,
+            "line": 718,
             "description": "Provides virtual dom functionality for other modules.\n\nThe module exports a single function which should be called to\nfetch the [vDOM](../classes/vDOM.html) class.\n\nThe function must be passed a reference to the DOM `window` object\nor a reasonable substitute.\nFor modules to be loaded through Browserify,\nthis is usually `global.window`.  For modules loaded both through\nBrowserify or node, assuming a suitable emulator, it can be\ndone like this:\n\n```\n   var vDOM = require('virtual-dom')(global.window || require('dom-window-emulator'));\n```"
         }
     },
@@ -613,10 +647,28 @@
             "submodule": "event-emitter",
             "namespace": "",
             "file": "src/event/event-emitter.js",
-            "line": 3,
-            "description": "Extends the Event-instance by adding the method `Emitter` to it.\nThe `Emitter-method` returns an object that should be merged into any Class-instance or object you\nwant to extend with the emit-methods, so the appropriate methods can be invoked on the instance.\n\n<i>Copyright (c) 2014 Parcela - https://github.com/Parcela</i>\nNew BSD License - https://github.com/ItsAsbreuk/itsa-library/blob/master/LICENSE\n\nShould be called using  the provided `extend`-method like this:",
+            "line": 53,
+            "description": "This object should be merged into any Class-instance or object that you want to provide\nevent-emitter methods. This way, the appropriate methods can be invoked on the instance.\ninstead of using the static Event-methods.\n\nWhen merging, you need to merge a method with the `emitterName` as its only argument. f.e:\nEvent.Emitter('PersonalProfile')\n\nIt is highly recommendable to merge on the prototype instead of the instance. See the docs.",
             "example": [
                 "\n    var Event = require('event');<br>\n    var EventEmitter = require('event-emitter');<br>\n    EventEmitter.mergeInto(Event);"
+            ]
+        },
+        "Event": {
+            "name": "Event",
+            "shortname": "Event",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "event",
+            "submodule": "event-hammerjs",
+            "namespace": "",
+            "file": "src/event-hammerjs/event-hammer.js",
+            "line": 5,
+            "description": "Integrates DOM-events to core-event-base. more about DOM-events:\nhttp://www.smashingmagazine.com/2013/11/12/an-introduction-to-dom-events/\n\nShould be called using  the provided `init`-method like this:",
+            "example": [
+                "\nEvent = require('event');\nDOMEvent = require('event-dom');\nDOMEvent.mergeInto(Event);"
             ]
         },
         "Event.Listener": {
@@ -631,29 +683,11 @@
             "submodule": "event-listener",
             "namespace": "",
             "file": "src/event/event-listener.js",
-            "line": 3,
-            "description": "Extends the Event-instance by adding the object `Listener` to it.\nThe returned object should be merged into any Class-instance or object you want to\nextend with the listener-methods, so the appropriate methods can be invoked on the instance.\n\n<i>Copyright (c) 2014 Parcela - https://github.com/Parcela</i>\nNew BSD License - https://github.com/ItsAsbreuk/itsa-library/blob/master/LICENSE\n\nShould be called using  the provided `extend`-method like this:",
+            "line": 54,
+            "description": "This object should be merged into any Class-instance or object that you want to provide\nevent-listener methods. This way, the appropriate methods can be invoked on the instance.\ninstead of using the static Event-methods.\n\nIt is highly recommendable to merge on the prototype instead of the instance. See the docs.",
             "example": [
                 "\n    var Event = require('event');<br>\n    var EventListener = require('event-listener');<br>\n    EventListener.mergeInto(Event);"
             ]
-        },
-        "Event": {
-            "name": "Event",
-            "shortname": "Event",
-            "classitems": [],
-            "plugins": [],
-            "extensions": [],
-            "plugin_for": [],
-            "extension_for": [],
-            "module": "event",
-            "namespace": "",
-            "file": "src/event-hammerjs/event-hammer.js",
-            "line": 5,
-            "description": "Integrates DOM-events to core-event-base. more about DOM-events:\nhttp://www.smashingmagazine.com/2013/11/12/an-introduction-to-dom-events/\n\nShould be called using  the provided `init`-method like this:",
-            "example": [
-                "\nEvent = require('event');\nDOMEvent = require('event-dom');\nDOMEvent.mergeInto(Event);"
-            ],
-            "submodule": "event-hammerjs"
         },
         "IO": {
             "name": "IO",
@@ -684,7 +718,7 @@
             "module": "Object",
             "namespace": "",
             "file": "src/lang-ext/lang-ext.js",
-            "line": 47,
+            "line": 48,
             "description": "Pollyfils for often used functionality for objects"
         },
         "Function": {
@@ -698,7 +732,7 @@
             "module": "Object",
             "namespace": "",
             "file": "src/lang-ext/lang-ext.js",
-            "line": 251,
+            "line": 252,
             "description": "Pollyfils for often used functionality for Function"
         },
         "Parcel.Listener": {
@@ -749,6 +783,32 @@
             "file": "src/parcel/events.js",
             "line": 61,
             "description": "This object should be merged into any Class-instance or object that you want to provide\nevent-listener methods. This way, the appropriate methods can be invoked on the instance.\ninstead of using the static Event-methods.\n\nIt is highly recommendable to merge on the prototype instead of the instance. See the docs."
+        },
+        "Parcela": {
+            "name": "Parcela",
+            "shortname": "Parcela",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Parcela",
+            "namespace": "",
+            "file": "src/parcela/parcela.js",
+            "line": 13,
+            "description": "The Parcela class provides the core functionality for the Parcela library\nand is the root namespace for all the additional modules.\n\nThe Parcela class cannot be instantiated.\nInstead, the Parcela function takes a configuration object to allow for tailoring of the library.\nThe Parcela function returns itself to allow for further chaining.\n\nCalling the Parcela function is optional. If the default configuration is acceptable,\nthe Parcela class can be used directly.\n\nThe Parcela name is usually used only once in an application, when configuring it\nand when calling the [`ready`](#method_ready) or [`require`](#method_require) methods.\nThe callback to these two methods provide a reference to Parcela itself as their argument.\nThese methods allow the developer to rename Parcela to a shorter name, usually `P`,\nfor use within the local scope.\n\n Parcela( config )\n     .require('dialog', 'event', ...)\n     .then(function (P) {\n         // P is an alias of Parcela\n     });\n\n // If the default configuration is acceptable, you can simply do:\n Parcela.require('dialog', 'event', ...)\n     .then(function (P) {\n         // P is an alias of Parcela\n     });\n\n // If extra modules are to be loaded later, you can simply do:\n Parcela( config ).ready\n     .then(function (P) {\n         // P is an alias of Parcela\n     });\n\n // And if no configuration is needed:\n Parcela.ready\n     .then(function (P) {\n         // P is an alias of Parcela\n     });",
+            "static": 1,
+            "params": [
+                {
+                    "name": "config",
+                    "description": "Configuration options for the Parcela Library",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "self",
+                "type": "Object"
+            }
         },
         "Promise": {
             "name": "Promise",
@@ -820,7 +880,7 @@
             "module": "virtual-dom",
             "namespace": "",
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 704,
+            "line": 718,
             "description": "Internal, virtual representation of an actual DOM node.\nThere are two sub-versions of it.\n\n* For text nodes, the vNode will be an instance of String\n  with an extra `node` property.\n* For nodes corresponding to Parcel containers, the node\n  will have the extra `parcel` and `stamp` properties.\n\nThe virtual DOM version differs from that produced by the\n[Parcel.view](Parcel.html#method_view) method in that it has the `node`\nproperty set.\n\nThis entry is just for documentation purposes.\nThere is no actual code for this class.  It is created as an object literal.",
             "access": "protected",
             "tagname": "",
@@ -830,7 +890,33 @@
     "classitems": [
         {
             "file": "src/event/event-emitter.js",
-            "line": 37,
+            "line": 28,
+            "description": "Creates an object which holds all event-emission methods.\nThe returned object should be merged into any Class-instance or object you want to\nextend with the emit-methods, so the appropriate methods can be invoked on the instance.\n\nSee [Event.Emitter](Event.Emitter.html) for all properties that can be merged.",
+            "example": [
+                "\n    var greenObject = {};\n    greenObject.merge(Event.Emitter('green'));\n    greenObject.emit('save'); // --> emits the customEvent `green:save`",
+                "\n    Profile.mergePrototypes(Event.Emitter('PersonalProfile'));\n    var myProfile = new Profile({name: Marco});\n    myProfile.emit('save'); // --> emits the customEvent `PersonalProfile:save`"
+            ],
+            "itemtype": "method",
+            "name": "Emitter",
+            "params": [
+                {
+                    "name": "emitterName",
+                    "description": "the Event-instance that is responsible for the event-system.\n       Should be an instance created by the class provided by `core-custom-event`",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "with the methods which should be merged inside an instance.",
+                "type": "Object"
+            },
+            "since": "0.0.1",
+            "class": "Event",
+            "module": "event",
+            "submodule": "event-emitter"
+        },
+        {
+            "file": "src/event/event-emitter.js",
+            "line": 76,
             "description": "Defines a CustomEvent. If the eventtype already exists, it will not be overridden,\nunless you force to assign with `.forceAssign()`\n\nThe returned object comes with 4 methods which can be invoked chainable:\n\n<ul>\n    <li>defaultFn() --> the default-function of the event</li>\n    <li>preventedFn() --> the function that should be invoked when the event is defaultPrevented</li>\n    <li>forceAssign() --> overrides any previous definition</li>\n    <li>unHaltable() --> makes the customEvent cannot be halted</li>\n    <li>unPreventable() --> makes the customEvent's defaultFn cannot be prevented</li>\n    <li>unSilencable() --> makes that emitters cannot make this event to perform silently (using e.silent)</li>\n    <li>unRenderPreventable() --> makes that the customEvent's render cannot be prevented</li>\n    <li>noRender() --> prevents this customEvent from render the dom. Overrules unRenderPreventable()</li>\n</ul>",
             "itemtype": "method",
             "name": "defineEvent",
@@ -852,7 +938,7 @@
         },
         {
             "file": "src/event/event-emitter.js",
-            "line": 72,
+            "line": 111,
             "description": "Emits the event `eventName` on behalf of the instance holding this method.",
             "itemtype": "method",
             "name": "emit",
@@ -879,7 +965,7 @@
         },
         {
             "file": "src/event/event-emitter.js",
-            "line": 91,
+            "line": 130,
             "description": "Removes all event-definitions of the instance holding this method.",
             "itemtype": "method",
             "name": "undefAllEvents",
@@ -890,7 +976,7 @@
         },
         {
             "file": "src/event/event-emitter.js",
-            "line": 101,
+            "line": 140,
             "description": "Removes the event-definition of the specified customEvent.",
             "itemtype": "method",
             "name": "undefEvent",
@@ -909,6 +995,22 @@
         {
             "file": "src/event/event-listener.js",
             "line": 27,
+            "description": "Holds all event-listener methods.\nThe returned object should be merged into any Class-instance or object you want to\nextend with the listener-methods, so the appropriate methods can be invoked on the instance.\n\nSee [Event.Listener](Event.Listener.html) for all properties that can be merged.",
+            "example": [
+                "\n    var blueObject = {};\n    blueObject.merge(Event.Listener);\n    blueObject.after('*:save', function(e) {\n        ...\n    });",
+                "\n    Members.mergePrototypes(Event.Listener);\n    var myMembers = new Members();\n    myMembers.after('PersonalProfile:save', function(e) {\n        ...\n    });"
+            ],
+            "itemtype": "property",
+            "name": "Listener",
+            "type": "Object",
+            "since": "0.0.1",
+            "class": "Event",
+            "module": "event",
+            "submodule": "event-listener"
+        },
+        {
+            "file": "src/event/event-listener.js",
+            "line": 65,
             "description": "Subscribes to a customEvent on behalf of the object who calls this method.\nThe callback will be executed `after` the defaultFn.",
             "itemtype": "method",
             "name": "after",
@@ -948,7 +1050,7 @@
         },
         {
             "file": "src/event/event-listener.js",
-            "line": 50,
+            "line": 88,
             "description": "Subscribes to a customEvent on behalf of the object who calls this method.\nThe callback will be executed `before` the defaultFn.",
             "itemtype": "method",
             "name": "before",
@@ -988,7 +1090,7 @@
         },
         {
             "file": "src/event/event-listener.js",
-            "line": 73,
+            "line": 111,
             "description": "Detaches (unsubscribes) the listener from the specified customEvent,\non behalf of the object who calls this method.",
             "itemtype": "method",
             "name": "detach",
@@ -1006,7 +1108,7 @@
         },
         {
             "file": "src/event/event-listener.js",
-            "line": 86,
+            "line": 124,
             "description": "Detaches (unsubscribes) the listener from all customevents,\non behalf of the object who calls this method.",
             "itemtype": "method",
             "name": "detachAll",
@@ -1017,7 +1119,7 @@
         },
         {
             "file": "src/event/event-listener.js",
-            "line": 97,
+            "line": 135,
             "description": "Alias for `after`.\n\nSubscribes to a customEvent on behalf of the object who calls this method.\nThe callback will be executed `after` the defaultFn.",
             "itemtype": "method",
             "name": "on",
@@ -1057,7 +1159,7 @@
         },
         {
             "file": "src/event/event-listener.js",
-            "line": 122,
+            "line": 160,
             "description": "Alias for `onceAfter`.\n\nSubscribes to a customEvent on behalf of the object who calls this method.\nThe callback will be executed `after` the defaultFn.\nThe subscriber will be automaticly removed once the callback executed the first time.\nNo need to `detach()` (unless you want to undescribe before the first event)",
             "itemtype": "method",
             "name": "onceAfter",
@@ -1097,7 +1199,7 @@
         },
         {
             "file": "src/event/event-listener.js",
-            "line": 149,
+            "line": 187,
             "description": "Subscribes to a customEvent on behalf of the object who calls this method.\nThe callback will be executed `after` the defaultFn.\nThe subscriber will be automaticly removed once the callback executed the first time.\nNo need to `detach()` (unless you want to undescribe before the first event)",
             "itemtype": "method",
             "name": "onceAfter",
@@ -1137,7 +1239,7 @@
         },
         {
             "file": "src/event/event-listener.js",
-            "line": 174,
+            "line": 212,
             "description": "Subscribes to a customEvent on behalf of the object who calls this method.\nThe callback will be executed `before` the defaultFn.\nThe subscriber will be automaticly removed once the callback executed the first time.\nNo need to `detach()` (unless you want to undescribe before the first event)",
             "itemtype": "method",
             "name": "onceBefore",
@@ -1177,7 +1279,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 68,
+            "line": 57,
             "description": "Subscribes to a customEvent. The callback will be executed `after` the defaultFn.",
             "static": 1,
             "itemtype": "method",
@@ -1223,7 +1325,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 105,
+            "line": 94,
             "description": "Subscribes to a customEvent. The callback will be executed `before` the defaultFn.",
             "static": 1,
             "itemtype": "method",
@@ -1269,7 +1371,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 142,
+            "line": 131,
             "description": "Defines an emitterName into the instance (emitter).\nThis will add a protected property `_emitterName` to the instance.",
             "static": 1,
             "itemtype": "method",
@@ -1292,7 +1394,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 163,
+            "line": 152,
             "description": "Defines a CustomEvent. If the eventtype already exists, it will not be overridden,\nunless you force to assign with `.forceAssign()`\n\nThe returned object comes with 4 methods which can be invoked chainable:\n\n<ul>\n    <li>defaultFn() --> the default-function of the event</li>\n    <li>preventedFn() --> the function that should be invoked when the event is defaultPrevented</li>\n    <li>forceAssign() --> overrides any previous definition</li>\n    <li>unHaltable() --> makes the customEvent cannot be halted</li>\n    <li>unPreventable() --> makes the customEvent's defaultFn cannot be prevented</li>\n    <li>unSilencable() --> makes that emitters cannot make this event to perform silently (using e.silent)</li>\n    <li>unRenderPreventable() --> makes that the customEvent's render cannot be prevented</li>\n    <li>noRender() --> prevents this customEvent from render the dom. Overrules unRenderPreventable()</li>\n</ul>",
             "static": 1,
             "itemtype": "method",
@@ -1314,7 +1416,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 257,
+            "line": 246,
             "description": "Detaches (unsubscribes) the listener from the specified customEvent.",
             "static": 1,
             "itemtype": "method",
@@ -1338,7 +1440,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 275,
+            "line": 264,
             "description": "Detaches (unsubscribes) the listener from all customevents.",
             "static": 1,
             "itemtype": "method",
@@ -1356,7 +1458,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 299,
+            "line": 288,
             "description": "Emits the event `eventName` on behalf of `emitter`, which becomes e.target in the eventobject.\nDuring this process, all subscribers and the defaultFn/preventedFn get an eventobject passed through.\nThe eventobject is created with at least these properties:\n\n<ul>\n    <li>e.target --> source that triggered the event (instance or DOM-node), specified by `emitter`</li>\n    <li>e.type --> eventName</li>\n    <li>e.emitter --> emitterName</li>\n    <li>e.status --> status-information:\n         <ul>\n              <li>e.status.ok --> `true|false` whether the event got executed (not halted or defaultPrevented)</li>\n              <li>e.status.defaultFn (optional) --> `true` if any defaultFn got invoked</li>\n              <li>e.status.preventedFn (optional) --> `true` if any preventedFn got invoked</li>\n              <li>e.status.rendered (optional) --> `true` the vDOM rendered the dom</li>\n              <li>e.status.halted (optional) --> `reason|true` if the event got halted and optional the why</li>\n              <li>e.status.defaultPrevented (optional) -->  `reason|true` if the event got defaultPrevented and optional the why</li>\n              <li>e.status.renderPrevented (optional) -->  `reason|true` if the event got renderPrevented and optional the why</li>\n         </ul>\n    </li>\n</ul>\n\nThe optional `payload` is merged into the eventobject and could be used by the subscribers and the defaultFn/preventedFn.\nIf payload.silent is set true, the subscribers are not getting invoked: only the defaultFn.\n\nThe eventobject also has these methods:\n\n<ul>\n    <li>e.halt() --> stops immediate all actions: no mer subscribers are invoked, no defaultFn/preventedFn</li>\n    <li>e.preventDefault() --> instead of invoking defaultFn, preventedFn will be invoked. No aftersubscribers</li>\n    <li>e.preventRender() --> by default, any event will trigger the vDOM (if exists) to re-render, this can be prevented by calling e.preventRender()</li>\n</ul>\n\n<ul>\n    <li>First, before-subscribers are invoked: this is the place where you might call `e.halt()`, `a.preventDefault()` or `e.preventRender()`</li>\n    <li>Next, defaultFn or preventedFn gets invoked, depending on whether e.halt() or a.preventDefault() has been called</li>\n    <li>Next, after-subscribers get invoked (unless e.halt() or a.preventDefault() has been called)</li>\n    <li>Finally, the finalization takes place: any subscribers are invoked, unless e.halt() or a.preventDefault() has been called</li>\n<ul>",
             "static": 1,
             "itemtype": "method",
@@ -1389,7 +1491,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 475,
+            "line": 464,
             "description": "Adds a subscriber to the finalization-cycle, which happens after the after-subscribers.\nOnly get invoked when the cycle was not preventDefaulted or halted.",
             "itemtype": "method",
             "name": "finalize",
@@ -1410,7 +1512,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 498,
+            "line": 487,
             "description": "Creates a notifier for the customEvent.\nYou can use this to create delayed `defineEvents`. When the customEvent is called, the callback gets invoked\n(even before the subsrcibers). Use this callback for delayed customEvent-definitions.\n\nUse **no** wildcards for the emitterName. You might use wildcards for the eventName. Without wildcards, the\nnotification will be unNotified (callback automaticly detached) on the first time the event occurs.\n\nYou **must** specify the full `emitterName:eventName` syntax.\nThe module `core-event-dom` uses `notify` to auto-define DOM-events (UI:*).",
             "static": 1,
             "itemtype": "method",
@@ -1439,7 +1541,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 529,
+            "line": 518,
             "description": "Alias for `after`.\n\nSubscribes to a customEvent. The callback will be executed `after` the defaultFn.",
             "static": 1,
             "itemtype": "method",
@@ -1485,7 +1587,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 557,
+            "line": 546,
             "description": "Alias for `onceAfter`.\n\nSubscribes to a customEvent. The callback will be executed `after` the defaultFn.\nThe subscriber will be automaticly removed once the callback executed the first time.\nNo need to `detach()` (unless you want to undescribe before the first event)",
             "static": 1,
             "itemtype": "method",
@@ -1531,7 +1633,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 587,
+            "line": 576,
             "description": "Subscribes to a customEvent. The callback will be executed `after` the defaultFn.\nThe subscriber will be automaticly removed once the callback executed the first time.\nNo need to `detach()` (unless you want to undescribe before the first event)",
             "static": 1,
             "itemtype": "method",
@@ -1577,7 +1679,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 641,
+            "line": 630,
             "description": "Subscribes to a customEvent. The callback will be executed `before` the defaultFn.\nThe subscriber will be automaticly removed once the callback executed the first time.\nNo need to `detach()` (unless you want to undescribe before the first event)",
             "static": 1,
             "itemtype": "method",
@@ -1623,7 +1725,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 695,
+            "line": 684,
             "description": "Removes all event-definitions of an emitter, specified by its `emitterName`.\nWhen `emitterName` is not set, ALL event-definitions will be removed, except for the DOM's `UI`-events.",
             "static": 1,
             "itemtype": "method",
@@ -1642,7 +1744,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 715,
+            "line": 704,
             "description": "Removes the event-definition of the specified customEvent.",
             "static": 1,
             "itemtype": "method",
@@ -1660,7 +1762,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 728,
+            "line": 717,
             "description": "unNotifies (unsubscribes) the notifier of the specified customEvent.",
             "static": 1,
             "itemtype": "method",
@@ -1678,7 +1780,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 741,
+            "line": 730,
             "description": "unNotifies (unsubscribes) the notifiers of all defined customevent-notifications.",
             "static": 1,
             "itemtype": "method",
@@ -1689,7 +1791,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 763,
+            "line": 752,
             "description": "Creates a subscriber to the specified customEvent. The customEvent must conform the syntax:\n`emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`\nIf `emitterName` is not defined, `UI` is assumed.\n\nExamples of valid customevents:\n\n<ul>\n    <li>'redmodel:save'</li>\n    <li>'UI:click'</li>\n    <li>'click' --> alias for 'UI:click'</li>\n    <li>'`*`:click' --> careful: will listen to both UIs and non-UI- click-events</li>\n    <li>'redmodel:`*`'</li>\n    <li>'`*`:`*`'</li>\n</ul>",
             "static": 1,
             "itemtype": "method",
@@ -1741,7 +1843,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 818,
+            "line": 807,
             "description": "Creates a subscriber to the specified customEvent. The customEvent must conform the syntax:\n`emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`\nIf `emitterName` is not defined, `UI` is assumed.\n\nExamples of valid customevents:\n\n<ul>\n    <li>'redmodel:save'</li>\n    <li>'UI:click'</li>\n    <li>'click' --> alias for 'UI:click'</li>\n    <li>'`*`:click' --> careful: will listen to both UIs and non-UI- click-events</li>\n    <li>'redmodel:`*`'</li>\n    <li>'`*`:`*`'</li>\n</ul>",
             "static": 1,
             "itemtype": "method",
@@ -1793,7 +1895,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 902,
+            "line": 891,
             "description": "Creates the filter-function on the subscriber.\nInside core-event-base this means: just set the filter, but core-event-dom overrides this method\n(because dom-filters could be css-selectors)",
             "itemtype": "method",
             "name": "_createFilter",
@@ -1823,7 +1925,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 919,
+            "line": 908,
             "description": "Does the actual invocation of a subscriber.",
             "itemtype": "method",
             "name": "_invokeSubs",
@@ -1859,7 +1961,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 958,
+            "line": 947,
             "description": "Removes a subscriber from the specified customEvent. The customEvent must conform the syntax:\n`emitterName:eventName`.",
             "static": 1,
             "itemtype": "method",
@@ -1895,7 +1997,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 997,
+            "line": 986,
             "description": "Removes subscribers from the multiple customevents. The customEvent must conform the syntax:\n`emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`\nIf `emitterName` is not defined, `UI` is assumed.\n\nExamples of valid customevents:\n\n<ul>\n    <li>'redmodel:save'</li>\n    <li>'UI:click'</li>\n    <li>'click' --> alias for 'UI:click'</li>\n    <li>'`*`:click' --> careful: will listen to both UIs and non-UI- click-events</li>\n    <li>'redmodel:`*`'</li>\n    <li>'`*`:`*`'</li>\n</ul>",
             "static": 1,
             "itemtype": "method",
@@ -1920,7 +2022,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 1052,
+            "line": 1041,
             "description": "Adds a property to the default eventobject's prototype which passes through all eventcycles.\nGoes through Object.defineProperty with configurable, enumerable and writable\nall set to false.",
             "itemtype": "method",
             "name": "_setEventObjProperty",
@@ -1945,7 +2047,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 1070,
+            "line": 1059,
             "description": "Generates a sort-function. By default NOOP, however core-event-dom will return\na valid function when it needs to sort nodes conform the dom-tree",
             "itemtype": "method",
             "name": "_sortSubs",
@@ -1968,7 +2070,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 1087,
+            "line": 1076,
             "description": "Objecthash containing all defined custom-events\nwhich has a structure like this:\n\n_ce = {\n    'UI:click': {\n        preventable: true,\n        defaultFn: function(){...},\n        preventedFn: function(){...},\n        renderPreventable: true\n    },\n    'redmodel:save': {\n        preventable: true,\n        defaultFn: function(){...},\n        preventedFn: function(){...},\n        renderPreventable: true\n    }\n}",
             "itemtype": "property",
             "name": "_ce",
@@ -1982,7 +2084,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 1119,
+            "line": 1108,
             "description": "Objecthash containing all defined before and after subscribers\nwhich has a structure like this (`b` represents `before` and `a` represents `after`)\nEvery item that gets in the array consist by itself of 3 properties:\n                                                         subscriberitem = {\n                                                             o: listener,\n                                                             cb: callback,\n                                                             f: filter\n                                                         };\n\n_subs = {\n    'UI:click': {\n        b: [\n            function() {},\n            function() {}\n        ],\n        a: [\n            function() {},\n            function() {}\n        ]\n    },\n    '*:click': {\n        b: [\n            function() {},\n            function() {}\n        ],\n        a: [\n            function() {},\n            function() {}\n        ]\n    },\n    'redmodel:save': {\n        b: [\n            function() {},\n            function() {}\n        ],\n        a: [\n            function() {},\n            function() {}\n        ]\n    }\n}",
             "itemtype": "property",
             "name": "_ce",
@@ -1996,7 +2098,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 1170,
+            "line": 1159,
             "description": "Internal list of finalize-subscribers which are invoked at the finalization-cycle, which happens after the after-subscribers.\nIs an array of function-references.",
             "itemtype": "property",
             "name": "_final",
@@ -2010,7 +2112,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 1182,
+            "line": 1171,
             "description": "Object that acts as the prototype of the eventobject.\nTo add more methods, you can use `_setEventObjProperty`",
             "itemtype": "property",
             "name": "_defaultEventObj",
@@ -2024,7 +2126,7 @@
         },
         {
             "file": "src/event/event.js",
-            "line": 1198,
+            "line": 1187,
             "description": "Objecthash containing all notifiers, keyed by customEvent name.\nThis list is maintained by `notify`, `unNotify` and `unNotifyAll`\n\n_notifiers = {\n    'UI:click': {\n        cb:function() {}\n        o: {} // context\n    },\n    'redmodel:*': {\n        cb:function() {}\n        o: {} // context\n    },\n    'bluemodel:save': {\n        cb:function() {}\n        o: {} // context\n    }\n}",
             "itemtype": "property",
             "name": "_notifiers",
@@ -3823,7 +3925,7 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 52,
+            "line": 53,
             "description": "Loops through all properties in the object.  Equivalent to Array.forEach.\nThe callback is provided with the value of the property, the name of the property\nand a reference to the whole object itself.\nThe context to run the callback in can be overriden, otherwise it is undefined.",
             "itemtype": "method",
             "name": "each",
@@ -3840,7 +3942,7 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 79,
+            "line": 80,
             "description": "Loops through the properties in an object until the callback function returns *truish*.\nThe callback is provided with the value of the property, the name of the property\nand a reference to the whole object itself.\nThe order in which the elements are visited is not predictable.\nThe context to run the callback in can be overriden, otherwise it is undefined.",
             "itemtype": "method",
             "name": "some",
@@ -3860,7 +3962,7 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 107,
+            "line": 108,
             "description": "Loops through the properties in an object until the callback assembling a new object\nwith its properties set to the values returned by the callback function.\nIf the callback function returns `undefined` the property will not be copied to the new object.\nThe resulting object will have the same keys as the original, except for those where the callback\nreturned `undefined` which will have dissapeared.\nThe callback is provided with the value of the property, the name of the property\nand a reference to the whole object itself.\nThe context to run the callback in can be overriden, otherwise it is undefined.",
             "itemtype": "method",
             "name": "map",
@@ -3880,7 +3982,7 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 139,
+            "line": 140,
             "description": "Returns the keys of the object.",
             "itemtype": "method",
             "name": "keys",
@@ -3893,7 +3995,7 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 148,
+            "line": 149,
             "description": "Loops through the object collection the values of all its properties.\nIt is the counterpart of the [`keys`](#method_keys).",
             "itemtype": "method",
             "name": "values",
@@ -3906,7 +4008,7 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 168,
+            "line": 169,
             "description": "Returns true if the object has no own members",
             "itemtype": "method",
             "name": "isEmpty",
@@ -3919,7 +4021,7 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 181,
+            "line": 182,
             "description": "Returns a shallow copy of the object.\nIt does not clone objects within the object, it does a simple, shallow clone.\nFast, mostly useful for plain hash maps.",
             "itemtype": "method",
             "name": "shallowClone",
@@ -3932,7 +4034,7 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 202,
+            "line": 203,
             "description": "Merges into this object the properties of the given object.\nIf the second argument is true, the properties on the source object will be overwritten\nby those of the second object of the same name, otherwise, they are preserved.",
             "itemtype": "method",
             "name": "merge",
@@ -3954,7 +4056,7 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 227,
+            "line": 228,
             "description": "Returns a new object resulting of merging the properties of the given objects.\nThe copying is shallow, complex properties will reference the very same object.\nProperties in later objects do **not overwrite** properties of the same name in earlier objects.\nIf any of the objects is missing, it will be skiped.",
             "example": [
                 "\n\n\tvar foo = function (config) {\n\t\t config = Object.merge(config, defaultConfig);\n\t}"
@@ -3979,8 +4081,8 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 257,
-            "description": "Merges the given map of properties into the `prototype` of the Class.\n**Not** to be used on instances.\n\nThe members in the hash map will become members with\ninstances of the merged class.\n\nBy default, this method will not override existing prototype members, \nunless the second argument `force` is true.\n\nWhen the replaced member is a function, the original version is \npreserved in the `$orig` (original) static property\nand can be called from the overriding method. If the same method is overriden more than once\nonly the last one will be kept.",
+            "line": 258,
+            "description": "Merges the given map of properties into the `prototype` of the Class.\n**Not** to be used on instances.\n\nThe members in the hash map will become members with\ninstances of the merged class.\n\nBy default, this method will not override existing prototype members, \nunless the second argument `force` is true.\n\nWhen `force` is true and the replacement is a function, \nthe original method is prepended to the list of arguments of the new method.\nIt is the responsibility of the developer to call the original \nto preserve the inheritance chain.",
             "itemtype": "method",
             "name": "mergePrototypes",
             "params": [
@@ -4001,7 +4103,7 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 295,
+            "line": 308,
             "description": "Returns a newly created class inheriting from this class\nusing the given `constructor` with the\nprototypes listed in `prototypes` merged in.\n\n\nThe newly created class has the `$super` static property\navailable to access all of is ancestor's instance methods.\n\nFurther methods can be added via the [mergePrototypes](#method_mergePrototypes).",
             "example": [
                 "\n\n\tvar Circle = Shape.subClass(\n\t\tfunction (x, y, r) {\n\t\t\tthis.r = r;\n\t\t\tCircle.$super.constructor.call(this, x, y);\n\t\t},\n\t\t{\n\t\t\tarea: function () {\n\t\t\t\treturn this.r * this.r * Math.PI;\n\t\t\t}\n\t\t}\n\t);"
@@ -4030,7 +4132,7 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 354,
+            "line": 372,
             "description": "Sets the context of which the function will be execute. in the\nsupplied object's context, optionally adding any additional\nsupplied parameters to the end of the arguments the function\nis executed with.",
             "itemtype": "method",
             "name": "rbind",
@@ -4057,7 +4159,7 @@
         },
         {
             "file": "src/lang-ext/lang-ext.js",
-            "line": 389,
+            "line": 407,
             "description": "Returns a base class with the given constructor and prototype methods",
             "itemtype": "method",
             "name": "createClass",
@@ -4541,7 +4643,7 @@
         {
             "file": "src/parcel/parcel.js",
             "line": 29,
-            "description": "Provides the initialization of the parcel, called by the constructor of the parcel with all its arguments.\n\nCan be overriden by each Parcela app.\n\nSet up event listeners, initialize variables and models and prepare for operation.",
+            "description": "Provides the initialization of the parcel, called by the constructor of the parcel with all its arguments.\n\nThe provided method is empty, it can be overriden by each Parcela app.\n\nSet up event listeners, initialize variables and models and prepare for operation.",
             "itemtype": "method",
             "name": "init",
             "class": "Parcel",
@@ -4551,20 +4653,36 @@
         {
             "file": "src/parcel/parcel.js",
             "line": 40,
-            "description": "Called by the page manager before unloading the parcel, for example, when switching pages.",
+            "description": "Destructor.  \n\nThe provided method checks all the instance properties and if any of them are \ninstances of Parcel or arrays of Parcel instances, \nit will call the `destroy` method on each of the child parcels.",
             "itemtype": "method",
-            "name": "unload",
-            "return": {
-                "description": "If it returns exactly `false`, page switching will be prevented.",
-                "type": "Boolean"
-            },
+            "name": "destroy",
             "class": "Parcel",
             "module": "core",
             "submodule": "parcel"
         },
         {
             "file": "src/parcel/parcel.js",
-            "line": 49,
+            "line": 69,
+            "description": "Called by the renderer before this Parcel is shown for the first time.\nIt is a good place to activate resources that are only usefull while the \nparcel is visible such as animations.\n\nThe provided method is empty, it can be overriden by each Parcela app.",
+            "itemtype": "method",
+            "name": "preView",
+            "class": "Parcel",
+            "module": "core",
+            "submodule": "parcel"
+        },
+        {
+            "file": "src/parcel/parcel.js",
+            "line": 80,
+            "description": "Called by the renderer after this Parcel is hidden.\n\nIt is a good place to deactivate resources that are only usefull while the \nparcel is visible such as animations.\n\nThe provided method is empty, it can be overriden by each Parcela app.",
+            "itemtype": "method",
+            "name": "postView",
+            "class": "Parcel",
+            "module": "core",
+            "submodule": "parcel"
+        },
+        {
+            "file": "src/parcel/parcel.js",
+            "line": 93,
             "description": "Returns the virtual DOM for this parcel.\n\nMust be overriden by each Parcela app.\n\nA virtual DOM node is composed of the following elements:\n\n* `tag` {String}:  Name of the HTML tag for the node to be created.\n* `attrs` {Object}: Collection of HTML attributes to be added to the node.\n* `children` {Array}: Array of virtual DOM nodes that will become children of the created node.\n\nThis method will usually use the [`ITSA.vNode`](ITSA.html#method_vNode)\nhelper function to produce the virtual DOM node.",
             "example": [
                 "\n\tview: function () {\n\t\tvar v = I.Parcel.vNode;\n\t\treturn v('div', [\n\t\t\tv('p.joyful','Hello Workd!'),\n\t\t\tv('hr'),\n\t\t\tv('p','(Not very original, really)')\n\t\t]);\n\t}\n\n\t// Equivalent to:\n\tview: function () {\n\t\treturn {tag:'div', attrs:{},children: [\n\t\t\t{tag:'p', attrs:{class:'joyful'}, children:['Hellow World!']},\n\t\t\t{tag:'hr', attrs: {}, children: []},\n\t\t\t{tag:'p', attrs:{}, children:['(Not very original, really)']}\n\t\t]};\n\t}"
@@ -4581,7 +4699,7 @@
         },
         {
             "file": "src/parcel/parcel.js",
-            "line": 88,
+            "line": 132,
             "description": "Returns a value representative of the state of this parcel.\nThe system will compare it with the previous state and if they match,\nit will assume the view has not changed.\n\nThe default function returns `NaN` which is always different than itself.\nIt may be overriden for optimization purposes.",
             "itemtype": "method",
             "name": "stamp",
@@ -4595,7 +4713,7 @@
         },
         {
             "file": "src/parcel/parcel.js",
-            "line": 101,
+            "line": 145,
             "description": "Provides default initialization values for the configuration of this Parcel.\nIt is used by the constructor to merge it with the `config` values it might have\nreceived.\n\nThe constructor only makes a shallow copy of the values in the hash.\nObject references must be initialized in the [`init`](#method_init) method,\notherwise they would all point to the very same copy.",
             "itemtype": "property",
             "name": "defaultConfig",
@@ -4607,7 +4725,7 @@
         },
         {
             "file": "src/parcel/parcel.js",
-            "line": 115,
+            "line": 159,
             "description": "Type of DOM element that will be created to serve as a container for this Parcel.\nDefaults to a `DIV`",
             "itemtype": "property",
             "name": "containerType",
@@ -4619,7 +4737,7 @@
         },
         {
             "file": "src/parcel/parcel.js",
-            "line": 125,
+            "line": 169,
             "description": "CSS className to add to the container for this parcel.\nThis is in addition to the className of `parcel` which is\nautomatically added to all Parcel containers.",
             "itemtype": "property",
             "name": "className",
@@ -4628,6 +4746,109 @@
             "class": "Parcel",
             "module": "core",
             "submodule": "parcel"
+        },
+        {
+            "file": "src/parcela/parcela.js",
+            "line": 68,
+            "description": "Global configuration properties for the Parcela object.\nIt can only be set on initialization via the [`Parcela`](#docs-main) function.\n\nThe config is set at a default-configutation",
+            "itemtype": "property",
+            "name": "_config",
+            "type": "Object",
+            "access": "private",
+            "tagname": "",
+            "class": "Parcela",
+            "module": "Parcela"
+        },
+        {
+            "file": "src/parcela/parcela.js",
+            "line": 100,
+            "description": "Reference to the `idGenerator` function in [utils](../modules/utils.html)",
+            "itemtype": "property",
+            "name": "idGenerator",
+            "type": "function",
+            "static": 1,
+            "class": "Parcela",
+            "module": "Parcela"
+        },
+        {
+            "file": "src/parcela/parcela.js",
+            "line": 107,
+            "description": "Reference to the `typeOf` function in [utils](../modules/utils.html)",
+            "itemtype": "property",
+            "name": "typeOf",
+            "type": "function",
+            "static": 1,
+            "class": "Parcela",
+            "module": "Parcela"
+        },
+        {
+            "file": "src/parcela/parcela.js",
+            "line": 117,
+            "description": "Reference to the [IO](io.html) object",
+            "itemtype": "property",
+            "name": "IO",
+            "type": "Object",
+            "static": 1,
+            "class": "Parcela",
+            "module": "Parcela"
+        },
+        {
+            "file": "src/parcela/parcela.js",
+            "line": 127,
+            "description": "[Event](Event.html)-instance",
+            "itemtype": "property",
+            "name": "Event",
+            "type": "Event",
+            "static": 1,
+            "class": "Parcela",
+            "module": "Parcela"
+        },
+        {
+            "file": "src/parcela/parcela.js",
+            "line": 155,
+            "description": "Reference to the [Parcel](Parcel.html) static class",
+            "itemtype": "property",
+            "name": "Parcel",
+            "type": "Parcel",
+            "static": 1,
+            "class": "Parcela",
+            "module": "Parcela"
+        },
+        {
+            "file": "src/parcela/parcela.js",
+            "line": 165,
+            "description": "Reference to the virtual DOM [render](vDOM.html#method_render) method",
+            "itemtype": "property",
+            "name": "render",
+            "type": "Function",
+            "static": 1,
+            "class": "Parcela",
+            "module": "Parcela"
+        },
+        {
+            "file": "src/parcela/parcela.js",
+            "line": 176,
+            "description": "Reference to the [routing module](Router.html).",
+            "itemtype": "property",
+            "name": "Router",
+            "type": "Function",
+            "static": 1,
+            "class": "Parcela",
+            "module": "Parcela"
+        },
+        {
+            "file": "src/parcela/parcela.js",
+            "line": 193,
+            "description": "Returns a promise when the DOM and Parcela library are ready.\n\nThe callback receives a copy of `Parcela` as its only argument so that the developer can use a shorter name within the application.\nIt is often called simply `P`.\n\nCalling the Parcela function is optional. If the default configuration is acceptable,\nthe Parcela class can be used directly.",
+            "example": [
+                "\n <script>\n     Parcela.ready\n     .then(function (P) {\n         // P is an alias of Parcela\n     });\n </script>",
+                "\n <script>\n     Parcela({base: '/build'}).ready\n     .then(function (P) {\n         // P is an alias of Parcela\n     });\n </script>"
+            ],
+            "itemtype": "property",
+            "name": "ready",
+            "type": "Promise",
+            "class": "Parcela",
+            "module": "Parcela"
         },
         {
             "file": "src/promise-ext/promise-ext.js",
@@ -5143,25 +5364,31 @@
         {
             "file": "src/virtual-dom/virtual-dom.js",
             "line": 227,
-            "description": "Determines which [Parcel](Parcel.html) instance is the root app for this page\nand which is the DOM element it corresponds to and renders the app.\n\nIf ITSA controls the whole screen, the corresponding DOM element is going to be\n`document.body`, which is the default when omitted.",
+            "description": "Determines which [Parcel](Parcel.html) is the root app for this page\nand which is the DOM element it corresponds to and renders the app.\n\nIf the root app controls the whole screen, the corresponding DOM element is going to be\n`document.body`, which is the default when omitted.",
             "itemtype": "method",
             "name": "rootApp",
             "params": [
                 {
-                    "name": "parcel",
-                    "description": "instance of [Parcel](Parcel.html) that is the root of the app",
+                    "name": "Parcel",
+                    "description": "instance of [Parcel](Parcel.html) that is the root of the app.",
                     "type": "Parcel"
                 },
                 {
                     "name": "element",
-                    "description": "DOM element that is the root of the app",
+                    "description": "DOM element that is the root of the app.",
                     "type": "DOM element",
                     "optional": true,
                     "optdefault": "document.body"
+                },
+                {
+                    "name": "parcelConfig",
+                    "description": "optional arguments to provide to Parcel when intantiating it.",
+                    "type": "Object",
+                    "optional": true
                 }
             ],
             "return": {
-                "description": "the `parcel` argument;",
+                "description": "the root parcel just created (available in the [rootParcel](#property_rootParcel) property).",
                 "type": "Parcel"
             },
             "static": 1,
@@ -5170,7 +5397,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 257,
+            "line": 264,
             "description": "Returns a new `pNode` based on the given parcel and namspace.",
             "itemtype": "method",
             "name": "_buildPNode",
@@ -5198,7 +5425,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 275,
+            "line": 283,
             "description": "Returns a new `vNode` based on the given `tag` and `namespace`",
             "itemtype": "method",
             "name": "_buildVNode",
@@ -5226,7 +5453,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 299,
+            "line": 307,
             "description": "Returns a string node.",
             "itemtype": "method",
             "name": "_buildStringNode",
@@ -5248,7 +5475,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 312,
+            "line": 320,
             "description": "Skips over Parcels whose stamp has not changed, looking for nested parcels within",
             "itemtype": "method",
             "name": "_skipPNode",
@@ -5266,7 +5493,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 334,
+            "line": 342,
             "description": "Runs the differences in between an existing and the expected `pNodes`",
             "itemtype": "method",
             "name": "_diffPNode",
@@ -5290,7 +5517,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 359,
+            "line": 367,
             "description": "Runs the difference between an existing and the expected `vNode`\nand makes the necessaty changes on the DOM based on the differences.\nAt the end, the existing should match the expected.",
             "itemtype": "method",
             "name": "_diffVNodes",
@@ -5320,7 +5547,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 377,
+            "line": 385,
             "description": "Compares the children of the existing and the expected vDOM and makes the necessary\nchanges so it updates to the expected.",
             "itemtype": "method",
             "name": "_diffChildren",
@@ -5355,7 +5582,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 559,
+            "line": 573,
             "description": "Compares the attributes of the existing virtual DOM and the expected\nand makes the differences.",
             "itemtype": "method",
             "name": "_diffAttrs",
@@ -5385,7 +5612,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 646,
+            "line": 660,
             "description": "Compares the new and old list of classNames and\nif there is any difference, it sets the whole thing at once.",
             "itemtype": "method",
             "name": "_diffClassNames",
@@ -5413,7 +5640,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 668,
+            "line": 682,
             "description": "Compares the new and old styles and fixes the differences in the DOM",
             "itemtype": "method",
             "name": "_diffStyles",
@@ -5441,7 +5668,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 726,
+            "line": 740,
             "description": "Represents the DOM `tagName` or node type.\nCorresponds to the HTML element type.",
             "itemtype": "property",
             "name": "tag",
@@ -5453,7 +5680,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 735,
+            "line": 749,
             "description": "The value of the `xmlns` attribute for namespaced elements\nsuch as `svg`.",
             "itemtype": "property",
             "name": "namespace",
@@ -5465,7 +5692,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 744,
+            "line": 758,
             "description": "DOM node corresponding to the virtual node.\nIt is only present in the internal vDOM and only assigned\nafter the DOM has been rendered.",
             "itemtype": "property",
             "name": "node",
@@ -5478,7 +5705,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 754,
+            "line": 768,
             "description": "Collection of the attributes of the DOM element.\nIt is an hash map of attribute names to attribute values.",
             "itemtype": "property",
             "name": "attrs",
@@ -5490,7 +5717,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 764,
+            "line": 778,
             "description": "Array of children nodes of this node.\nThe children can be either\n* further vNodes,\n* pNodes\n* plain values which will be converted to strings or tNodes",
             "itemtype": "property",
             "name": "children",
@@ -5502,7 +5729,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 776,
+            "line": 790,
             "description": "Reference to the [Parcel](Parcel.html) instance that has produced this pNode\nand its descendants.",
             "itemtype": "property",
             "name": "parcel",
@@ -5513,7 +5740,7 @@
         },
         {
             "file": "src/virtual-dom/virtual-dom.js",
-            "line": 784,
+            "line": 798,
             "description": "Value returned by the [`stamp()`](Parcel.html#method_stamp) method\nto compare whether the parcel contents has changed",
             "itemtype": "property",
             "name": "stamp",

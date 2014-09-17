@@ -59,6 +59,8 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
@@ -108,6 +110,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -270,6 +274,13 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
                     <ul class="index-list methods">
                         
                             <li class="index-item method">
+                                <a href="#method_destroy">destroy</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
                                 <a href="#method_init">init</a>
 
                                 
@@ -277,14 +288,21 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
                             </li>
                         
                             <li class="index-item method">
-                                <a href="#method_stamp">stamp</a>
+                                <a href="#method_postView">postView</a>
 
                                 
                                 
                             </li>
                         
                             <li class="index-item method">
-                                <a href="#method_unload">unload</a>
+                                <a href="#method_preView">preView</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_stamp">stamp</a>
 
                                 
                                 
@@ -349,6 +367,64 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
                 <h2 class="off-left">Methods</h2>
 
                 
+                    <div id="method_destroy" class="method item">
+    <h3 class="name"><code>destroy</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcel_parcel.js.html#l40"><code>src&#x2F;parcel&#x2F;parcel.js:40</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Destructor.  </p>
+<p>The provided method checks all the instance properties and if any of them are 
+instances of Parcel or arrays of Parcel instances, 
+it will call the <code>destroy</code> method on each of the child parcels.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="method_init" class="method item">
     <h3 class="name"><code>init</code></h3>
 
@@ -393,8 +469,124 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
 
     <div class="description">
         <p>Provides the initialization of the parcel, called by the constructor of the parcel with all its arguments.</p>
-<p>Can be overriden by each Parcela app.</p>
+<p>The provided method is empty, it can be overriden by each Parcela app.</p>
 <p>Set up event listeners, initialize variables and models and prepare for operation.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_postView" class="method item">
+    <h3 class="name"><code>postView</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcel_parcel.js.html#l80"><code>src&#x2F;parcel&#x2F;parcel.js:80</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Called by the renderer after this Parcel is hidden.</p>
+<p>It is a good place to deactivate resources that are only usefull while the 
+parcel is visible such as animations.</p>
+<p>The provided method is empty, it can be overriden by each Parcela app.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_preView" class="method item">
+    <h3 class="name"><code>preView</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_parcel_parcel.js.html#l69"><code>src&#x2F;parcel&#x2F;parcel.js:69</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Called by the renderer before this Parcel is shown for the first time.
+It is a good place to activate resources that are only usefull while the 
+parcel is visible such as animations.</p>
+<p>The provided method is empty, it can be overriden by each Parcela app.</p>
 
     </div>
 
@@ -442,7 +634,7 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
             
         
         
-        <a href="../files/src_parcel_parcel.js.html#l88"><code>src&#x2F;parcel&#x2F;parcel.js:88</code></a>
+        <a href="../files/src_parcel_parcel.js.html#l132"><code>src&#x2F;parcel&#x2F;parcel.js:132</code></a>
         
         </p>
 
@@ -473,79 +665,6 @@ It may be overriden for optimization purposes.</p>
                         <span class="type">Value</span>:
                     
                     <p>any simple value (no objects or such) that reflects the state of this view</p>
-
-                
-            </div>
-        </div>
-    
-
-    
-</div>
-
-                
-                    <div id="method_unload" class="method item">
-    <h3 class="name"><code>unload</code></h3>
-
-    
-        <span class="paren">()</span>
-    
-
-    
-        <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
-        </span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/src_parcel_parcel.js.html#l40"><code>src&#x2F;parcel&#x2F;parcel.js:40</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Called by the page manager before unloading the parcel, for example, when switching pages.</p>
-
-    </div>
-
-    
-
-    
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                
-                    
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>:
-                    
-                    <p>If it returns exactly <code>false</code>, page switching will be prevented.</p>
 
                 
             </div>
@@ -592,7 +711,7 @@ It may be overriden for optimization purposes.</p>
             
         
         
-        <a href="../files/src_parcel_parcel.js.html#l49"><code>src&#x2F;parcel&#x2F;parcel.js:49</code></a>
+        <a href="../files/src_parcel_parcel.js.html#l93"><code>src&#x2F;parcel&#x2F;parcel.js:93</code></a>
         
         </p>
 
@@ -694,7 +813,7 @@ view: function () {
             
         
         
-        <a href="../files/src_parcel_parcel.js.html#l125"><code>src&#x2F;parcel&#x2F;parcel.js:125</code></a>
+        <a href="../files/src_parcel_parcel.js.html#l169"><code>src&#x2F;parcel&#x2F;parcel.js:169</code></a>
         
         </p>
 
@@ -743,7 +862,7 @@ automatically added to all Parcel containers.</p>
             
         
         
-        <a href="../files/src_parcel_parcel.js.html#l115"><code>src&#x2F;parcel&#x2F;parcel.js:115</code></a>
+        <a href="../files/src_parcel_parcel.js.html#l159"><code>src&#x2F;parcel&#x2F;parcel.js:159</code></a>
         
         </p>
 
@@ -791,7 +910,7 @@ Defaults to a <code>DIV</code></p>
             
         
         
-        <a href="../files/src_parcel_parcel.js.html#l101"><code>src&#x2F;parcel&#x2F;parcel.js:101</code></a>
+        <a href="../files/src_parcel_parcel.js.html#l145"><code>src&#x2F;parcel&#x2F;parcel.js:145</code></a>
         
         </p>
 

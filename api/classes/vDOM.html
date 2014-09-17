@@ -59,6 +59,8 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
@@ -108,6 +110,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -403,7 +407,7 @@
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l257"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:257</code></a>
+        <a href="../files/src_virtual-dom_virtual-dom.js.html#l264"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:264</code></a>
         
         </p>
 
@@ -529,7 +533,7 @@
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l299"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:299</code></a>
+        <a href="../files/src_virtual-dom_virtual-dom.js.html#l307"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:307</code></a>
         
         </p>
 
@@ -642,7 +646,7 @@
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l275"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:275</code></a>
+        <a href="../files/src_virtual-dom_virtual-dom.js.html#l283"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:283</code></a>
         
         </p>
 
@@ -778,7 +782,7 @@
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l559"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:559</code></a>
+        <a href="../files/src_virtual-dom_virtual-dom.js.html#l573"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:573</code></a>
         
         </p>
 
@@ -923,7 +927,7 @@ and makes the differences.</p>
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l377"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:377</code></a>
+        <a href="../files/src_virtual-dom_virtual-dom.js.html#l385"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:385</code></a>
         
         </p>
 
@@ -1076,7 +1080,7 @@ changes so it updates to the expected.</p>
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l646"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:646</code></a>
+        <a href="../files/src_virtual-dom_virtual-dom.js.html#l660"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:660</code></a>
         
         </p>
 
@@ -1208,7 +1212,7 @@ if there is any difference, it sets the whole thing at once.</p>
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l334"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:334</code></a>
+        <a href="../files/src_virtual-dom_virtual-dom.js.html#l342"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:342</code></a>
         
         </p>
 
@@ -1327,7 +1331,7 @@ if there is any difference, it sets the whole thing at once.</p>
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l668"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:668</code></a>
+        <a href="../files/src_virtual-dom_virtual-dom.js.html#l682"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:682</code></a>
         
         </p>
 
@@ -1464,7 +1468,7 @@ if there is any difference, it sets the whole thing at once.</p>
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l359"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:359</code></a>
+        <a href="../files/src_virtual-dom_virtual-dom.js.html#l367"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:367</code></a>
         
         </p>
 
@@ -1590,7 +1594,7 @@ At the end, the existing should match the expected.</p>
             
         
         
-        <a href="../files/src_virtual-dom_virtual-dom.js.html#l312"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:312</code></a>
+        <a href="../files/src_virtual-dom_virtual-dom.js.html#l320"><code>src&#x2F;virtual-dom&#x2F;virtual-dom.js:320</code></a>
         
         </p>
 
@@ -1744,13 +1748,19 @@ controlled by the given Parcel instance.</p>
             
                 <li class="arg">
                     
-                        <code>parcel</code>
+                        <code>Parcel</code>
                     
                 </li>
             
                 <li class="arg">
                     
                         <code class="optional">[element=document.body]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[parcelConfig]</code>
                     
                 </li>
             
@@ -1800,9 +1810,9 @@ controlled by the given Parcel instance.</p>
     </div>
 
     <div class="description">
-        <p>Determines which <a href="Parcel.html">Parcel</a> instance is the root app for this page
+        <p>Determines which <a href="Parcel.html">Parcel</a> is the root app for this page
 and which is the DOM element it corresponds to and renders the app.</p>
-<p>If ITSA controls the whole screen, the corresponding DOM element is going to be
+<p>If the root app controls the whole screen, the corresponding DOM element is going to be
 <code>document.body</code>, which is the default when omitted.</p>
 
     </div>
@@ -1815,14 +1825,14 @@ and which is the DOM element it corresponds to and renders the app.</p>
             
                 <li class="param">
                     
-                        <code class="param-name">parcel</code>
+                        <code class="param-name">Parcel</code>
                         <span class="type"><a href="../classes/Parcel.html" class="crosslink">Parcel</a></span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>instance of <a href="Parcel.html">Parcel</a> that is the root of the app</p>
+                        <p>instance of <a href="Parcel.html">Parcel</a> that is the root of the app.</p>
 
                     </div>
 
@@ -1839,7 +1849,24 @@ and which is the DOM element it corresponds to and renders the app.</p>
                     
 
                     <div class="param-description">
-                        <p>DOM element that is the root of the app</p>
+                        <p>DOM element that is the root of the app.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[parcelConfig]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>optional arguments to provide to Parcel when intantiating it.</p>
 
                     </div>
 
@@ -1859,7 +1886,7 @@ and which is the DOM element it corresponds to and renders the app.</p>
                     
                         <span class="type"><a href="../classes/Parcel.html" class="crosslink">Parcel</a></span>:
                     
-                    <p>the <code>parcel</code> argument;</p>
+                    <p>the root parcel just created (available in the <a href="#property_rootParcel">rootParcel</a> property).</p>
 
                 
             </div>

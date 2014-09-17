@@ -59,6 +59,8 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
@@ -108,6 +110,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -160,7 +164,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/src_event_event-emitter.js.html#l3"><code>src&#x2F;event&#x2F;event-emitter.js:3</code></a>
+            Defined in: <a href="../files/src_event_event-emitter.js.html#l53"><code>src&#x2F;event&#x2F;event-emitter.js:53</code></a>
         </div>
     
 
@@ -177,12 +181,12 @@
 
 
 <div class="box intro">
-    <p>Extends the Event-instance by adding the method <code>Emitter</code> to it.
-The <code>Emitter-method</code> returns an object that should be merged into any Class-instance or object you
-want to extend with the emit-methods, so the appropriate methods can be invoked on the instance.</p>
-<p><i>Copyright (c) 2014 Parcela - <a href="https://github.com/Parcela">https://github.com/Parcela</a></i>
-New BSD License - <a href="https://github.com/ItsAsbreuk/itsa-library/blob/master/LICENSE">https://github.com/ItsAsbreuk/itsa-library/blob/master/LICENSE</a></p>
-<p>Should be called using  the provided <code>extend</code>-method like this:</p>
+    <p>This object should be merged into any Class-instance or object that you want to provide
+event-emitter methods. This way, the appropriate methods can be invoked on the instance.
+instead of using the static Event-methods.</p>
+<p>When merging, you need to merge a method with the <code>emitterName</code> as its only argument. f.e:
+Event.Emitter(&#39;PersonalProfile&#39;)</p>
+<p>It is highly recommendable to merge on the prototype instead of the instance. See the docs.</p>
 
 </div>
 
@@ -300,7 +304,7 @@ New BSD License - <a href="https://github.com/ItsAsbreuk/itsa-library/blob/maste
             
         
         
-        <a href="../files/src_event_event-emitter.js.html#l37"><code>src&#x2F;event&#x2F;event-emitter.js:37</code></a>
+        <a href="../files/src_event_event-emitter.js.html#l76"><code>src&#x2F;event&#x2F;event-emitter.js:76</code></a>
         
         </p>
 
@@ -434,7 +438,7 @@ unless you force to assign with <code>.forceAssign()</code></p>
             
         
         
-        <a href="../files/src_event_event-emitter.js.html#l72"><code>src&#x2F;event&#x2F;event-emitter.js:72</code></a>
+        <a href="../files/src_event_event-emitter.js.html#l111"><code>src&#x2F;event&#x2F;event-emitter.js:111</code></a>
         
         </p>
 
@@ -549,7 +553,7 @@ unless you force to assign with <code>.forceAssign()</code></p>
             
         
         
-        <a href="../files/src_event_event-emitter.js.html#l91"><code>src&#x2F;event&#x2F;event-emitter.js:91</code></a>
+        <a href="../files/src_event_event-emitter.js.html#l130"><code>src&#x2F;event&#x2F;event-emitter.js:130</code></a>
         
         </p>
 
@@ -616,7 +620,7 @@ unless you force to assign with <code>.forceAssign()</code></p>
             
         
         
-        <a href="../files/src_event_event-emitter.js.html#l101"><code>src&#x2F;event&#x2F;event-emitter.js:101</code></a>
+        <a href="../files/src_event_event-emitter.js.html#l140"><code>src&#x2F;event&#x2F;event-emitter.js:140</code></a>
         
         </p>
 

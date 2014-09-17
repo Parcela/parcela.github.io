@@ -42,7 +42,8 @@ contribution_url: "contribution/index.html"
 			</li>
 			<li>Client side, minified Browserify bundle: <a href="./dist/parcela-min.js">parcela-min.js</a>
 			</li>
-			<li>Npm `package.json` file to install via `npm install`: <a href="./dist/package.json">package.json</a>
+			<li>Npm `package.json` file to install via `npm install`: 
+				<a href="https://raw.githubusercontent.com/Parcela/parcela/{{ site.version }}/package.json">package.json</a>
 			</li>
 		</ul>
 	</p>
@@ -56,7 +57,7 @@ contribution_url: "contribution/index.html"
 	</script>
 	{% endhighlight %}
 
-	<p>For a server-side application, download the <a href="./dist/package.json">package.json</a> file and run <code>npm install</code> to download the <i>standard distribution</i> installed. Then, in your application, you can simply do:</p>
+	<p>For a server-side application, download the <a href="https://raw.githubusercontent.com/Parcela/parcela/{{ site.version }}/package.json">package.json</a> file and run <code>npm install</code> to download the <i>standard distribution</i> installed. Then, in your application, you can simply do:</p>
 
 	{% highlight js %} 
 	var Parcela = require('parcela'); 

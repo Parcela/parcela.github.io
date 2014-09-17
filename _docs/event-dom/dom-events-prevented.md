@@ -18,33 +18,33 @@ Code-example:
 ```
 
 ```js
-var afterClick = function(e) {
-    // the alert will never pop-up
-    alert('Button #buttongo is clicked');
-};
-var beforeClick = function(e) {
-    e.preventDefault();
-};
+<script src="parcela-min.js"></script>
+<script>
+    var Parcela = require('parcela');
+    var afterClick = function(e) {
+        // the alert will never pop-up
+        alert('Button #buttongo is clicked');
+    };
+    var beforeClick = function(e) {
+        e.preventDefault();
+    };
 
-Event.before('click', beforeClick, '#buttongo');
-Event.after('click', afterClick, '#buttongo');
+    Parcela.Event.before('click', beforeClick, '#buttongo');
+    Parcela.Event.after('click', afterClick, '#buttongo');
+</script>
 ```
 
-<script src="../../assets/core.js"></script>
+<script src="../../dist/parcela-min.js"></script>
 <script>
-    ITSA = require('core');
-    ITSA.ready().then(
-        function() {
-            var afterClick = function(e) {
-                // the alert will never pop-up
-                alert('Button #buttongo is clicked');
-            };
-            var beforeClick = function(e) {
-                e.preventDefault();
-            };
+    var Parcela = require('parcela');
+    var afterClick = function(e) {
+        // the alert will never pop-up
+        alert('Button #buttongo is clicked');
+    };
+    var beforeClick = function(e) {
+        e.preventDefault();
+    };
 
-            ITSA.Event.before('click', beforeClick, '#buttongo');
-            ITSA.Event.after('click', afterClick, '#buttongo');
-        }
-    );
+    Parcela.Event.before('click', beforeClick, '#buttongo');
+    Parcela.Event.after('click', afterClick, '#buttongo');
 </script>

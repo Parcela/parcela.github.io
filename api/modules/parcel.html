@@ -51,6 +51,8 @@
             
                 <li><a href="../classes/IO.html">IO</a></li>
             
+                <li><a href="../classes/ITSA.html">ITSA</a></li>
+            
                 <li><a href="../classes/Object.html">Object</a></li>
             
                 <li><a href="../classes/Parcel.html">Parcel</a></li>
@@ -59,7 +61,11 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
+            
+                <li><a href="../classes/Promise.Resolver.html">Promise.Resolver</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
             
@@ -75,7 +81,17 @@
             
                 <li><a href="../modules/core.html">core</a></li>
             
+                <li><a href="../modules/core-event.html">core-event</a></li>
+            
+                <li><a href="../modules/core-event-base.html">core-event-base</a></li>
+            
                 <li><a href="../modules/core-routing.html">core-routing</a></li>
+            
+                <li><a href="../modules/core-timers.html">core-timers</a></li>
+            
+                <li><a href="../modules/core-utils.html">core-utils</a></li>
+            
+                <li><a href="../modules/core-vdom.html">core-vdom</a></li>
             
                 <li><a href="../modules/event.html">event</a></li>
             
@@ -108,6 +124,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -160,7 +178,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/src_parcel_events.js.html#l61"><code>src&#x2F;parcel&#x2F;events.js:61</code></a>
+            Defined in: <a href="../files/src_parcela.github.io_assets_core.js.html#l7681"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:7681</code></a>
         </div>
     
 
@@ -170,12 +188,24 @@
 
 
 <div class="box intro">
-    <p>All Parcela apps should inherit from this class.</p>
-<p>The constructor ensures the <code>config</code> argument exists and is an object.
-It merges the values from the <a href="#property_defaultConfig"><code>defaultConfig</code></a> property into it and
-sets the properties of the instance to the resulting values.
-It then calls the <code>init</code> method with all its arguments.
-The <a href="#method_init"><code>init</code></a> might be considered the true constructor of the parcel.</p>
+    <p>Provides core IO-functionality.</p>
+<p>The returned xhr DOES support CORS for all modern browsers.
+To use CORS, you need to setup the responseserver right
+More info about CORS: <a href="http://remysharp.com/2011/04/21/getting-cors-working/">http://remysharp.com/2011/04/21/getting-cors-working/</a></p>
+<p>TODO: make STREAMING with IE9-browsers work: the XDomainRequest() seems not to fire the onprogress-event...
+      (and XMLHttpRequest1 doesn&#39;t have this event at all)
+TODO: make CORS with IE9-browsers work: the XDomainRequest() fails currently on cors..</p>
+<p>Using CORS with IE9-browsers need special consideration, for it uses the XDomainRequest():</p>
+<ol>
+<li>Only GET and POST methods are supported. Other methods will be reset into one of these,
+so make sure the cross-domain-server handles all requests as being send with the GET or POST method.</li>
+<li>Only text/plain is supported for the request&#39;s Content-Type header. This will lead into troubles when handling
+POST-requests: the cross-domain-server needs to extract the parameters itself. For nodejs, there is a nice npm module:
+<code>express-ie-cors</code> <a href="https://github.com/advanced/express-ie-cors/blob/master/lib/express-ie-cors.js">https://github.com/advanced/express-ie-cors/blob/master/lib/express-ie-cors.js</a></li>
+<li>No custom headers can be added to the request.</li>
+<li>No authentication or cookies will be sent with the request.
+more info: <a href="http://blogs.msdn.com/b/ieinternals/archive/2010/05/13/xdomainrequest-restrictions-limitations-and-workarounds.aspx">http://blogs.msdn.com/b/ieinternals/archive/2010/05/13/xdomainrequest-restrictions-limitations-and-workarounds.aspx</a></li>
+</ol>
 
 </div>
 
@@ -189,20 +219,20 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
             <ul class="module-classes">
             
                 <li class="module-class">
-                    <a href="../classes/Parcel.html">
-                        Parcel
-                    </a>
-                </li>
-            
-                <li class="module-class">
-                    <a href="../classes/Parcel.EventListener.html">
-                        Parcel.EventListener
+                    <a href="../classes/IO.html">
+                        IO
                     </a>
                 </li>
             
                 <li class="module-class">
                     <a href="../classes/Parcel.Listener.html">
                         Parcel.Listener
+                    </a>
+                </li>
+            
+                <li class="module-class">
+                    <a href="../classes/Router.html">
+                        Router
                     </a>
                 </li>
             
@@ -217,16 +247,26 @@ The <a href="#method_init"><code>init</code></a> might be considered the true co
             <ul class="module-submodules">
             
                 <li class="module-submodule">
-                    <a href="../modules/parcel-event-listener.html">
-                        parcel-event-listener
+                    <a href="../modules/core-routing.html">
+                        core-routing
                     </a>
 
                     <div class="module-submodule-description">
-                        Extends the Event-instance by adding the object <code>listener</code> to it.
-The returned object should be merged into any Class-instance or object you want to
-extend with the listener-methods, so the appropriate methods can be invoked on the instance.
+                        Provides routing services.
 
-Should be called using  the provided <code>extend</code>-method like this:
+The module exports a single function which should be called to
+fetch the [Router](../classes/Router.html) class.
+
+The function must be passed a reference to the DOM <code>window</code> object
+or a reasonable substitute.
+For modules to be loaded through Browserify,
+this is usually <code>global.window</code>.  For modules loaded both through
+Browserify or node, assuming a suitable emulator, it can be
+done like this:
+
+<code>&#x60;</code>
+var vDOM = require('core-vdom')(global.window || require('dom-window-emulator'));
+<code>&#x60;</code>
                     </div>
                 </li>
             

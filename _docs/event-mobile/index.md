@@ -1,9 +1,9 @@
 ---
-module: event-hammer
+module: event-mobile
 version: 0.0.1
 maintainer: Marco Asbreuk
-title: Gesture Events by HammerJS
-intro: "This module adds gesture events to the `event-dom` module. It integrates all of HammerJS into the eventsystem. You need `event-dom` to make this module operational."
+title: Mobile Events using HammerJS
+intro: "This module adds mobile events to the `event-dom` module. It integrates all of HammerJS into the eventsystem. You need `event-dom` to make this module operational."
 firstpar: get-started-browser
 ---
 

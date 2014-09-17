@@ -51,6 +51,8 @@
             
                 <li><a href="../classes/IO.html">IO</a></li>
             
+                <li><a href="../classes/ITSA.html">ITSA</a></li>
+            
                 <li><a href="../classes/Object.html">Object</a></li>
             
                 <li><a href="../classes/Parcel.html">Parcel</a></li>
@@ -59,7 +61,11 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
+            
+                <li><a href="../classes/Promise.Resolver.html">Promise.Resolver</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
             
@@ -75,7 +81,17 @@
             
                 <li><a href="../modules/core.html">core</a></li>
             
+                <li><a href="../modules/core-event.html">core-event</a></li>
+            
+                <li><a href="../modules/core-event-base.html">core-event-base</a></li>
+            
                 <li><a href="../modules/core-routing.html">core-routing</a></li>
+            
+                <li><a href="../modules/core-timers.html">core-timers</a></li>
+            
+                <li><a href="../modules/core-utils.html">core-utils</a></li>
+            
+                <li><a href="../modules/core-vdom.html">core-vdom</a></li>
             
                 <li><a href="../modules/event.html">event</a></li>
             
@@ -108,6 +124,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -160,7 +178,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/src_routing_routing.js.html#l25"><code>src&#x2F;routing&#x2F;routing.js:25</code></a>
+            Defined in: <a href="../files/src_parcela.github.io_assets_core.js.html#l7737"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:7737</code></a>
         </div>
     
 
@@ -170,7 +188,8 @@
 
 
 <div class="box intro">
-    
+    <p>core module</p>
+
 </div>
 
 
@@ -183,8 +202,32 @@
             <ul class="module-classes">
             
                 <li class="module-class">
+                    <a href="../classes/IO.html">
+                        IO
+                    </a>
+                </li>
+            
+                <li class="module-class">
+                    <a href="../classes/ITSA.html">
+                        ITSA
+                    </a>
+                </li>
+            
+                <li class="module-class">
                     <a href="../classes/Parcel.html">
                         Parcel
+                    </a>
+                </li>
+            
+                <li class="module-class">
+                    <a href="../classes/Parcel.EventListener.html">
+                        Parcel.EventListener
+                    </a>
+                </li>
+            
+                <li class="module-class">
+                    <a href="../classes/Promise.html">
+                        Promise
                     </a>
                 </li>
             
@@ -212,19 +255,115 @@
                     <div class="module-submodule-description">
                         Provides routing services.
 
-The module exports a single function which should be called to 
+The module exports a single function which should be called to
 fetch the [Router](../classes/Router.html) class.
 
 The function must be passed a reference to the DOM <code>window</code> object
 or a reasonable substitute.
-For modules to be loaded through Browserify, 
+For modules to be loaded through Browserify,
 this is usually <code>global.window</code>.  For modules loaded both through
 Browserify or node, assuming a suitable emulator, it can be
 done like this:
- 
-<code>&#x60;</code>   
-var vDOM = require('virtual-dom')(global.window || require('dom-window-emulator'));
+
 <code>&#x60;</code>
+var vDOM = require('core-vdom')(global.window || require('dom-window-emulator'));
+<code>&#x60;</code>
+                    </div>
+                </li>
+            
+                <li class="module-submodule">
+                    <a href="../modules/core-timers.html">
+                        core-timers
+                    </a>
+
+                    <div class="module-submodule-description">
+                        Provides Timer (async) functionality.
+
+Also finilisez by calling <code>_afterAsyncFn()</code> on the host, if specified.
+<code>_afterAsyncFn</code> could be defined on the host to get informed whenever an asynchronous action
+has occured by this module
+                    </div>
+                </li>
+            
+                <li class="module-submodule">
+                    <a href="../modules/core-utils.html">
+                        core-utils
+                    </a>
+
+                    <div class="module-submodule-description">
+                        Collection of various utility functions.
+                    </div>
+                </li>
+            
+                <li class="module-submodule">
+                    <a href="../modules/event-hammerjs.html">
+                        event-hammerjs
+                    </a>
+
+                    <div class="module-submodule-description">
+                        Integrates DOM-events to core-event-base. more about DOM-events:
+http://www.smashingmagazine.com/2013/11/12/an-introduction-to-dom-events/
+
+Should be called using  the provided <code>init</code>-method like this:
+                    </div>
+                </li>
+            
+                <li class="module-submodule">
+                    <a href="../modules/io-win.html">
+                        io-win
+                    </a>
+
+                    <div class="module-submodule-description">
+                        Provides core IO-functionality.
+
+The returned xhr DOES support CORS for all modern browsers.
+To use CORS, you need to setup the responseserver right
+More info about CORS: http://remysharp.com/2011/04/21/getting-cors-working/
+
+
+
+
+TODO: make STREAMING with IE9-browsers work: the XDomainRequest() seems not to fire the onprogress-event...
+      (and XMLHttpRequest1 doesn't have this event at all)
+TODO: make CORS with IE9-browsers work: the XDomainRequest() fails currently on cors..
+
+
+
+
+Using CORS with IE9-browsers need special consideration, for it uses the XDomainRequest():
+1. Only GET and POST methods are supported. Other methods will be reset into one of these,
+   so make sure the cross-domain-server handles all requests as being send with the GET or POST method.
+2. Only text/plain is supported for the request's Content-Type header. This will lead into troubles when handling
+   POST-requests: the cross-domain-server needs to extract the parameters itself. For nodejs, there is a nice npm module:
+   <code>express-ie-cors</code> https://github.com/advanced/express-ie-cors/blob/master/lib/express-ie-cors.js
+3. No custom headers can be added to the request.
+4. No authentication or cookies will be sent with the request.
+more info: http://blogs.msdn.com/b/ieinternals/archive/2010/05/13/xdomainrequest-restrictions-limitations-and-workarounds.aspx
+                    </div>
+                </li>
+            
+                <li class="module-submodule">
+                    <a href="../modules/parcel-event-listener.html">
+                        parcel-event-listener
+                    </a>
+
+                    <div class="module-submodule-description">
+                        Extends the Event-instance by adding the object <code>listener</code> to it.
+The returned object should be merged into any Class-instance or object you want to
+extend with the listener-methods, so the appropriate methods can be invoked on the instance.
+
+Should be called using  the provided <code>extend</code>-method like this:
+                    </div>
+                </li>
+            
+                <li class="module-submodule">
+                    <a href="../modules/promise-ext.html">
+                        promise-ext
+                    </a>
+
+                    <div class="module-submodule-description">
+                        Provides additional Promise-methods. These are extra methods which are not part of the PromiseA+ specification,
+But are all Promise/A+ compatable.
                     </div>
                 </li>
             

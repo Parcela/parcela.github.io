@@ -51,6 +51,8 @@
             
                 <li><a href="../classes/IO.html">IO</a></li>
             
+                <li><a href="../classes/ITSA.html">ITSA</a></li>
+            
                 <li><a href="../classes/Object.html">Object</a></li>
             
                 <li><a href="../classes/Parcel.html">Parcel</a></li>
@@ -59,7 +61,11 @@
             
                 <li><a href="../classes/Parcel.Listener.html">Parcel.Listener</a></li>
             
+                <li><a href="../classes/Parcela.html">Parcela</a></li>
+            
                 <li><a href="../classes/Promise.html">Promise</a></li>
+            
+                <li><a href="../classes/Promise.Resolver.html">Promise.Resolver</a></li>
             
                 <li><a href="../classes/Router.html">Router</a></li>
             
@@ -75,7 +81,17 @@
             
                 <li><a href="../modules/core.html">core</a></li>
             
+                <li><a href="../modules/core-event.html">core-event</a></li>
+            
+                <li><a href="../modules/core-event-base.html">core-event-base</a></li>
+            
                 <li><a href="../modules/core-routing.html">core-routing</a></li>
+            
+                <li><a href="../modules/core-timers.html">core-timers</a></li>
+            
+                <li><a href="../modules/core-utils.html">core-utils</a></li>
+            
+                <li><a href="../modules/core-vdom.html">core-vdom</a></li>
             
                 <li><a href="../modules/event.html">event</a></li>
             
@@ -108,6 +124,8 @@
                 <li><a href="../modules/parcel.html">parcel</a></li>
             
                 <li><a href="../modules/parcel-event-listener.html">parcel-event-listener</a></li>
+            
+                <li><a href="../modules/Parcela.html">Parcela</a></li>
             
                 <li><a href="../modules/Promise.html">Promise</a></li>
             
@@ -160,7 +178,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/src_event-hammerjs_event-hammer.js.html#l5"><code>src&#x2F;event-hammerjs&#x2F;event-hammer.js:5</code></a>
+            Defined in: <a href="../files/src_parcela.github.io_assets_core.js.html#l2654"><code>src&#x2F;parcela.github.io&#x2F;assets&#x2F;core.js:2654</code></a>
         </div>
     
 
@@ -188,20 +206,20 @@ New BSD License - <a href="https://github.com/ItsAsbreuk/itsa-library/blob/maste
             <ul class="module-classes">
             
                 <li class="module-class">
-                    <a href="../classes/Event.html">
-                        Event
-                    </a>
-                </li>
-            
-                <li class="module-class">
                     <a href="../classes/Event.Emitter.html">
                         Event.Emitter
                     </a>
                 </li>
             
                 <li class="module-class">
-                    <a href="../classes/Event.Listener.html">
-                        Event.Listener
+                    <a href="../classes/Promise.Resolver.html">
+                        Promise.Resolver
+                    </a>
+                </li>
+            
+                <li class="module-class">
+                    <a href="../classes/vNode.html">
+                        vNode
                     </a>
                 </li>
             
@@ -214,6 +232,30 @@ New BSD License - <a href="https://github.com/ItsAsbreuk/itsa-library/blob/maste
             <p>This module is a rollup of the following modules:</p>
 
             <ul class="module-submodules">
+            
+                <li class="module-submodule">
+                    <a href="../modules/core-vdom.html">
+                        core-vdom
+                    </a>
+
+                    <div class="module-submodule-description">
+                        Provides virtual dom functionality for other modules.
+
+The module exports a single function which should be called to
+fetch the [vDOM](../classes/vDOM.html) class.
+
+The function must be passed a reference to the DOM <code>window</code> object
+or a reasonable substitute.
+For modules to be loaded through Browserify,
+this is usually <code>global.window</code>.  For modules loaded both through
+Browserify or node, assuming a suitable emulator, it can be
+done like this:
+
+<code>&#x60;</code>
+   var vDOM = require('core-vdom')(global.window || require('dom-window-emulator'));
+<code>&#x60;</code>
+                    </div>
+                </li>
             
                 <li class="module-submodule">
                     <a href="../modules/event-dom.html">
@@ -237,36 +279,6 @@ Should be called using  the provided <code>mergeInto</code>-method like this:
                         Extends the Event-instance by adding the method <code>Emitter</code> to it.
 The <code>Emitter-method</code> returns an object that should be merged into any Class-instance or object you
 want to extend with the emit-methods, so the appropriate methods can be invoked on the instance.
-
-<i>Copyright (c) 2014 Parcela - https://github.com/Parcela</i>
-New BSD License - https://github.com/ItsAsbreuk/itsa-library/blob/master/LICENSE
-
-Should be called using  the provided <code>extend</code>-method like this:
-                    </div>
-                </li>
-            
-                <li class="module-submodule">
-                    <a href="../modules/event-hammerjs.html">
-                        event-hammerjs
-                    </a>
-
-                    <div class="module-submodule-description">
-                        Integrates DOM-events to core-event-base. more about DOM-events:
-http://www.smashingmagazine.com/2013/11/12/an-introduction-to-dom-events/
-
-Should be called using  the provided <code>init</code>-method like this:
-                    </div>
-                </li>
-            
-                <li class="module-submodule">
-                    <a href="../modules/event-listener.html">
-                        event-listener
-                    </a>
-
-                    <div class="module-submodule-description">
-                        Extends the Event-instance by adding the object <code>Listener</code> to it.
-The returned object should be merged into any Class-instance or object you want to
-extend with the listener-methods, so the appropriate methods can be invoked on the instance.
 
 <i>Copyright (c) 2014 Parcela - https://github.com/Parcela</i>
 New BSD License - https://github.com/ItsAsbreuk/itsa-library/blob/master/LICENSE

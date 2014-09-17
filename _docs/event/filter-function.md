@@ -33,65 +33,66 @@ Code-example:
 ```
 
 ```js
-Event.after(
-    '*:save',
-    function(e) {
-        alert('saved with age '+e.age+' years');
-    },
-    function(e) {
-        return (e.age>50);
-    }
-);
+<script src="parcela-min.js"></script>
+<script>
+    var Parcela = require('parcela');
+    Parcela.Event.after(
+        '*:save',
+        function(e) {
+            alert('saved with age '+e.age+' years');
+        },
+        null,
+        function(e) {
+            return (e.age>50);
+        }
+    );
 
-Event.after(
-    'click',
-    function() {
-        Event.emit('object1:save');
-    },
-    '#button1'
-);
+    Parcela.Event.after(
+        'click',
+        function() {
+            Parcela.Event.emit('object1:save');
+        },
+        '#button1'
+    );
 
-Event.after(
-    'click',
-    function() {
-        Event.emit('object2:save', {age: 65});
-    },
-    '#button2'
-);
+    Parcela.Event.after(
+        'click',
+        function() {
+            Parcela.Event.emit('object2:save', {age: 65});
+        },
+        '#button2'
+    );
+</script>
 ```
 
-<script src="../../assets/core.js"></script>
+<script src="../../dist/parcela-min.js"></script>
 <script>
-    ITSA = require('core');
-    ITSA.ready().then(
-        function() {
-            ITSA.Event.after(
-                '*:save',
-                function(e) {
-                    alert('saved with age '+e.age+' years');
-                },
-                null,
-                function(e) {
-                    return (e.age>50);
-                }
-            );
-
-            ITSA.Event.after(
-                'click',
-                function() {
-                    ITSA.Event.emit('object1:save');
-                },
-                '#button1'
-            );
-
-            ITSA.Event.after(
-                'click',
-                function() {
-                    ITSA.Event.emit('object2:save', {age: 65});
-                },
-                '#button2'
-            );
+    var Parcela = require('parcela');
+    Parcela.Event.after(
+        '*:save',
+        function(e) {
+            alert('saved with age '+e.age+' years');
+        },
+        null,
+        function(e) {
+            return (e.age>50);
         }
+    );
+
+    Parcela.Event.after(
+        'click',
+        function() {
+            Parcela.Event.emit('object1:save');
+        },
+        '#button1'
+    );
+
+    Parcela.Event.after(
+        'click',
+        function() {
+            Parcela.Event.emit('object2:save', {age: 65});
+        },
+        '#button2'
     );
 </script>
 

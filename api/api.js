@@ -6,11 +6,14 @@ YUI.add("yuidoc-meta", function(Y) {
         "Event.Listener",
         "Function",
         "IO",
+        "ITSA",
         "Object",
         "Parcel",
         "Parcel.EventListener",
         "Parcel.Listener",
+        "Parcela",
         "Promise",
+        "Promise.Resolver",
         "Router",
         "Utils",
         "vDOM",
@@ -18,9 +21,15 @@ YUI.add("yuidoc-meta", function(Y) {
     ],
     "modules": [
         "Object",
+        "Parcela",
         "Promise",
         "core",
+        "core-event-base",
         "core-routing",
+        "core-routing",
+        "core-timers",
+        "core-utils",
+        "core-vdom",
         "event",
         "event-dom",
         "event-emitter",
@@ -37,18 +46,45 @@ YUI.add("yuidoc-meta", function(Y) {
         "parcel",
         "parcel-event-listener",
         "promise-ext",
+        "promise-ext",
         "utils",
         "virtual-dom"
     ],
     "allModules": [
         {
             "displayName": "core",
-            "name": "core"
+            "name": "core",
+            "description": "core module"
+        },
+        {
+            "displayName": "core-event",
+            "name": "core-event",
+            "description": "Defines the Event-Class, which should be instantiated to get its functionality"
+        },
+        {
+            "displayName": "core-event-base",
+            "name": "core-event-base",
+            "description": "Defines the Event-Class, which should be instantiated to get its functionality"
         },
         {
             "displayName": "core-routing",
             "name": "core-routing",
-            "description": "Provides routing services.\n\nThe module exports a single function which should be called to \nfetch the [Router](../classes/Router.html) class.\n\nThe function must be passed a reference to the DOM `window` object\nor a reasonable substitute.\nFor modules to be loaded through Browserify, \nthis is usually `global.window`.  For modules loaded both through\nBrowserify or node, assuming a suitable emulator, it can be\ndone like this:\n \n```   \nvar vDOM = require('virtual-dom')(global.window || require('dom-window-emulator'));\n```"
+            "description": "Provides routing services.\n\nThe module exports a single function which should be called to\nfetch the [Router](../classes/Router.html) class.\n\nThe function must be passed a reference to the DOM `window` object\nor a reasonable substitute.\nFor modules to be loaded through Browserify,\nthis is usually `global.window`.  For modules loaded both through\nBrowserify or node, assuming a suitable emulator, it can be\ndone like this:\n\n```\nvar vDOM = require('core-vdom')(global.window || require('dom-window-emulator'));\n```"
+        },
+        {
+            "displayName": "core-timers",
+            "name": "core-timers",
+            "description": "Provides Timer (async) functionality.\n\nAlso finilisez by calling `_afterAsyncFn()` on the host, if specified.\n`_afterAsyncFn` could be defined on the host to get informed whenever an asynchronous action\nhas occured by this module"
+        },
+        {
+            "displayName": "core-utils",
+            "name": "core-utils",
+            "description": "Collection of various utility functions."
+        },
+        {
+            "displayName": "core-vdom",
+            "name": "core-vdom",
+            "description": "Provides virtual dom functionality for other modules.\n\nThe module exports a single function which should be called to\nfetch the [vDOM](../classes/vDOM.html) class.\n\nThe function must be passed a reference to the DOM `window` object\nor a reasonable substitute.\nFor modules to be loaded through Browserify,\nthis is usually `global.window`.  For modules loaded both through\nBrowserify or node, assuming a suitable emulator, it can be\ndone like this:\n\n```\n   var vDOM = require('core-vdom')(global.window || require('dom-window-emulator'));\n```"
         },
         {
             "displayName": "event",
@@ -117,17 +153,22 @@ YUI.add("yuidoc-meta", function(Y) {
         {
             "displayName": "Object",
             "name": "Object",
-            "description": "Pollyfils for often used functionality for objects and Functions"
+            "description": "Pollyfils for often used functionality for objects"
         },
         {
             "displayName": "parcel",
             "name": "parcel",
-            "description": "All Parcela apps should inherit from this class.\n\nThe constructor ensures the `config` argument exists and is an object.\nIt merges the values from the [`defaultConfig`](#property_defaultConfig) property into it and\nsets the properties of the instance to the resulting values.\nIt then calls the `init` method with all its arguments.\nThe [`init`](#method_init) might be considered the true constructor of the parcel."
+            "description": "Provides core IO-functionality.\n\nThe returned xhr DOES support CORS for all modern browsers.\nTo use CORS, you need to setup the responseserver right\nMore info about CORS: http://remysharp.com/2011/04/21/getting-cors-working/\n\n\n\n\nTODO: make STREAMING with IE9-browsers work: the XDomainRequest() seems not to fire the onprogress-event...\n      (and XMLHttpRequest1 doesn't have this event at all)\nTODO: make CORS with IE9-browsers work: the XDomainRequest() fails currently on cors..\n\n\n\n\nUsing CORS with IE9-browsers need special consideration, for it uses the XDomainRequest():\n1. Only GET and POST methods are supported. Other methods will be reset into one of these,\n   so make sure the cross-domain-server handles all requests as being send with the GET or POST method.\n2. Only text/plain is supported for the request's Content-Type header. This will lead into troubles when handling\n   POST-requests: the cross-domain-server needs to extract the parameters itself. For nodejs, there is a nice npm module:\n   `express-ie-cors` https://github.com/advanced/express-ie-cors/blob/master/lib/express-ie-cors.js\n3. No custom headers can be added to the request.\n4. No authentication or cookies will be sent with the request.\nmore info: http://blogs.msdn.com/b/ieinternals/archive/2010/05/13/xdomainrequest-restrictions-limitations-and-workarounds.aspx"
         },
         {
             "displayName": "parcel-event-listener",
             "name": "parcel-event-listener",
             "description": "Extends the Event-instance by adding the object `listener` to it.\nThe returned object should be merged into any Class-instance or object you want to\nextend with the listener-methods, so the appropriate methods can be invoked on the instance.\n\nShould be called using  the provided `extend`-method like this:"
+        },
+        {
+            "displayName": "Parcela",
+            "name": "Parcela",
+            "description": "The Parcela module is an aggregator for all the individual modules that the library uses.\nThe developer is free to use it as it is or tailor it to contain whatever modules\nhe/she might need in the global namespace.\n\nThe modules themselves work quite well independent of this module and can be used\nseparately without the need of them being integrated under one globa namespace."
         },
         {
             "displayName": "Promise",

@@ -17,68 +17,67 @@ Code-example:
 ```
 
 ```js
-var profiles = [];
+<script src="parcela-min.js"></script>
+<script>
+    var Parcela = require('parcela');
 
-io.read('/getProfiles', {listId: 25}).then(
-    function(data) {
-        // `data` is an array of objects,
-        // they are already initiated, so we cannot redefine their prototype
-        profiles = data;
+    // instead of loading the data (as explained in the example-source)
+    // we simulate this by just creating the array.
+    // so we don't need to maintain a server running for this example
+    var profiles = [],
+        i;
+
+    // create 100 profiles which all can emit through their prototype:
+    for (i=0; i<100; i++) {
+        profiles.push({name: 'Marco '+i});
     }
-);
 
-Event.after(
-    'PersonalProfile:save',
-    function(e) {
-        alert(e.target.name+' got saved');
-    }
-);
-
-Event.after(
-    'click',
-    function() {
-        // we make the 11'th element to emit the save-event:
-        var profile = profiles[10];
-        if (profile) {
-            Event.emit(profile, 'PersonalProfile:save');
+    Parcela.Event.after(
+        'PersonalProfile:save',
+        function(e) {
+            alert(e.target.name+' got saved');
         }
-    },
-    '#buttongo'
-);
+    );
+
+    Parcela.Event.after(
+        'click',
+        function() {
+            // we make the 11'th element to emit the save-event:
+            Parcela.Event.emit(profiles[10], 'PersonalProfile:save');
+        },
+        '#buttongo'
+    );
+</script>
 ```
 
-<script src="../../assets/core.js"></script>
+<script src="../../dist/parcela-min.js"></script>
 <script>
-    ITSA = require('core');
-    ITSA.ready().then(
-        function() {
+    var Parcela = require('parcela');
 
-            // instaed of loading the data (as explained in the example-source)
-            // we simulate this by just creating the array.
-            // so we don't need to maintain a server running for this example
-            var profiles = [],
-                i;
+    // instead of loading the data (as explained in the example-source)
+    // we simulate this by just creating the array.
+    // so we don't need to maintain a server running for this example
+    var profiles = [],
+        i;
 
-            // create 100 profiles which all can emit through their prototype:
-            for (i=0; i<100; i++) {
-                profiles.push({name: 'Marco '+i});
-            }
+    // create 100 profiles which all can emit through their prototype:
+    for (i=0; i<100; i++) {
+        profiles.push({name: 'Marco '+i});
+    }
 
-            ITSA.Event.after(
-                'PersonalProfile:save',
-                function(e) {
-                    alert(e.target.name+' got saved');
-                }
-            );
-
-            ITSA.Event.after(
-                'click',
-                function() {
-                    // we make the 11'th element to emit the save-event:
-                    ITSA.Event.emit(profiles[10], 'PersonalProfile:save');
-                },
-                '#buttongo'
-            );
+    Parcela.Event.after(
+        'PersonalProfile:save',
+        function(e) {
+            alert(e.target.name+' got saved');
         }
+    );
+
+    Parcela.Event.after(
+        'click',
+        function() {
+            // we make the 11'th element to emit the save-event:
+            Parcela.Event.emit(profiles[10], 'PersonalProfile:save');
+        },
+        '#buttongo'
     );
 </script>

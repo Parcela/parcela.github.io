@@ -18,36 +18,36 @@ Code-example:
 ```
 
 ```js
-var Profile = Object.createClass(null, Event.Emitter('PersonalProfile')),
-    myProfile = new Profile();
+<script src="parcela-min.js"></script>
+<script>
+    var Parcela = require('parcela');
+    var Profile = Object.createClass(null, Parcela.Event.Emitter('PersonalProfile')),
+        myProfile = new Profile();
 
-myProfile.defineEvent('save') // defines "PersonalProfile:save"
-         .defaultFn(function(e) {
-             alert('personal profile was saved');
-         });
+    myProfile.defineEvent('save') // defines "PersonalProfile:save"
+             .defaultFn(function(e) {
+                 alert('personal profile was saved');
+             });
 
-Event.after('click', function() {
-    myProfile.emit('save');
-}, '#save');
+    Parcela.Event.after('click', function() {
+        myProfile.emit('save');
+    }, '#save');
+</script>
 ```
 
 
-<script src="../../assets/core.js"></script>
+<script src="../../dist/parcela-min.js"></script>
 <script>
-    ITSA = require('core');
-    ITSA.ready().then(
-        function() {
-            var Profile = Object.createClass(null, ITSA.Event.Emitter('PersonalProfile')),
-                myProfile = new Profile();
+    var Parcela = require('parcela');
+    var Profile = Object.createClass(null, Parcela.Event.Emitter('PersonalProfile')),
+        myProfile = new Profile();
 
-            myProfile.defineEvent('save') // defines "PersonalProfile:save"
-                     .defaultFn(function(e) {
-                         alert('personal profile was saved');
-                     });
+    myProfile.defineEvent('save') // defines "PersonalProfile:save"
+             .defaultFn(function(e) {
+                 alert('personal profile was saved');
+             });
 
-            ITSA.Event.after('click', function() {
-                myProfile.emit('save');
-            }, '#save');
-        }
-    );
+    Parcela.Event.after('click', function() {
+        myProfile.emit('save');
+    }, '#save');
 </script>

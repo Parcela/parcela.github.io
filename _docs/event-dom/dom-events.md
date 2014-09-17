@@ -28,26 +28,27 @@ Code-example:
 ```
 
 ```js
+<script src="parcela-min.js"></script>
 <script>
+    var Parcela = require('parcela');
+
     var showMsg = function(e) {
-        alert(e.target.innerHTML);
+        alert('Button was clicked');
+        console.log(e);
     };
 
-    Event.after('click', showMsg, '#buttongo');
+    Parcela.Event.after('click', showMsg, '#buttongo');
 </script>
 ```
 
-<script src="../../assets/core.js"></script>
+<script src="../../dist/parcela-min.js"></script>
 <script>
-    ITSA = require('core');
-    ITSA.ready().then(
-        function() {
-            var showMsg = function(e) {
-                alert('Button was clicked');
-                console.log(e);
-            };
+    var Parcela = require('parcela');
 
-            ITSA.Event.after('click', showMsg, '#buttongo');
-        }
-    );
+    var showMsg = function(e) {
+        alert('Button was clicked');
+        console.log(e);
+    };
+
+    Parcela.Event.after('click', showMsg, '#buttongo');
 </script>

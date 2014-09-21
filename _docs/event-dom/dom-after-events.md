@@ -7,7 +7,7 @@ intro: "DOM-events do not have after-listeners by default. However, <b>event-dom
 
 Code-example:
 
-```html
+```
 <body>
     <div id="input-container">
         <input id="example" />
@@ -16,7 +16,7 @@ Code-example:
 </body>
 ```
 
-```js
+```
 <script src="parcela-min.js"></script>
 <script>
     var Parcela = require('parcela');

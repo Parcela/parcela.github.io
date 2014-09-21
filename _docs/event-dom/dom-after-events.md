@@ -6,13 +6,3 @@ intro: "DOM-events do not have after-listeners by default. However, <b>event-dom
 ---
 
 Code-example:
-
-```
-<body>
-    <div id="input-container">
-        <input id="example" />
-    </div>
-    <div id="container"></div>
-</body>
-```
-

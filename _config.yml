@@ -16,17 +16,3 @@ permalink: pretty
 redcarpet:
   input: GFM
   extensions: [with_toc_data, prettify, hard_wrap]
-
-collections:
-  docs:
-    output: true
-
-# Defaults per scope
-defaults:
-  -
-    scope:
-      path: ""
-      type: docs
-    values:
-      layout: module # overrides previous default layout
-      category: module

@@ -1,4 +1,5 @@
 ---
+layout: module
 module: event-dom
 maintainer: Marco Asbreuk
 title: DOM after-events

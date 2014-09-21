@@ -12,6 +12,3 @@ github_username:  Parcela
 highlighter: rouge
 markdown: redcarpet
 permalink: pretty
-
-redcarpet:
-  input: GFM

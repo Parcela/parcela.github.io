@@ -15,4 +15,3 @@ permalink: pretty
 
 redcarpet:
   input: GFM
-  extensions: [with_toc_data, prettify, hard_wrap]

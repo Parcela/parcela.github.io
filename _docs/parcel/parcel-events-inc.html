@@ -17,7 +17,7 @@
 </head>
 
 <body>
-    <script src="../../dist/parcela-min.js"></script>
+    <script src="../../dist/parcela.js"></script>
     <script>
         var Parcela = require('parcela');
         var v = Parcela.Parcel.vNode;
@@ -170,9 +170,9 @@ var getPNodeOrVnodeInfo = function(parcel, domnode) {
             }
         });
 
-        var webApp = new WebApp();
+        // var webApp = new WebApp();
 
-        Parcela.rootApp(webApp);
+        Parcela.rootApp(WebApp);
     </script>
 </body>
 

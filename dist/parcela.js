@@ -3030,7 +3030,6 @@ http://yuilibrary.com/license/
 var NAME = '[event-dom]: ',
     Event = require('event'),
     async = require('utils').async,
-    PARCELA_EMITTER = 'ParcelaEvent',
     OUTSIDE = 'outside',
     REGEXP_UI = /^UI:/,
     REGEXP_NODE_ID = /^#\S+$/,
@@ -3051,6 +3050,7 @@ var NAME = '[event-dom]: ',
      * @private
      * @since 0.0.1
     */
+    DOCUMENT_POSITION_CONTAINED_BY = 16,
     DOMEvents = {};
 
 module.exports = function (window) {
@@ -3058,7 +3058,7 @@ module.exports = function (window) {
         NEW_EVENTSYSTEM = DOCUMENT.addEventListener,
         OLD_EVENTSYSTEM = !NEW_EVENTSYSTEM && DOCUMENT.attachEvent,
         DOM_Events, _bubbleIE8, _domSelToFunc, _evCallback, _findCurrentTargets, _preProcessor,
-        _filter, _setupDomListener, _sortFunc;
+        _filter, _setupDomListener, SORT, _sortFunc, _sortFuncReversed, _getSubscribers, _selToFunc;
 
     window.Parcela || (window.Parcela={});
     window.Parcela.modules || (window.Parcela.modules={});
@@ -3083,6 +3083,14 @@ module.exports = function (window) {
             return !!nodes[i];
         };
     }(window.Element.prototype);
+
+    // polyfill for Node.contains
+    window.Node && !window.Node.prototype.contains && function(NodePrototype) {
+        NodePrototype.contains = function(child) {
+            var comparison = this.compareDocumentPosition(child);
+            return !!((comparison===0) || (comparison & DOCUMENT_POSITION_CONTAINED_BY));
+        };
+    }(window.Node.prototype);
 
     /*
      * Polyfill for bubbling the `focus` and `blur` events in IE8.
@@ -3120,6 +3128,12 @@ module.exports = function (window) {
         });
     };
 
+    _selToFunc = function(customEvent, subscriber) {
+        Event._sellist.some(function(selFn) {
+            return selFn(customEvent, subscriber);
+        });
+    },
+
     /*
      * Creates a filterfunction out of a css-selector. To be used for catching any dom-element, without restrictions
      * of any context (like Parcels can --> Parcel.Event uses _parcelSelToDom instead)
@@ -3127,37 +3141,34 @@ module.exports = function (window) {
      * so it can be used to set as e.target in the final subscriber
      *
      * @method _domSelToFunc
-     * @param ev {Object} eventobject
-     * @param ev.subscriber {Object} subscriber
-     * @param ev.subscriber.o {Object} context
-     * @param ev.subscriber.cb {Function} callbackFn
-     * @param ev.subscriber.f {Function|String} filter
-     * @param ev.subscriber.n {dom-node} becomes e.currentTarget
-     * @param ev.subscriber.t {dom-node} becomes e.target
-     * @param ev.customEvent {String}
+     * @param customEvent {String} the customEvent that is transported to the eventsystem
+     * @param subscriber {Object} subscriber
+     * @param subscriber.o {Object} context
+     * @param subscriber.cb {Function} callbackFn
+     * @param subscriber.f {Function|String} filter
      * @private
      * @since 0.0.1
      */
-    _domSelToFunc = function(ev) {
+    _domSelToFunc = function(customEvent, subscriber) {
         // this stage is runned during subscription
-        var outsideEvent = REGEXP_UI_OUTSIDE.test(ev.customEvent),
-            selector = ev.subscriber.f,
+        var outsideEvent = REGEXP_UI_OUTSIDE.test(customEvent),
+            selector = subscriber.f,
             nodeid, byExactId;
 
         console.log(NAME, '_domSelToFunc type of selector = '+typeof selector);
-        // note: selector could still be a function: in case another ev.subscriber
+        // note: selector could still be a function: in case another subscriber
         // already changed it.
         if (!selector || (typeof selector === 'function')) {
-            ev.subscriber.n || (ev.subscriber.n=DOCUMENT);
-            return;
+            subscriber.n || (subscriber.n=DOCUMENT);
+            return true;
         }
 
         nodeid = selector.match(REGEXP_EXTRACT_NODE_ID);
-        nodeid ? (ev.subscriber.nId=nodeid[1]) : (ev.subscriber.n=DOCUMENT);
+        nodeid ? (subscriber.nId=nodeid[1]) : (subscriber.n=DOCUMENT);
 
         byExactId = REGEXP_NODE_ID.test(selector);
 
-        ev.subscriber.f = function(e) {
+        subscriber.f = function(e) {
             // this stage is runned when the event happens
             console.log(NAME, '_domSelToFunc inside filter. selector: '+selector);
             var node = e.target,
@@ -3174,13 +3185,14 @@ module.exports = function (window) {
                 // if there is a match, then set
                 // e.target to the target that matches the selector
                 if (match && !outsideEvent) {
-                    ev.subscriber.t = node;
+                    subscriber.t = node;
                 }
                 node = node.parentNode;
             }
             console.log(NAME, '_domSelToFunc filter returns '+(!outsideEvent ? match : !match));
             return !outsideEvent ? match : !match;
         };
+        return true;
     };
 
     // at this point, we need to find out what are the current node-refs. whenever there is
@@ -3211,50 +3223,16 @@ module.exports = function (window) {
      */
     _evCallback = function(e) {
         console.log(NAME, '_evCallback');
-        var beforeSubscribers = [],
-            afterSubscribers = [],
-            allSubscribers = Event._subs,
+        var allSubscribers = Event._subs,
             eventName = e.type,
             customEvent = 'UI:'+eventName,
-            eventobject, subs, wildcard_named_subs, named_wildcard_subs, wildcard_wildcard_subs,
-            beforeSubscribersOutside, afterSubscribersOutside, outsideEvent, eventobjectOutside;
+            eventobject, subs, wildcard_named_subs, named_wildcard_subs, wildcard_wildcard_subs, subsOutside,
+            subscribers, eventobjectOutside, wildcard_named_subsOutside;
 
         subs = allSubscribers[customEvent];
         wildcard_named_subs = allSubscribers['*:'+eventName];
         named_wildcard_subs = allSubscribers['UI:*'];
         wildcard_wildcard_subs = allSubscribers['*:*'];
-
-        subs && subs.b && (beforeSubscribers=beforeSubscribers.concat(subs.b));
-        wildcard_named_subs && wildcard_named_subs.b && (beforeSubscribers=beforeSubscribers.concat(wildcard_named_subs.b));
-        named_wildcard_subs && named_wildcard_subs.b && (beforeSubscribers=beforeSubscribers.concat(named_wildcard_subs.b));
-        wildcard_wildcard_subs && wildcard_wildcard_subs.b && (beforeSubscribers=beforeSubscribers.concat(wildcard_wildcard_subs.b));
-
-        if (beforeSubscribers.length>0) {
-            beforeSubscribers = _filter(beforeSubscribers, e);
-            if (beforeSubscribers.length>0) {
-                _findCurrentTargets(beforeSubscribers);
-                // sorting, based upon the sortFn
-                beforeSubscribers.sort(_sortFunc);
-            }
-        }
-
-        outsideEvent = REGEXP_UI_OUTSIDE.test(e.type);
-        if (outsideEvent) {
-            beforeSubscribersOutside = [];
-            afterSubscribersOutside = [];
-            subs && subs.b && (beforeSubscribersOutside=beforeSubscribersOutside.concat(subs.b));
-            wildcard_named_subs && wildcard_named_subs.b && (beforeSubscribersOutside=beforeSubscribersOutside.concat(wildcard_named_subs.b));
-            named_wildcard_subs && named_wildcard_subs.b && (beforeSubscribersOutside=beforeSubscribersOutside.concat(named_wildcard_subs.b));
-            wildcard_wildcard_subs && wildcard_wildcard_subs.b && (beforeSubscribersOutside=beforeSubscribersOutside.concat(wildcard_wildcard_subs.b));
-            if (beforeSubscribersOutside.length>0) {
-                beforeSubscribersOutside = _filter(beforeSubscribersOutside, e);
-                if (beforeSubscribersOutside.length>0) {
-                    _findCurrentTargets(beforeSubscribersOutside);
-                    // sorting, based upon the sortFn
-                    beforeSubscribersOutside.sort(_sortFunc);
-                }
-            }
-        }
 
         // Emit the dom-event though our eventsystem:
         // NOTE: emit() needs to be synchronous! otherwise we wouldn't be able
@@ -3263,9 +3241,14 @@ module.exports = function (window) {
         // e = eventobject from the DOM-event OR gesture-event
         // eventobject = eventobject from our Eventsystem, which get returned by calling `emit()`
 
+        subscribers = _getSubscribers(e, true, subs, wildcard_named_subs, named_wildcard_subs, wildcard_wildcard_subs);
+        eventobject = Event._emit(e.target, customEvent, e, subscribers, [], _preProcessor);
 
-        eventobject = Event._emit(e.target, customEvent, e, beforeSubscribers, [], _preProcessor);
-        outsideEvent && (eventobjectOutside=Event._emit(e.target, customEvent+OUTSIDE, e, beforeSubscribersOutside, [], _preProcessor));
+        // now check outside subscribers
+        subsOutside = allSubscribers[customEvent+OUTSIDE];
+        wildcard_named_subsOutside = allSubscribers['*:'+eventName+OUTSIDE];
+        subscribers = _getSubscribers(e, true, subsOutside, wildcard_named_subsOutside);
+        eventobjectOutside = Event._emit(e.target, customEvent+OUTSIDE, e, subscribers, [], _preProcessor);
 
         // if eventobject was preventdefaulted or halted: take appropriate action on
         // the original dom-event. Note: only the original event can caused this, not the outsideevent
@@ -3282,37 +3265,28 @@ module.exports = function (window) {
             // last step: invoke the aftersubscribers
             // we need to do this asynchronous: this way we pass them AFTER the DOM-event's defaultFn
             // also make sure to paas-in the payload of the manipulated eventobject
-            subs && subs.a && (afterSubscribers=afterSubscribers.concat(subs.a));
-            wildcard_named_subs && wildcard_named_subs.a && (afterSubscribers=afterSubscribers.concat(wildcard_named_subs.a));
-            named_wildcard_subs && named_wildcard_subs.a && (afterSubscribers=afterSubscribers.concat(named_wildcard_subs.a));
-            wildcard_wildcard_subs && wildcard_wildcard_subs.a && (afterSubscribers=afterSubscribers.concat(wildcard_wildcard_subs.a));
-            if (afterSubscribers.length>0) {
-                afterSubscribers = _filter(afterSubscribers, e);
-                if (afterSubscribers.length>0) {
-                    _findCurrentTargets(afterSubscribers);
-                    // sorting, based upon the sortFn
-                    afterSubscribers.sort(_sortFunc);
-                    async(Event._emit.bind(Event, e.target, customEvent, eventobject, [], afterSubscribers, _preProcessor, true), false);
-                }
-            }
-            if (outsideEvent) {
-                subs && subs.a && (afterSubscribersOutside=afterSubscribersOutside.concat(subs.a));
-                wildcard_named_subs && wildcard_named_subs.a && (afterSubscribersOutside=afterSubscribersOutside.concat(wildcard_named_subs.a));
-                named_wildcard_subs && named_wildcard_subs.a && (afterSubscribersOutside=afterSubscribersOutside.concat(named_wildcard_subs.a));
-                wildcard_wildcard_subs && wildcard_wildcard_subs.a && (afterSubscribersOutside=afterSubscribersOutside.concat(wildcard_wildcard_subs.a));
-                if (afterSubscribersOutside.length>0) {
-                    afterSubscribersOutside = _filter(afterSubscribersOutside, e);
-                    if (afterSubscribersOutside.length>0) {
-                        _findCurrentTargets(afterSubscribersOutside);
-                        // sorting, based upon the sortFn
-                        afterSubscribersOutside.sort(_sortFunc);
-                        async(Event._emit.bind(Event, e.target, customEvent+OUTSIDE, eventobjectOutside, [], afterSubscribersOutside, _preProcessor, true), false);
-                    }
-                }
-            }
+            subscribers = _getSubscribers(e, false, subs, wildcard_named_subs, named_wildcard_subs, wildcard_wildcard_subs);
+            (subscribers.length>0) && async(Event._emit.bind(Event, e.target, customEvent, eventobject, [], subscribers, _preProcessor, true), false);
+
+            // now check outside subscribers
+            subscribers = _getSubscribers(e, false, subsOutside, wildcard_named_subsOutside);
+            (subscribers.length>0) && async(Event._emit.bind(Event, e.target, customEvent+OUTSIDE, eventobjectOutside, [], subscribers, _preProcessor, true), false);
         }
     };
 
+    /*
+     * Filters a list of subscribers to only those subscribers that match the filter.
+     *
+     * @method _filter
+     * @param subscriber {Object} subscriber
+     * @param subscriber.o {Object} context
+     * @param subscriber.cb {Function} callbackFn
+     * @param subscriber.f {Function|String} filter
+     * @param e {Object} eventobject
+     * @private
+     * @return {Array} sublist of the subscribers: only those who match the filter.
+     * @since 0.0.1
+     */
     _filter = function(subscribers, e) {
         console.log(NAME, '_filter');
         var filtered = [];
@@ -3327,6 +3301,54 @@ module.exports = function (window) {
         return filtered;
     };
 
+    /*
+     * Creates an array of subscribers in the right order, conform their position in the DOM.
+     * Only subscribers that match the filter are involved.
+     *
+     * @method _getSubscribers
+     * @param e {Object} eventobject
+     * @param before {Boolean} whether it is a before- or after-subscriber
+     * @param subs {Array} array with subscribers
+     * @param wildcard_named_subs {Array} array with subscribers
+     * @param named_wildcard_subs {Array} array with subscribers
+     * @param wildcard_wildcard_subs {Array} array with subscribers
+     * @private
+     * @since 0.0.1
+     */
+    _getSubscribers = function(e, before, subs, wildcard_named_subs, named_wildcard_subs, wildcard_wildcard_subs) {
+        var subscribers = [],
+            beforeOrAfter = before ? 'b' : 'a',
+            saveConcat = function(extrasubs) {
+                extrasubs && extrasubs[beforeOrAfter] && (subscribers=subscribers.concat(extrasubs[beforeOrAfter]));
+            };
+        saveConcat(subs);
+        saveConcat(wildcard_named_subs);
+        saveConcat(named_wildcard_subs);
+        saveConcat(wildcard_wildcard_subs);
+        if (subscribers.length>0) {
+            subscribers=_filter(subscribers, e);
+            if (subscribers.length>0) {
+                _findCurrentTargets(subscribers);
+                // sorting, based upon the sortFn
+                subscribers.sort(SORT);
+            }
+        }
+        return subscribers;
+    };
+
+    /*
+     * Sets e.target, e.currentTarget and e.sourceTarget for the single subscriber.
+     * Needs to be done for evenry single subscriber, because with a single event, these values change for each subscriber
+     *
+     * @method _preProcessor
+     * @param subscriber {Object} subscriber
+     * @param subscriber.o {Object} context
+     * @param subscriber.cb {Function} callbackFn
+     * @param subscriber.f {Function|String} filter
+     * @param e {Object} eventobject
+     * @private
+     * @since 0.0.1
+     */
     _preProcessor = function(subscriber, e) {
         console.log(NAME, '_preProcessor');
         // inside the aftersubscribers, we may need exit right away.
@@ -3369,12 +3391,15 @@ module.exports = function (window) {
      * Eventsystem, by calling _evCallback(). This way we keep DOM-events and our Eventsystem completely separated.
      *
      * @method _setupDomListener
-     * @param instanceEvent {Object} The Event-system
      * @param customEvent {String} the customEvent that is transported to the eventsystem
+     * @param subscriber {Object} subscriber
+     * @param subscriber.o {Object} context
+     * @param subscriber.cb {Function} callbackFn
+     * @param subscriber.f {Function|String} filter
      * @private
      * @since 0.0.1
      */
-    _setupDomListener = function(customEvent) {
+    _setupDomListener = function(customEvent, subscriber) {
         console.log(NAME, '_setupDomListener');
         var eventSplitted = customEvent.split(':'),
             eventName = eventSplitted[1],
@@ -3390,6 +3415,10 @@ module.exports = function (window) {
             console.warn(NAME, 'Subscription to '+eventName+' not supported, use mouseover and mouseout: this eventsystem uses these non-noisy so they act as mouseenter and mouseleave');
             return;
         }
+
+        // now transform the subscriber's filter from css-string into a filterfunction
+        _selToFunc(customEvent, subscriber);
+
         // already registered? then return, also return if someone registered for UI:*
         if (DOMEvents[eventName] || (eventName==='*')) {
             // cautious: one might have registered the event, but not yet the outsideevent.
@@ -3418,9 +3447,28 @@ module.exports = function (window) {
      * @since 0.0.1
      */
     _sortFunc = function(subscriberOne, subscriberTwo) {
-        console.log(NAME, '_sortSubs');
         return (subscriberTwo.t || subscriberTwo.n).contains(subscriberOne.t || subscriberOne.n) ? -1 : 1;
     };
+
+    /*
+     *
+     * @method _sortFunc
+     * @param customEvent {String}
+     * @private
+     * @return {Function|undefined} sortable function
+     * @since 0.0.1
+     */
+    _sortFuncReversed = function(subscriberOne, subscriberTwo) {
+        return (subscriberOne.t || subscriberOne.n).contains(subscriberTwo.t || subscriberTwo.n) ? 1 : -1;
+    };
+
+    // Now a very tricky one:
+    // Some browsers do an array.sort down-top instead of top-down.
+    // In those cases we need another sortFn, for the position on an equal match should fall
+    // behind instead of before (which is the case on top-down sort)
+    [1,2].sort(function(a, b) {
+        SORT || (SORT=(a===2) ? _sortFuncReversed : _sortFunc);
+    });
 
     // Now we do some initialization in order to make DOM-events work:
 
@@ -3431,8 +3479,8 @@ module.exports = function (window) {
          ._setEventObjProperty('stopPropagation', function() {this.status.ok || (this.status.propagationStopped = this.target);})
          ._setEventObjProperty('stopImmediatePropagation', function() {this.status.ok || (this.status.immediatePropagationStopped = this.target);});
 
-    // specify the emitter by emitterName UI
-    Event.defineEmitter(window.HTMLElement.prototype, 'UI');
+
+    Event._sellist = [_domSelToFunc];
 
     // Event._domCallback is the only method that is added to Event.
     // We need to do this, because `event-mobile` needs access to the same method.
@@ -3452,11 +3500,6 @@ module.exports = function (window) {
     Event._domCallback = function(e) {
         _evCallback(e);
     };
-
-    // whenever a subscriber gets defined with a css-selector instead of a filterfunction,
-    // the event: 'ParcelaEvent:selectorsubs' get emitted. We need to catch this event and transform its
-    // selector into a filter-function:
-    Event.after(PARCELA_EMITTER+':selectorsubs', _domSelToFunc, Event);
 
     // next: bubble-polyfill for IE8:
     OLD_EVENTSYSTEM && _bubbleIE8();
@@ -3929,8 +3972,6 @@ require('lang-ext');
     "use strict";
 
     var NAME = '[core-event]: ',
-        PARCELA_EMITTER = 'ParcelaEvent',
-        REGEXP_PARCELA_EMITTER = new RegExp('^'+PARCELA_EMITTER),
         REGEXP_CUSTOMEVENT = /^((?:\w|-)+):((?:\w|-)+)$/,
         REGEXP_WILDCARD_CUSTOMEVENT = /^(?:((?:(?:\w|-)+)|\*):)?((?:(?:\w|-)+)|\*)$/,
         /* REGEXP_WILDCARD_CUSTOMEVENT :
@@ -3989,17 +4030,7 @@ require('lang-ext');
         */
         after: function(customEvent, callback, context, filter, prepend) {
             console.log(NAME, 'add after subscriber to: '+customEvent);
-            if ((typeof context === 'string') || (typeof context === 'function')) {
-                prepend = filter;
-                filter = context;
-                context = null;
-            }
-            else if (typeof context === 'boolean') {
-                prepend = context;
-                filter = null;
-                context = null;
-            }
-            return this._addMultiSubs(context, false, customEvent, callback, filter, prepend);
+            return this._addMultiSubs(false, customEvent, callback, context, filter, prepend);
         },
 
         /**
@@ -4026,17 +4057,7 @@ require('lang-ext');
         */
         before: function(customEvent, callback, context, filter, prepend) {
             console.log(NAME, 'add before subscriber to: '+customEvent);
-            if ((typeof context === 'string') || (typeof context === 'function')) {
-                prepend = filter;
-                filter = context;
-                context = null;
-            }
-            else if (typeof context === 'boolean') {
-                prepend = context;
-                filter = null;
-                context = null;
-            }
-            return this._addMultiSubs(context, true, customEvent, callback, filter, prepend);
+            return this._addMultiSubs(true, customEvent, callback, context, filter, prepend);
         },
 
         /**
@@ -4190,10 +4211,7 @@ require('lang-ext');
                 // we cannot just redefine _subs, for it is set as readonly
                 instance._subs.each(
                     function(value, key) {
-                        // remove only subscribers that are not subscribed to systemevents of Parcela (emitterName=='ParcelaEvent'):
-                        if (!REGEXP_PARCELA_EMITTER.test(key)) {
-                            delete instance._subs[key];
-                        }
+                        delete instance._subs[key];
                     }
                 );
             }
@@ -4249,7 +4267,15 @@ require('lang-ext');
          * @since 0.0.1
          */
         emit: function (emitter, customEvent, payload) {
-            return this._emit.apply(this, arguments);
+            var instance = this;
+            if (typeof emitter === 'string') {
+                // emit is called with signature emit(customEvent, payload)
+                // thus the source-emitter is the Event-instance
+                payload = customEvent;
+                customEvent = emitter;
+                emitter = instance;
+            }
+            return instance._emit(emitter, customEvent, payload);
         },
 
         /**
@@ -4292,7 +4318,7 @@ require('lang-ext');
          *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used only  for`eventName`.
          *        If `emitterName` should be defined.
          * @param callback {Function} subscriber: will be invoked when the customEvent is called (before any subscribers.
-         *                 Recieves 2 arguments: `Event` and `customEvent`.
+         *                 Recieves 2 arguments: `customEvent` and the `subscriber-object`.
          * @param context {Object} context of the callback
          * @chainable
          * @since 0.0.1
@@ -4404,17 +4430,7 @@ require('lang-ext');
                 handler._detached = true;
                 setTimeout(function() {handler.detach();}, 0);
             };
-            if ((typeof context === 'string') || (typeof context === 'function')) {
-                prepend = filter;
-                filter = context;
-                context = null;
-            }
-            else if (typeof context === 'boolean') {
-                prepend = context;
-                filter = null;
-                context = null;
-            }
-            handler = instance._addMultiSubs(context, false, customEvent, wrapperFn, filter, prepend);
+            handler = instance._addMultiSubs(false, customEvent, wrapperFn, context, filter, prepend);
             return handler;
         },
 
@@ -4458,23 +4474,13 @@ require('lang-ext');
                 handler._detached = true;
                 setTimeout(function() {handler.detach();}, 0);
             };
-            if ((typeof context === 'string') || (typeof context === 'function')) {
-                prepend = filter;
-                filter = context;
-                context = null;
-            }
-            else if (typeof context === 'boolean') {
-                prepend = context;
-                filter = null;
-                context = null;
-            }
-            handler = instance._addMultiSubs(context, true, customEvent, wrapperFn, filter, prepend);
+            handler = instance._addMultiSubs(true, customEvent, wrapperFn, context, filter, prepend);
             return handler;
         },
 
         /**
          * Removes all event-definitions of an emitter, specified by its `emitterName`.
-         * When `emitterName` is not set, ALL event-definitions will be removed, except for the DOM's `UI`-events.
+         * When `emitterName` is not set, ALL event-definitions will be removed.
          *
          * @static
          * @method undefAllEvents
@@ -4496,9 +4502,7 @@ require('lang-ext');
             else {
                 instance._ce.each(
                     function(value, key, object) {
-                        if ((key.substring(0,3)!=='UI:') && (key.substring(0,13)!=='ParcelaEvent:')) {
-                            delete instance._ce[key];
-                        }
+                        delete instance._ce[key];
                     }
                 );
             }
@@ -4530,24 +4534,6 @@ require('lang-ext');
             delete this._notifiers[customEvent];
         },
 
-        /**
-         * unNotifies (unsubscribes) the notifiers of all defined customevent-notifications.
-         *
-         * @static
-         * @method unNotifyAll
-         * @since 0.0.1
-        */
-        unNotifyAll: function() {
-            console.log(NAME, 'unNotifyAll');
-            var instance = this;
-            // we cannot just redefine _subs, for it is set as readonly
-            instance._notifiers.each(
-                function(value, key) {
-                    delete instance._notifiers[key];
-                }
-            );
-        },
-
         //====================================================================================================
         // private methods:
         //====================================================================================================
@@ -4570,11 +4556,11 @@ require('lang-ext');
          *
          * @static
          * @method _addMultiSubs
-         * @param listener {Object} Object that creates the subscriber (and will be listening by `listener.after(...)`)
          * @param before {Boolean} whether the subscriber is a `before` subscriber. On falsy, an `after`-subscriber is assumed.
          * @param customEvent {Array} Array of Strings. customEvent should conform the syntax: `emitterName:eventName`, wildcard `*`
          *         may be used for both `emitterName` as well as only `eventName`, in which case 'UI' will become the emitterName.
          * @param callback {Function} subscriber to the event.
+         * @param listener {Object} Object that creates the subscriber (and will be listening by `listener.after(...)`)
          * @param [filter] {String|Function} to filter the event.
          *        Use a String if you want to filter DOM-events by a `selector`
          *        Use a function if you want to filter by any other means. If the function returns a trully value, the
@@ -4585,9 +4571,24 @@ require('lang-ext');
          * @private
          * @since 0.0.1
         */
-        _addMultiSubs: function(listener, before, customEvent, callback, filter, prepend) {
+        _addMultiSubs: function(before, customEvent, callback, listener, filter, prepend) {
             console.log(NAME, '_addMultiSubs');
             var instance = this;
+            if ((typeof listener === 'string') || (typeof listener === 'function')) {
+                prepend = filter;
+                filter = listener;
+                listener = null;
+            }
+            else if (typeof listener === 'boolean') {
+                prepend = listener;
+                filter = null;
+                listener = null;
+            }
+            if ((typeof filter==='boolean') || (typeof filter===undefined) || (typeof filter===null)) {
+                // filter was not set, instead `prepend` is set at this position
+                prepend = filter;
+                filter = null;
+            }
             if (!Array.isArray(customEvent)) {
                 return instance._addSubscriber(listener, before, customEvent, callback, filter, prepend);
             }
@@ -4650,11 +4651,6 @@ require('lang-ext');
                 console.error(NAME, 'subscribe-error: eventname does not match pattern');
                 return;
             }
-            if ((typeof filter==='boolean') || (typeof filter===undefined) || (typeof filter===null)) {
-                // filter was not set, instead `prepend` is set at this position
-                prepend = filter;
-                filter = null;
-            }
             // if extract[1] is undefined, a simple customEvent is going to subscribe (without :)
             // therefore: recomposite customEvent:
             extract[1] || (customEvent='UI:'+customEvent);
@@ -4681,32 +4677,18 @@ require('lang-ext');
                 // before subscribing: we might need to activate notifiers --> with defined eventName should also be cleaned up:
                 notifier = instance._notifiers[customEvent];
                 if (notifier) {
-                    notifier.cb.call(notifier.o, customEvent);
+                    notifier.cb.call(notifier.o, customEvent, item);
                     delete instance._notifiers[customEvent];
                 }
                 // check the same for wildcard eventName:
                 customEventWildcardEventName = customEvent.replace(REGEXP_EVENTNAME_WITH_SEMICOLON, ':*');
-                (customEventWildcardEventName !== customEvent) && (notifier=instance._notifiers[customEventWildcardEventName]) && notifier.cb.call(notifier.o, customEvent);
+                if ((customEventWildcardEventName !== customEvent) && (notifier=instance._notifiers[customEventWildcardEventName])) {
+                    notifier.cb.call(notifier.o, customEvent, item);
+                }
             }
 
             console.log(NAME, '_addSubscriber to customEvent: '+customEvent);
             prepend ? hashtable.unshift(item) : hashtable.push(item);
-            // in case of `UI`, other modules (like event-dom) might need to change properties of the subscriber:
-            if (customEvent.substring(0, 3)==='UI:') {
-                /**
-                 * Is emitted whenever an UI-event gets subscribed
-                 * By emitting this event, `event-dom` can catch it and process the filter-selector
-                 *
-                 * @event ParcelaEvent:selectorsubs
-                 * @param customEvent {String}
-                 * @param subscriber {Object}
-                 * @param subscriber.o {Object} context for the callbackFn
-                 * @param subscriber.cb {Object} callbackFn
-                 * @param subscriber.f {String|Function} filterfunction or selector
-                 * @since 0.1
-                **/
-                instance.emit(PARCELA_EMITTER+':selectorsubs', {customEvent: customEvent, subscriber: item});
-            }
 
             return {
                 detach: function() {
@@ -4783,17 +4765,8 @@ require('lang-ext');
                 allCustomEvents = instance._ce,
                 allSubscribers = instance._subs,
                 customEventDefinition, extract, emitterName, eventName, subs, wildcard_named_subs,
-                named_wildcard_subs, wildcard_wildcard_subs, e;
-            if (typeof emitter === 'string') {
-                // emit is called with signature emit(customEvent, payload)
-                // thus the source-emitter is the Event-instance
-                preProcessor = afterSubscribers;
-                afterSubscribers = beforeSubscribers;
-                beforeSubscribers = payload;
-                payload = customEvent;
-                customEvent = emitter;
-                emitter = instance;
-            }
+                named_wildcard_subs, wildcard_wildcard_subs, e, invokeSubs;
+
             (customEvent.indexOf(':') !== -1) || (customEvent = emitter._emitterName+':'+customEvent);
             console.log(NAME, 'customEvent.emit: '+customEvent);
 
@@ -4815,51 +4788,15 @@ require('lang-ext');
                 e = payload;
             }
             else {
-                e = Object.create(instance._defaultEventObj, {
-                    target: {
-                        configurable: false,
-                        enumerable: true,
-                        writable: true, // cautious: needs to be writable: event-dom resets e.target
-                        value: emitter
-                    },
-                    type: {
-                        configurable: false,
-                        enumerable: true,
-                        writable: false,
-                        value: eventName
-                    },
-                    emitter: {
-                        configurable: false,
-                        enumerable: true,
-                        writable: false,
-                        value: emitterName
-                    },
-                    status: {
-                        configurable: false,
-                        enumerable: true,
-                        writable: false,
-                        value: {}
-                    },
-                    _unPreventable: {
-                        configurable: false,
-                        enumerable: false,
-                        writable: false,
-                        value: customEventDefinition && customEventDefinition.unPreventable
-                    },
-                    _unHaltable: {
-                        configurable: false,
-                        enumerable: false,
-                        writable: false,
-                        value: customEventDefinition && customEventDefinition.unHaltable
-                    },
-                    _unRenderPreventable: {
-                        configurable: false,
-                        enumerable: false,
-                        writable: false,
-                        value: customEventDefinition && customEventDefinition.unRenderPreventable
-                    }
-                });
+                e = Object.create(instance._defaultEventObj);
+                e.target = emitter;
+                e.type = eventName;
+                e.emitter = emitterName;
+                e.status = {};
                 if (customEventDefinition) {
+                    e._unPreventable = customEventDefinition.unPreventable;
+                    e._unHaltable = customEventDefinition.unHaltable;
+                    e._unRenderPreventable = customEventDefinition.unRenderPreventable;
                     customEventDefinition.unSilencable && (e.status.unSilencable = true);
                 }
                 if (payload) {
@@ -4874,13 +4811,11 @@ require('lang-ext');
                 }
             }
             if (beforeSubscribers) {
-                instance._invokeSubs(e, beforeSubscribers, false, true, preProcessor);
+                instance._invokeSubs(e, false, true, preProcessor, {b: beforeSubscribers});
             }
             else {
-                subs && subs.b && instance._invokeSubs(e, subs.b, true, true);
-                named_wildcard_subs && named_wildcard_subs.b && instance._invokeSubs(e, named_wildcard_subs.b, true, true);
-                wildcard_named_subs && wildcard_named_subs.b && instance._invokeSubs(e, wildcard_named_subs.b, true, true);
-                wildcard_wildcard_subs && wildcard_wildcard_subs.b && instance._invokeSubs(e, wildcard_wildcard_subs.b, true, true);
+                invokeSubs = instance._invokeSubs.bind(instance, e, true, true, false);
+                [subs, named_wildcard_subs, wildcard_named_subs, wildcard_wildcard_subs].forEach(invokeSubs);
             }
             e.status.ok = !e.status.halted && !e.status.defaultPrevented;
             // in case any subscriber changed e.target inside its filter (event-dom does this),
@@ -4895,13 +4830,11 @@ require('lang-ext');
 
             if (e.status.ok) {
                 if (afterSubscribers) {
-                    instance._invokeSubs(e, afterSubscribers, false, false, preProcessor);
+                    instance._invokeSubs(e, false, false, preProcessor, {a: afterSubscribers});
                 }
                 else {
-                    subs && subs.a && instance._invokeSubs(e, subs.a, true);
-                    named_wildcard_subs && named_wildcard_subs.a && instance._invokeSubs(e, named_wildcard_subs.a, true);
-                    wildcard_named_subs && wildcard_named_subs.a && instance._invokeSubs(e, wildcard_named_subs.a, true);
-                    wildcard_wildcard_subs && wildcard_wildcard_subs.a && instance._invokeSubs(e, wildcard_wildcard_subs.a, true);
+                    invokeSubs = instance._invokeSubs.bind(instance, e, true, false, false);
+                    [subs, named_wildcard_subs, wildcard_named_subs, wildcard_wildcard_subs].forEach(invokeSubs);
                 }
                 if (!e.silent) {
                     // in case any subscriber changed e.target inside its filter (event-dom does this),
@@ -4925,6 +4858,9 @@ require('lang-ext');
          *
          * @method _invokeSubs
          * @param e {Object} event-object
+         * @param [checkFilter] {Boolean}
+         * @param [before] {Boolean} whether it concerns before subscribers
+         * @param [checkFilter] {Boolean}
          * @param subscribers {Array} contains subscribers (objects) with these members:
          * <ul>
          *     <li>subscriber.o {Object} context of the callback</li>
@@ -4935,14 +4871,15 @@ require('lang-ext');
          *     <li>subscriber.n {DOM-node} highest dom-node that acts as the container for delegation.
          *         only when event-dom is active and there are filter-selectors</li>
          * </ul>
-         * @param [before] {Boolean} whether it concerns before subscribers
          * @private
          * @since 0.0.1
          */
-        _invokeSubs: function (e, subscribers, checkFilter, before, preProcessor) { // subscribers, plural
+        _invokeSubs: function (e, checkFilter, before, preProcessor, subscribers) { // subscribers, plural
             console.log(NAME, '_invokeSubs');
-            if (!e.status.halted && !e.silent) {
-                subscribers.some(function(subscriber) {
+            var subs;
+            if (subscribers && !e.status.halted && !e.silent) {
+                subs = before ? subscribers.b : subscribers.a;
+                subs && subs.some(function(subscriber) {
                     console.log(NAME, '_invokeSubs checking invokation for single subscriber');
                     if (preProcessor && preProcessor(subscriber, e)) {
                         return true;
@@ -4984,7 +4921,7 @@ require('lang-ext');
                 hashtable = eventSubscribers && eventSubscribers[before ? 'b' : 'a'],
                 i, subscriber, beforeUsed, afterUsed;
             // remove only subscribers that are not subscribed to systemevents of Parcela (emitterName=='ParcelaEvent'):
-            if (hashtable && !REGEXP_PARCELA_EMITTER.test(customEvent)) {
+            if (hashtable) {
                 // unfortunatly we cannot search by reference, because the array has composed objects
                 // also: can't use native Array.forEach: removing items within its callback change the array
                 // during runtime, making it to skip the next item of the one that's being removed
@@ -5229,6 +5166,7 @@ require('lang-ext');
 }));
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"lang-ext":9}],8:[function(require,module,exports){
+(function (global){
 /* globals XMLHttpRequest:true */
 
 /**
@@ -5271,7 +5209,7 @@ require('ypromise');
 require('lang-ext');
 require('promise-ext');
 
-var NAME = '[io-win]: ',
+var NAME = '[io]: ',
     GET = 'GET',
     DEF_REQ_TIMEOUT = 300000, // don't create an ever-lasting request: always quit after 5 minutes
     BODY_METHODS = {
@@ -5286,259 +5224,283 @@ var NAME = '[io-win]: ',
     UNKNOW_ERROR = 'Unknown response-error',
     XHR_ERROR = 'XHR Error',
     ABORTED = 'Request aborted',
-    NO_XHR = 'No valid xhr found on this browser',
-    ENCODE_URI_COMPONENT = encodeURIComponent,
+    NO_XHR = 'No valid xhr found on this browser';
 
-IO = {
-    config: {},
+module.exports = function (window) {
 
-    //===============================================================================================
-    // private methods:
-    //===============================================================================================
-
-    _xhrList: [],
-
-    /**
-     * Initializes the xhr-instance, based on the config-params.
-     * This method is the standard way of doing xhr-requests without processing streams.
-     *
-     * @method _initXHR
-     * @param xhr {Object} xhr-instance
-     * @param options {Object}
-     *    @param [options.url] {String} The url to which the request is sent.
-     *    @param [options.method='GET'] {String} The HTTP method to use.
-     *    can be ignored, even if streams are used --> the returned Promise will always hold all data
-     *    @param [options.sync=false] {boolean} By default, all requests are sent asynchronously. To send synchronous requests, set to true.
-     *    @param [options.data] {Object} Data to be sent to the server, either to be used by `query-params` or `body`.
-     *    @param [options.headers] {Object} HTTP request headers.
-     *    @param [options.responseType] {String} Force the response type.
-     *    @param [options.timeout=3000] {number} to timeout the request, leading into a rejected Promise.
-     *    @param [options.withCredentials=false] {boolean} Whether or not to send credentials on the request.
-     * @param fulfill {Function} reference to xhr-promise's fulfill-function
-     * @param reject {Function} reference to xhr-promise's reject-function
-     * @param promise {Promise} the xhr-promise which will be extended with the `abort()`-method
-     * @private
-    */
-    _initXHR: function (xhr, options, promise) {
-        console.log(NAME, '_initXHR');
-        var instance = this,
-            url = options.url,
-            method = options.method || GET,
-            headers = options.headers || {}, // all request will get some headers
-            async = !options.sync,
-            data = options.data,
-            reject = promise.reject;
-        // xhr will be null in case of a CORS-request when no CORS is possible
-        if (!xhr) {
-            console.error(NAME, '_initXHR fails: '+ERROR_NO_XHR);
-            reject(new Error(ERROR_NO_XHR));
-            return;
-        }
-        console.log(NAME, '_initXHR succesfully created '+(xhr._isXHR2 ? 'XMLHttpRequest2' : (xhr._isXDR ? 'XDomainRequest' : 'XMLHttpRequest1'))+'-instance');
-
-        // method-name should be in uppercase:
-        method = method.toUpperCase();
-
-        // in case of BODY-method: eliminate any data behind querystring:
-        // else: append data-object behind querystring
-        if (BODY_METHODS[method]) {
-            url = url.split('?'); // now url is an array
-            url = url[0]; // now url is a String again
-        }
-        else if (data) {
-            url += ((url.indexOf('?') > 0) ? '&' : '?') + instance._toQueryString(data);
-        }
-
-        xhr.open(method, url, async);
-        // xhr.responseType = options.responseType || 'text';
-        options.withCredentials && (xhr.withCredentials=true);
-
-
-        // more initialisation might be needed by extended modules:
-        instance._xhrInitList.each(
-            function(fn) {
-                fn(xhr, promise, headers, method);
-            }
-        );
-
-        // send the request:
-        xhr.send((BODY_METHODS[method] && data) ? ((headers[CONTENT_TYPE]===MIME_JSON) ? JSON.stringify(data) : instance._toQueryString(data)) : null);
-
-        console.log(NAME, 'xhr send to '+url+' with method '+method);
-
-        // now add xhr.abort() to the promise, so we can call from within the returned promise-instance
-        promise.abort = function() {
-            console.log(NAME, 'xhr aborted');
-            reject(new Error(ABORTED));
-            xhr._aborted = true; // must be set: IE9 won't allow to read anything on xhr after being aborted
-            xhr.abort();
-        };
-
-        // in case synchronous transfer: force an xhr.onreadystatechange:
-        async || xhr.onreadystatechange();
-    },
-
-    /**
-     * Adds the `headers`-object to `xhr`-headers.
-     *
-     * @method _setHeaders
-     * @param xhr {Object} containing the xhr-instance
-     * @param headers {Object} containing all headers
-     * @param method {String} the request-method used
-     * @private
-    */
-    _setHeaders: function(xhr, promise, headers, method) {
-        // XDR cannot set requestheaders, only XHR:
-        if (!xhr._isXDR) {
-            console.log(NAME, '_setHeaders');
-            var name;
-            if ((method!=='POST') && (method!=='PUT')) {
-                // force GET-request to make a request instead of using cache (like IE does):
-                headers['If-Modified-Since'] = 'Wed, 15 Nov 1995 01:00:00 GMT';
-                // header 'Content-Type' should only be set with POST or PUT requests:
-                delete headers[CONTENT_TYPE];
-            }
-            // set all headers
-            for (name in headers) {
-                xhr.setRequestHeader(name, headers[name]);
-            }
-
-            // in case of POST or PUT method: always make sure 'Content-Type' is specified
-            ((method!=='POST') && (method!=='PUT')) || (headers && (CONTENT_TYPE in headers)) || xhr.setRequestHeader(CONTENT_TYPE, DEF_CONTENT_TYPE_POST);
-        }
-    },
-
-    /**
-     * Adds 2 methods on the xhr-instance which are used by xhr when events occur:
-     *
-     * xhr.onreadystatechange()
-     * xhr.ontimeout()  // only XMLHttpRequest2
-     *
-     * These events are responsible for making the Promise resolve.
-     * @method _setReadyHandle
-     * @param xhr {Object} containing the xhr-instance
-     * @param fulfill {Function} reference to the Promise fulfill-function
-     * @param reject {Function} reference to the Promise reject-function
-     * @private
-    */
-    _setReadyHandle: function(xhr, promise) {
-        console.log(NAME, '_setReadyHandle');
-        // for XDomainRequest, we need 'onload' instead of 'onreadystatechange'
-        xhr.onreadystatechange = function() {
-            // CANNOT console xhr.responseText here! IE9 will throw an error:
-            // you can only acces it after (xhr.readyState===4)
-            // also check xhr._aborted --> IE9 comes here after aborted and will throw an error when reading xhr's native properties
-            if (!xhr._aborted && (xhr.readyState===4)) {
-                clearTimeout(xhr._timer);
-                if ((xhr.status>=200) && (xhr.status<300)) {
-                    console.log(NAME, 'xhr.onreadystatechange will fulfill xhr-instance: '+xhr.responseText);
-                    promise.fulfill(xhr);
-                }
-                else {
-                    console.warn(NAME, 'xhr.onreadystatechange will reject xhr-instance: '+xhr.statusText);
-                    promise.reject(new Error(xhr.statusText || UNKNOW_ERROR));
-                }
-            }
-        };
-        xhr.onerror = function() {
-            clearTimeout(xhr._timer);
-            promise.reject(new Error(XHR_ERROR));
-        };
-    },
-
-    /**
-     * Stringifies an object into one string with every pair separated by `&`
-     *
-     * @method _toQueryString
-     * @param data {Object} containing key-value pairs
-     * @return {String} stringified presentation of the object, with every pair separated by `&`
-     * @private
-    */
-    _toQueryString: function(data) {
-        var paramArray = [],
-            key, value;
-    // TODO: use `object` module
-        for (key in data) {
-            value = data[key];
-            key = ENCODE_URI_COMPONENT(key);
-            paramArray.push((value === null) ? key : (key + '=' + ENCODE_URI_COMPONENT(value)));
-        }
-        console.log(NAME, '_toQueryString --> '+paramArray.join('&'));
-        return paramArray.join('&');
-    },
-
-    /**
-     * Sends a HTTP request to the server and returns a Promise with an additional .abort() method to cancel the request.
-     * This method is the standard way of doing xhr-requests without processing streams.
-     *
-     * @method _xhr
-     * @param options {Object}
-     *    @param [options.url] {String} The url to which the request is sent.
-     *    @param [options.method='GET'] {String} The HTTP method to use.
-     *    can be ignored, even if streams are used --> the returned Promise will always hold all data
-     *    @param [options.sync=false] {boolean} By default, all requests are sent asynchronously. To send synchronous requests, set to true.
-     *    @param [options.data] {Object} Data to be sent to the server, either to be used by `query-params` or `body`.
-     *    @param [options.headers] {Object} HTTP request headers.
-     *    @param [options.responseType] {String} Force the response type.
-     *    @param [options.timeout=3000] {number} to timeout the request, leading into a rejected Promise.
-     *    @param [options.withCredentials=false] {boolean} Whether or not to send credentials on the request.
-     *    @param [options.streamback] {Function} callbackfunction in case you want to process streams (needs io-stream module).
-     * @return {Promise} Promise holding the request. Has an additional .abort() method to cancel the request.
-     * <ul>
-     *     <li>on success: xhr {XMLHttpRequest1|XMLHttpRequest2} xhr-response</li>
-     *     <li>on failure: reason {Error}</li>
-     * </ul>
-     * @private
-    */
-    _xhr: function(options) {
-        console.log(NAME, '_xhr');
-        var instance = this,
-            props = {},
-            xhr, promise;
-        options || (options={});
-
-        xhr = new XMLHttpRequest();
-        props._isXHR2 = ('withCredentials' in xhr);
-        // it could be other modules like io-cors or io-stream have subscribed
-        // xhr might be changed, also private properties might be extended
-        instance._xhrList.each(
-            function(fn) {
-                xhr = fn(xhr, props, options);
-            }
-        );
-        if (!xhr) {
-            return Promise.reject(NO_XHR);
-        }
-        xhr.merge(props);
-        console.log(NAME, '_xhr creating xhr of type: '+ (props._isXHR2 ? 'XMLHttpRequest2' : (props._isXDR ? 'XDomainRequest' : 'XMLHttpRequest1')));
-        console.log(NAME, 'CORS-IE: '+ props._CORS_IE + ', canStream: '+props._canStream);
-
-        promise = Promise.manage(options.streamback);
-
-        // Don't use xhr.timeout --> IE<10 throws an error when set xhr.timeout
-        // We use a timer that aborts the request
-        Object.defineProperty(xhr, '_timer', {
+    // to prevent multiple IO instances
+    // (which might happen: http://nodejs.org/docs/latest/api/modules.html#modules_module_caching_caveats)
+    // we make sure IO is defined only once. Therefore we bind it to `window` and return it if created before
+    // We need a singleton IO, because submodules might merge in. You can't have them merging
+    // into some other IO-instance than which is used.
+    if (!window._parcelaModules) {
+        Object.defineProperty(global, '_parcelaModules', {
             configurable: false,
             enumerable: false,
             writable: false,
-            value: setTimeout(function() {
-                       promise.reject(new Error(REQUEST_TIMEOUT));
-                       xhr._aborted = true; // must be set: IE9 won't allow to read anything on xhr after being aborted
-                       xhr.abort();
-                   }, options.timeout || instance.config.reqTimeout || DEF_REQ_TIMEOUT)
+            value: {} // `writable` is false means we cannot chance the value-reference, but we can change {} its members
         });
-
-        instance._initXHR(xhr, options, promise);
-        return promise;
     }
+    if (window._parcelaModules.IO) {
+        return window._parcelaModules.IO;
+    }
+
+    var ENCODE_URI_COMPONENT = window.encodeURIComponent,
+        IO;
+
+    IO = {
+        config: {},
+
+        //===============================================================================================
+        // private methods:
+        //===============================================================================================
+
+        _xhrList: [],
+
+        /**
+         * Initializes the xhr-instance, based on the config-params.
+         * This method is the standard way of doing xhr-requests without processing streams.
+         *
+         * @method _initXHR
+         * @param xhr {Object} xhr-instance
+         * @param options {Object}
+         *    @param [options.url] {String} The url to which the request is sent.
+         *    @param [options.method='GET'] {String} The HTTP method to use.
+         *    can be ignored, even if streams are used --> the returned Promise will always hold all data
+         *    @param [options.sync=false] {boolean} By default, all requests are sent asynchronously. To send synchronous requests, set to true.
+         *    @param [options.data] {Object} Data to be sent to the server, either to be used by `query-params` or `body`.
+         *    @param [options.headers] {Object} HTTP request headers.
+         *    @param [options.responseType] {String} Force the response type.
+         *    @param [options.timeout=3000] {number} to timeout the request, leading into a rejected Promise.
+         *    @param [options.withCredentials=false] {boolean} Whether or not to send credentials on the request.
+         * @param fulfill {Function} reference to xhr-promise's fulfill-function
+         * @param reject {Function} reference to xhr-promise's reject-function
+         * @param promise {Promise} the xhr-promise which will be extended with the `abort()`-method
+         * @private
+        */
+        _initXHR: function (xhr, options, promise) {
+            console.log(NAME, '_initXHR');
+            var instance = this,
+                url = options.url,
+                method = options.method || GET,
+                headers = options.headers || {}, // all request will get some headers
+                async = !options.sync,
+                data = options.data,
+                reject = promise.reject;
+            // xhr will be null in case of a CORS-request when no CORS is possible
+            if (!xhr) {
+                console.error(NAME, '_initXHR fails: '+ERROR_NO_XHR);
+                reject(new Error(ERROR_NO_XHR));
+                return;
+            }
+            console.log(NAME, '_initXHR succesfully created '+(xhr._isXHR2 ? 'XMLHttpRequest2' : (xhr._isXDR ? 'XDomainRequest' : 'XMLHttpRequest1'))+'-instance');
+
+            // method-name should be in uppercase:
+            method = method.toUpperCase();
+
+            // in case of BODY-method: eliminate any data behind querystring:
+            // else: append data-object behind querystring
+            if (BODY_METHODS[method]) {
+                url = url.split('?'); // now url is an array
+                url = url[0]; // now url is a String again
+            }
+            else if (data) {
+                url += ((url.indexOf('?') > 0) ? '&' : '?') + instance._toQueryString(data);
+            }
+
+            xhr.open(method, url, async);
+            // xhr.responseType = options.responseType || 'text';
+            options.withCredentials && (xhr.withCredentials=true);
+
+
+            // more initialisation might be needed by extended modules:
+            instance._xhrInitList.each(
+                function(fn) {
+                    fn(xhr, promise, headers, method);
+                }
+            );
+
+            // send the request:
+            xhr.send((BODY_METHODS[method] && data) ? (((headers[CONTENT_TYPE]===MIME_JSON) || xhr._isXDR) ? JSON.stringify(data) : instance._toQueryString(data)) : null);
+
+            console.log(NAME, 'xhr send to '+url+' with method '+method);
+
+            // now add xhr.abort() to the promise, so we can call from within the returned promise-instance
+            promise.abort = function() {
+                console.log(NAME, 'xhr aborted');
+                reject(new Error(ABORTED));
+                xhr._aborted = true; // must be set: IE9 won't allow to read anything on xhr after being aborted
+                xhr.abort();
+            };
+
+            // in case synchronous transfer: force an xhr.onreadystatechange:
+            async || xhr.onreadystatechange();
+        },
+
+        /**
+         * Adds the `headers`-object to `xhr`-headers.
+         *
+         * @method _setHeaders
+         * @param xhr {Object} containing the xhr-instance
+         * @param headers {Object} containing all headers
+         * @param method {String} the request-method used
+         * @private
+        */
+        _setHeaders: function(xhr, promise, headers, method) {
+            // XDR cannot set requestheaders, only XHR:
+            if (!xhr._isXDR) {
+                console.log(NAME, '_setHeaders');
+                var name;
+                if ((method!=='POST') && (method!=='PUT')) {
+                    // force GET-request to make a request instead of using cache (like IE does):
+                    headers['If-Modified-Since'] = 'Wed, 15 Nov 1995 01:00:00 GMT';
+                    // header 'Content-Type' should only be set with POST or PUT requests:
+                    delete headers[CONTENT_TYPE];
+                }
+                // set all headers
+                for (name in headers) {
+                    xhr.setRequestHeader(name, headers[name]);
+                }
+
+                // in case of POST or PUT method: always make sure 'Content-Type' is specified
+                ((method!=='POST') && (method!=='PUT')) || (headers && (CONTENT_TYPE in headers)) || xhr.setRequestHeader(CONTENT_TYPE, DEF_CONTENT_TYPE_POST);
+            }
+        },
+
+        /**
+         * Adds 2 methods on the xhr-instance which are used by xhr when events occur:
+         *
+         * xhr.onreadystatechange()
+         * xhr.ontimeout()  // only XMLHttpRequest2
+         *
+         * These events are responsible for making the Promise resolve.
+         * @method _setReadyHandle
+         * @param xhr {Object} containing the xhr-instance
+         * @param fulfill {Function} reference to the Promise fulfill-function
+         * @param reject {Function} reference to the Promise reject-function
+         * @private
+        */
+        _setReadyHandle: function(xhr, promise) {
+            console.log(NAME, '_setReadyHandle');
+            // for XDomainRequest, we need 'onload' instead of 'onreadystatechange'
+            xhr.onreadystatechange = function() {
+                // CANNOT console xhr.responseText here! IE9 will throw an error:
+                // you can only acces it after (xhr.readyState===4)
+                // also check xhr._aborted --> IE9 comes here after aborted and will throw an error when reading xhr's native properties
+                if (!xhr._aborted && (xhr.readyState===4)) {
+                    clearTimeout(xhr._timer);
+                    if ((xhr.status>=200) && (xhr.status<300)) {
+                        console.log(NAME, 'xhr.onreadystatechange will fulfill xhr-instance: '+xhr.responseText);
+                        promise.fulfill(xhr);
+                    }
+                    else {
+                        console.warn(NAME, 'xhr.onreadystatechange will reject xhr-instance: '+xhr.statusText);
+                        promise.reject(new Error(xhr.statusText || UNKNOW_ERROR+' '+xhr.status));
+                    }
+                }
+            };
+            xhr.onerror = function() {
+                clearTimeout(xhr._timer);
+                promise.reject(new Error(XHR_ERROR));
+            };
+        },
+
+        /**
+         * Stringifies an object into one string with every pair separated by `&`
+         *
+         * @method _toQueryString
+         * @param data {Object} containing key-value pairs
+         * @return {String} stringified presentation of the object, with every pair separated by `&`
+         * @private
+        */
+        _toQueryString: function(data) {
+            var paramArray = [],
+                key, value;
+        // TODO: use `object` module
+            for (key in data) {
+                value = data[key];
+                key = ENCODE_URI_COMPONENT(key);
+                paramArray.push((value === null) ? key : (key + '=' + ENCODE_URI_COMPONENT(value)));
+            }
+            console.log(NAME, '_toQueryString --> '+paramArray.join('&'));
+            return paramArray.join('&');
+        },
+
+        /**
+         * Sends a HTTP request to the server and returns a Promise with an additional .abort() method to cancel the request.
+         * This method is the standard way of doing xhr-requests without processing streams.
+         *
+         * @method request
+         * @param options {Object}
+         *    @param [options.url] {String} The url to which the request is sent.
+         *    @param [options.method='GET'] {String} The HTTP method to use.
+         *    can be ignored, even if streams are used --> the returned Promise will always hold all data
+         *    @param [options.sync=false] {boolean} By default, all requests are sent asynchronously. To send synchronous requests, set to true.
+         *    @param [options.data] {Object} Data to be sent to the server, either to be used by `query-params` or `body`.
+         *    @param [options.headers] {Object} HTTP request headers.
+         *    @param [options.responseType] {String} Force the response type.
+         *    @param [options.timeout=3000] {number} to timeout the request, leading into a rejected Promise.
+         *    @param [options.withCredentials=false] {boolean} Whether or not to send credentials on the request.
+         *    @param [options.streamback] {Function} callbackfunction in case you want to process streams (needs io-stream module).
+         * @return {Promise} Promise holding the request. Has an additional .abort() method to cancel the request.
+         * <ul>
+         *     <li>on success: xhr {XMLHttpRequest1|XMLHttpRequest2} xhr-response</li>
+         *     <li>on failure: reason {Error}</li>
+         * </ul>
+        */
+        request: function(options) {
+            console.log(NAME, 'request');
+            var instance = this,
+                props = {},
+                xhr, promise;
+            options || (options={});
+
+            xhr = new window.XMLHttpRequest();
+            props._isXHR2 = ('withCredentials' in xhr);
+            // it could be other modules like io-cors or io-stream have subscribed
+            // xhr might be changed, also private properties might be extended
+            instance._xhrList.each(
+                function(fn) {
+                    xhr = fn(xhr, props, options);
+                }
+            );
+            if (!xhr) {
+                return Promise.reject(NO_XHR);
+            }
+            xhr.merge(props);
+            console.log(NAME, 'request creating xhr of type: '+ (props._isXHR2 ? 'XMLHttpRequest2' : (props._isXDR ? 'XDomainRequest' : 'XMLHttpRequest1')));
+            console.log(NAME, 'CORS-IE: '+ props._CORS_IE + ', canStream: '+props._canStream);
+
+            promise = Promise.manage(options.streamback);
+
+            // Don't use xhr.timeout --> IE<10 throws an error when set xhr.timeout
+            // We use a timer that aborts the request
+            Object.defineProperty(xhr, '_timer', {
+                configurable: false,
+                enumerable: false,
+                writable: false,
+                value: setTimeout(function() {
+                           promise.reject(new Error(REQUEST_TIMEOUT));
+                           xhr._aborted = true; // must be set: IE9 won't allow to read anything on xhr after being aborted
+                           xhr.abort();
+                       }, options.timeout || instance.config.reqTimeout || DEF_REQ_TIMEOUT)
+            });
+
+            instance._initXHR(xhr, options, promise);
+            return promise;
+        }
+    };
+
+    IO._xhrInitList = [
+        IO._setReadyHandle,
+        IO._setHeaders
+    ];
+
+    window._parcelaModules.IO = IO;
+
+    return IO;
 };
-
-IO._xhrInitList = [
-    IO._setReadyHandle,
-    IO._setHeaders
-];
-
-module.exports = IO;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"lang-ext":9,"promise-ext":12,"ypromise":2}],9:[function(require,module,exports){
 /**
 Pollyfils for often used functionality for objects and Functions
@@ -5574,6 +5536,7 @@ Pollyfils for often used functionality for objects and Functions
 			defineProperty(object, name, map[name], force);
 		}
 	};
+	var NOOP = function () {};
 	// -------------------
 	var _each = function (obj, fn, context) {
 		var keys = Object.keys(obj),
@@ -5806,11 +5769,6 @@ Pollyfils for often used functionality for Function
 		 * By default, this method will not override existing prototype members, 
 		 * unless the second argument `force` is true.
 		 *
-		 * When the replaced member is a function, the original version is 
-		 * preserved in the `$orig` (original) static property
-		 * and can be called from the overriding method. If the same method is overriden more than once
-		 * only the last one will be kept.
-		 *
 		 * @method mergePrototypes
 		 * @param map {Object} Hash map of properties to add to the prototype of this object
 		 * @param force {Boolean}  If true, existing members will be overwritten
@@ -5826,13 +5784,10 @@ Pollyfils for often used functionality for Function
 			while (++i < l) {
 				name = names[i];
 				if (!force && name in proto) continue;
-				
-				if (typeof proto[name] === 'function') {
-					this.$orig[name] = proto[name];
-				}
 				proto[name] = map[name];
 			}
 			return this;
+			
 		},
 		/**
 		 * Returns a newly created class inheriting from this class
@@ -5888,11 +5843,42 @@ Pollyfils for often used functionality for Function
 			constructor.$super = baseProt;
 			constructor.$orig = {};
 
-			// add prototype overrides
 			constructor.mergePrototypes(prototypes, true);
 			return constructor;
 		},
-
+		/**
+		Overwrites the given prototype functions with the ones given in 
+		the hashmap while still providing a means of calling the original
+		overridden method.
+		
+		The patching function will receive a reference to the original method
+		prepended to the arguments the original would have received.
+		
+		@method patch
+		@param map {Object} Hash map of method names to their new implementation.
+		@chainable
+		*/
+		patch: function (map) {
+			var proto = this.prototype;
+			
+			var names = Object.keys(map || {}),
+				l = names.length,
+				i = -1,
+				name;
+			while (++i < l) {
+				name = names[i];
+				/*jshint -W083 */
+				proto[name] = (function (original) {
+					return function () {
+						/*jshint +W083 */
+						var a = Array.prototype.slice.call(arguments, 0);
+						a.unshift(original || NOOP);
+						return map[name].apply(this, a);
+					};
+				})(proto[name]);
+			}
+			return this;
+		},
 		/**
 		 * Sets the context of which the function will be execute. in the
 		 * supplied object's context, optionally adding any additional
@@ -5943,8 +5929,6 @@ Pollyfils for often used functionality for Function
 })();
 
 },{}],10:[function(require,module,exports){
-/* globals document:true */
-
 "use strict";
 
 /**
@@ -5980,6 +5964,7 @@ module.exports = function (window) {
     require('event/event-emitter.js');
 
     var Event = require('event-dom')(window),
+		Parcel = require('./parcel.js'),
         DOCUMENT = window.document,
         _parcelSelToFunc;
 
@@ -5989,22 +5974,20 @@ module.exports = function (window) {
      * On "non-outside" events, subscriber.t is set to the node that first matches the selector
      * so it can be used to set as e.target in the final subscriber
      *
-     * @method _parcelSelToFunc
-     * @param ev {Object} eventobject
-     * @param ev.subscriber {Object} subscriber
-     * @param ev.subscriber.o {Object} context
-     * @param ev.subscriber.cb {Function} callbackFn
-     * @param ev.subscriber.f {Function|String} filter
-     * @param ev.subscriber.n {dom-node} becomes e.currentTarget
-     * @param ev.subscriber.t {dom-node} becomes e.target
-     * @param ev.customEvent {String}
+     * @param customEvent {String} the customEvent that is transported to the eventsystem
+     * @param subscriber {Object} subscriber
+     * @param subscriber.o {Object} context
+     * @param subscriber.cb {Function} callbackFn
+     * @param subscriber.f {Function|String} filter
+     * @param subscriber.n {dom-node} becomes e.currentTarget
+     * @param subscriber.t {dom-node} becomes e.target
      * @private
      * @since 0.0.1
      */
-    _parcelSelToFunc = function(ev) {
+    _parcelSelToFunc = function(customEvent, subscriber) {
         // this stage is runned during subscription
-        var selector = ev.subscriber.f,
-            parcelinstance = ev.subscriber.o,
+        var selector = subscriber.f,
+            parcelinstance = subscriber.o,
             nodeid, byExactId, outsideEvent;
 
         if ((typeof parcelinstance.stamp!=='function') || (typeof parcelinstance.view!=='function')) {
@@ -6016,26 +5999,27 @@ module.exports = function (window) {
         // in case of no selector: we still need to process: parcelinstance._pNode becomes the currentTarget
         // to match against. Thus only leave when selector is a function
         if (typeof selector === 'function') {
-            ev.subscriber.n || (ev.subscriber.n=DOCUMENT);
+            subscriber.n || (subscriber.n=DOCUMENT);
             return;
         }
 
-        outsideEvent = REGEXP_UI_OUTSIDE.test(ev.customEvent);
+        outsideEvent = REGEXP_UI_OUTSIDE.test(customEvent);
 
         if (selector) {
             nodeid = selector.match(REGEXP_EXTRACT_NODE_ID);
-            // do need to set ev.subscriber.n, otherwise filtering goes wrong
-            nodeid ? (ev.subscriber.nId=nodeid[1]) : (ev.subscriber.n=DOCUMENT);
-
+            nodeid && (subscriber.nId=nodeid[1]);
             byExactId = REGEXP_NODE_ID.test(selector);
 
-            ev.subscriber.f = function(e) {
+            subscriber.f = function(e) {
                 // this stage is runned when the event happens
                 console.log(NAME, '_parcelSelToFunc inside filter');
                 var node = e.target,
                     pNode_node = parcelinstance._pNode && parcelinstance._pNode.node,
                     match = false,
                     pvNodeInfo;
+
+                // do need to set subscriber.n, otherwise filtering goes wrong
+                nodeid || (subscriber.n=pNode_node);
 
                 // e.target is the most deeply node in the dom-tree that caught the event
                 // our listener uses `selector` which might be a node higher up the tree.
@@ -6046,7 +6030,7 @@ module.exports = function (window) {
                 while (pNode_node.contains(node) && !match) {
                     console.log(NAME, '_parcelSelToFunc inside filter check match');
                     if (byExactId) {
-                        match = (node.id===selector.substr(1)) && ((node===pNode_node) || pNode_node.contains(node));
+                        match = (node.id===selector.substr(1)) && pNode_node.contains(node);
                     }
                     else {
                         match = node.matchesSelector(selector);
@@ -6054,7 +6038,7 @@ module.exports = function (window) {
                     // if there is a match, then set
                     // e.target to the target that matches the selector
                     if (match && !outsideEvent) {
-                        ev.subscriber.t = node;
+                        subscriber.t = node;
                     }
                     node = node.parentNode;
                 }
@@ -6063,218 +6047,230 @@ module.exports = function (window) {
             };
         }
         else {
-            ev.subscriber.f = function(e) {
+            subscriber.f = function(e) {
                 // this stage is runned when the event happens
                 console.log(NAME, '_parcelSelToFunc inside filter');
                 var node = e.target,
                     pNode_node = parcelinstance._pNode && parcelinstance._pNode.node,
+                    match = pNode_node.contains(node);
 
-                match = ((node===pNode_node) || pNode_node.contains(node));
+                subscriber.n = pNode_node;
+                if (match && !outsideEvent) {
+                    subscriber.t = pNode_node;
+                }
                 return !outsideEvent ? match : !match;
             };
         }
+        return true;
     };
+
     // whenever a subscriber gets defined with a css-selector instead of a filterfunction,
     // the event: 'ParcelaEvent:selectorsubs' get emitted. We need to catch this event and transform its
     // selector into a filter-function:
-    Event.after(PARCELA_EMITTER+':selectorsubs', _parcelSelToFunc, Event, true);
+    Event._sellist.unshift(_parcelSelToFunc);
 
-    return {
-        mergeInto: function(ParcelClass) {
-            ParcelClass.mergePrototypes({
+    var ParcelEv =  Parcel.subClass({
 
-                /**
-                 * Defines an emitterName into the instance.
-                 * This will add a protected property `_emitterName` to the instance. If you need an emitterName on
-                 * the Class, you should use the Event.Emitter helper: `ClassName.mergePrototypes(Event.Emitter(emitterName));`
-                 *
-                 * @static
-                 * @method defineEmitter
-                 * @param emitterName {String} identifier that will be added when events are sent (`emitterName:eventName`)
-                 * @since 0.0.1
-                */
-                defineEmitter: function(emitterName) {
-                     // force assign: there might be an emittername on the Class
-                    this.merge(Event.Emitter(emitterName), true);
-                },
+		/**
+		 * Defines an emitterName into the instance.
+		 * This will add a protected property `_emitterName` to the instance. If you need an emitterName on
+		 * the Class, you should use the Event.Emitter helper: `ClassName.mergePrototypes(Event.Emitter(emitterName));`
+		 *
+		 * @static
+		 * @method defineEmitter
+		 * @param emitterName {String} identifier that will be added when events are sent (`emitterName:eventName`)
+		 * @since 0.0.1
+		*/
+		defineEmitter: function(emitterName) {
+			 // force assign: there might be an emittername on the Class
+			this.merge(Event.Emitter(emitterName), true);
+		},
 
-                /**
-                 * Subscribes to a customEvent on behalf of the object who calls this method.
-                 * The callback will be executed `after` the defaultFn.
-                 *
-                 * @method after
-                 * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
-                 *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`.
-                 *        If `emitterName` is not defined, `UI` is assumed.
-                 * @param callback {Function} subscriber:will be invoked when the event occurs. An `eventobject` will be passed
-                 *        as its only argument.
-                 * @param [filter] {String|Function} to filter the event.
-                 *        Use a String if you want to filter DOM-events by a `selector`
-                 *        Use a function if you want to filter by any other means. If the function returns a trully value, the
-                 *        subscriber gets invoked. The function gets the `eventobject` as its only argument and the context is
-                 *        the subscriber.
-                 * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of after-subscribers.
-                 * @return {Object} handler with a `detach()`-method which can be used to detach the subscriber
-                 * @since 0.0.1
-                */
-                after: function (customEvent, callback, filter, prepend) {
-                    return Event.after(customEvent, callback, this, filter, prepend);
-                },
+		/**
+		 * Subscribes to a customEvent on behalf of the object who calls this method.
+		 * The callback will be executed `after` the defaultFn.
+		 *
+		 * @method after
+		 * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
+		 *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`.
+		 *        If `emitterName` is not defined, `UI` is assumed.
+		 * @param callback {Function} subscriber:will be invoked when the event occurs. An `eventobject` will be passed
+		 *        as its only argument.
+		 * @param [filter] {String|Function} to filter the event.
+		 *        Use a String if you want to filter DOM-events by a `selector`
+		 *        Use a function if you want to filter by any other means. If the function returns a trully value, the
+		 *        subscriber gets invoked. The function gets the `eventobject` as its only argument and the context is
+		 *        the subscriber.
+		 * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of after-subscribers.
+		 * @return {Object} handler with a `detach()`-method which can be used to detach the subscriber
+		 * @since 0.0.1
+		*/
+		after: function (customEvent, callback, filter, prepend) {
+			return Event.after(customEvent, callback, this, filter, prepend);
+		},
 
-                /**
-                 * Subscribes to a customEvent on behalf of the object who calls this method.
-                 * The callback will be executed `before` the defaultFn.
-                 *
-                 * @method before
-                 * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
-                 *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`.
-                 *        If `emitterName` is not defined, `UI` is assumed.
-                 * @param callback {Function} subscriber:will be invoked when the event occurs. An `eventobject` will be passed
-                 *        as its only argument.
-                 * @param [filter] {String|Function} to filter the event.
-                 *        Use a String if you want to filter DOM-events by a `selector`
-                 *        Use a function if you want to filter by any other means. If the function returns a trully value, the
-                 *        subscriber gets invoked. The function gets the `eventobject` as its only argument and the context is
-                 *        the subscriber.
-                 * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of before-subscribers.
-                 * @return {Object} handler with a `detach()`-method which can be used to detach the subscriber
-                 * @since 0.0.1
-                */
-                before: function (customEvent, callback, filter, prepend) {
-                    return Event.before(customEvent, callback, this, filter, prepend);
-                },
+		/**
+		 * Subscribes to a customEvent on behalf of the object who calls this method.
+		 * The callback will be executed `before` the defaultFn.
+		 *
+		 * @method before
+		 * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
+		 *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`.
+		 *        If `emitterName` is not defined, `UI` is assumed.
+		 * @param callback {Function} subscriber:will be invoked when the event occurs. An `eventobject` will be passed
+		 *        as its only argument.
+		 * @param [filter] {String|Function} to filter the event.
+		 *        Use a String if you want to filter DOM-events by a `selector`
+		 *        Use a function if you want to filter by any other means. If the function returns a trully value, the
+		 *        subscriber gets invoked. The function gets the `eventobject` as its only argument and the context is
+		 *        the subscriber.
+		 * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of before-subscribers.
+		 * @return {Object} handler with a `detach()`-method which can be used to detach the subscriber
+		 * @since 0.0.1
+		*/
+		before: function (customEvent, callback, filter, prepend) {
+			return Event.before(customEvent, callback, this, filter, prepend);
+		},
 
-                /**
-                 * Detaches (unsubscribes) the listener from the specified customEvent,
-                 * on behalf of the object who calls this method.
-                 *
-                 * @method detach
-                 * @param customEvent {String} conform the syntax: `emitterName:eventName`, wildcard `*` may be used for both
-                 *        `emitterName` as well as only `eventName`, in which case 'UI' will become the emitterName.
-                 * @since 0.0.1
-                */
-                detach: function(customEvent) {
-                    Event.detach(this, customEvent);
-                },
+		/**
+		 * Detaches (unsubscribes) the listener from the specified customEvent,
+		 * on behalf of the object who calls this method.
+		 *
+		 * @method detach
+		 * @param customEvent {String} conform the syntax: `emitterName:eventName`, wildcard `*` may be used for both
+		 *        `emitterName` as well as only `eventName`, in which case 'UI' will become the emitterName.
+		 * @since 0.0.1
+		*/
+		detach: function(customEvent) {
+			Event.detach(this, customEvent);
+		},
 
-                /**
-                 * Detaches (unsubscribes) the listener from all customevents,
-                 * on behalf of the object who calls this method.
-                 *
-                 * @method detachAll
-                 * @since 0.0.1
-                */
-                detachAll: function() {
-                    Event.detachAll(this);
-                },
+		/**
+		 * Detaches (unsubscribes) the listener from all customevents,
+		 * on behalf of the object who calls this method.
+		 *
+		 * @method detachAll
+		 * @since 0.0.1
+		*/
+		detachAll: function() {
+			Event.detachAll(this);
+		},
 
-                /**
-                 * Alias for `after`.
-                 *
-                 * Subscribes to a customEvent on behalf of the object who calls this method.
-                 * The callback will be executed `after` the defaultFn.
-                 *
-                 * @method on
-                 * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
-                 *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`.
-                 *        If `emitterName` is not defined, `UI` is assumed.
-                 * @param callback {Function} subscriber:will be invoked when the event occurs. An `eventobject` will be passed
-                 *        as its only argument.
-                 * @param [filter] {String|Function} to filter the event.
-                 *        Use a String if you want to filter DOM-events by a `selector`
-                 *        Use a function if you want to filter by any other means. If the function returns a trully value, the
-                 *        subscriber gets invoked. The function gets the `eventobject` as its only argument and the context is
-                 *        the subscriber.
-                 * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of after-subscribers.
-                 * @return {Object} handler with a `detach()`-method which can be used to detach the subscriber
-                 * @since 0.0.1
-                */
-                on: function (/* customEvent, callback, filter, prepend */) {
-                    return this.after.apply(this, arguments);
-                },
+		/**
+		 * Alias for `after`.
+		 *
+		 * Subscribes to a customEvent on behalf of the object who calls this method.
+		 * The callback will be executed `after` the defaultFn.
+		 *
+		 * @method on
+		 * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
+		 *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`.
+		 *        If `emitterName` is not defined, `UI` is assumed.
+		 * @param callback {Function} subscriber:will be invoked when the event occurs. An `eventobject` will be passed
+		 *        as its only argument.
+		 * @param [filter] {String|Function} to filter the event.
+		 *        Use a String if you want to filter DOM-events by a `selector`
+		 *        Use a function if you want to filter by any other means. If the function returns a trully value, the
+		 *        subscriber gets invoked. The function gets the `eventobject` as its only argument and the context is
+		 *        the subscriber.
+		 * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of after-subscribers.
+		 * @return {Object} handler with a `detach()`-method which can be used to detach the subscriber
+		 * @since 0.0.1
+		*/
+		on: function (/* customEvent, callback, filter, prepend */) {
+			return this.after.apply(this, arguments);
+		},
 
-                /**
-                 * Alias for `onceAfter`.
-                 *
-                 * Subscribes to a customEvent on behalf of the object who calls this method.
-                 * The callback will be executed `after` the defaultFn.
-                 * The subscriber will be automaticly removed once the callback executed the first time.
-                 * No need to `detach()` (unless you want to undescribe before the first event)
-                 *
-                 * @method onceAfter
-                 * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
-                 *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`.
-                 *        If `emitterName` is not defined, `UI` is assumed.
-                 * @param callback {Function} subscriber:will be invoked when the event occurs. An `eventobject` will be passed
-                 *        as its only argument.
-                 * @param [filter] {String|Function} to filter the event.
-                 *        Use a String if you want to filter DOM-events by a `selector`
-                 *        Use a function if you want to filter by any other means. If the function returns a trully value, the
-                 *        subscriber gets invoked. The function gets the `eventobject` as its only argument and the context is
-                 *        the subscriber.
-                 * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of after-subscribers.
-                 * @return {Object} handler with a `detach()`-method which can be used to detach the subscriber
-                 * @since 0.0.1
-                */
-                once: function (/* customEvent, callback, filter, prepend */) {
-                    return this.onceAfter.apply(this, arguments);
-                },
+		/**
+		 * Alias for `onceAfter`.
+		 *
+		 * Subscribes to a customEvent on behalf of the object who calls this method.
+		 * The callback will be executed `after` the defaultFn.
+		 * The subscriber will be automaticly removed once the callback executed the first time.
+		 * No need to `detach()` (unless you want to undescribe before the first event)
+		 *
+		 * @method onceAfter
+		 * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
+		 *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`.
+		 *        If `emitterName` is not defined, `UI` is assumed.
+		 * @param callback {Function} subscriber:will be invoked when the event occurs. An `eventobject` will be passed
+		 *        as its only argument.
+		 * @param [filter] {String|Function} to filter the event.
+		 *        Use a String if you want to filter DOM-events by a `selector`
+		 *        Use a function if you want to filter by any other means. If the function returns a trully value, the
+		 *        subscriber gets invoked. The function gets the `eventobject` as its only argument and the context is
+		 *        the subscriber.
+		 * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of after-subscribers.
+		 * @return {Object} handler with a `detach()`-method which can be used to detach the subscriber
+		 * @since 0.0.1
+		*/
+		once: function (/* customEvent, callback, filter, prepend */) {
+			return this.onceAfter.apply(this, arguments);
+		},
 
-                /**
-                 * Subscribes to a customEvent on behalf of the object who calls this method.
-                 * The callback will be executed `after` the defaultFn.
-                 * The subscriber will be automaticly removed once the callback executed the first time.
-                 * No need to `detach()` (unless you want to undescribe before the first event)
-                 *
-                 * @method onceAfter
-                 * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
-                 *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`.
-                 *        If `emitterName` is not defined, `UI` is assumed.
-                 * @param callback {Function} subscriber:will be invoked when the event occurs. An `eventobject` will be passed
-                 *        as its only argument.
-                 * @param [filter] {String|Function} to filter the event.
-                 *        Use a String if you want to filter DOM-events by a `selector`
-                 *        Use a function if you want to filter by any other means. If the function returns a trully value, the
-                 *        subscriber gets invoked. The function gets the `eventobject` as its only argument and the context is
-                 *        the subscriber.
-                 * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of after-subscribers.
-                 * @return {Object} handler with a `detach()`-method which can be used to detach the subscriber
-                 * @since 0.0.1
-                */
-                onceAfter: function (customEvent, callback, filter, prepend) {
-                    return Event.onceAfter(customEvent, callback, this, filter, prepend);
-                },
+		/**
+		 * Subscribes to a customEvent on behalf of the object who calls this method.
+		 * The callback will be executed `after` the defaultFn.
+		 * The subscriber will be automaticly removed once the callback executed the first time.
+		 * No need to `detach()` (unless you want to undescribe before the first event)
+		 *
+		 * @method onceAfter
+		 * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
+		 *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`.
+		 *        If `emitterName` is not defined, `UI` is assumed.
+		 * @param callback {Function} subscriber:will be invoked when the event occurs. An `eventobject` will be passed
+		 *        as its only argument.
+		 * @param [filter] {String|Function} to filter the event.
+		 *        Use a String if you want to filter DOM-events by a `selector`
+		 *        Use a function if you want to filter by any other means. If the function returns a trully value, the
+		 *        subscriber gets invoked. The function gets the `eventobject` as its only argument and the context is
+		 *        the subscriber.
+		 * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of after-subscribers.
+		 * @return {Object} handler with a `detach()`-method which can be used to detach the subscriber
+		 * @since 0.0.1
+		*/
+		onceAfter: function (customEvent, callback, filter, prepend) {
+			return Event.onceAfter(customEvent, callback, this, filter, prepend);
+		},
 
-                /**
-                 * Subscribes to a customEvent on behalf of the object who calls this method.
-                 * The callback will be executed `before` the defaultFn.
-                 * The subscriber will be automaticly removed once the callback executed the first time.
-                 * No need to `detach()` (unless you want to undescribe before the first event)
-                 *
-                 * @method onceBefore
-                 * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
-                 *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`.
-                 *        If `emitterName` is not defined, `UI` is assumed.
-                 * @param callback {Function} subscriber:will be invoked when the event occurs. An `eventobject` will be passed
-                 *        as its only argument.
-                 * @param [filter] {String|Function} to filter the event.
-                 *        Use a String if you want to filter DOM-events by a `selector`
-                 *        Use a function if you want to filter by any other means. If the function returns a trully value, the
-                 *        subscriber gets invoked. The function gets the `eventobject` as its only argument and the context is
-                 *        the subscriber.
-                 * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of before-subscribers.
-                 * @return {Object} handler with a `detach()`-method which can be used to detach the subscriber
-                 * @since 0.0.1
-                */
-                onceBefore: function (customEvent, callback, filter, prepend) {
-                    return Event.onceBefore(customEvent, callback, this, filter, prepend);
-                }
-            });
+		/**
+		 * Subscribes to a customEvent on behalf of the object who calls this method.
+		 * The callback will be executed `before` the defaultFn.
+		 * The subscriber will be automaticly removed once the callback executed the first time.
+		 * No need to `detach()` (unless you want to undescribe before the first event)
+		 *
+		 * @method onceBefore
+		 * @param customEvent {String|Array} the custom-event (or Array of events) to subscribe to. CustomEvents should
+		 *        have the syntax: `emitterName:eventName`. Wildcard `*` may be used for both `emitterName` as well as `eventName`.
+		 *        If `emitterName` is not defined, `UI` is assumed.
+		 * @param callback {Function} subscriber:will be invoked when the event occurs. An `eventobject` will be passed
+		 *        as its only argument.
+		 * @param [filter] {String|Function} to filter the event.
+		 *        Use a String if you want to filter DOM-events by a `selector`
+		 *        Use a function if you want to filter by any other means. If the function returns a trully value, the
+		 *        subscriber gets invoked. The function gets the `eventobject` as its only argument and the context is
+		 *        the subscriber.
+		 * @param [prepend=false] {Boolean} whether the subscriber should be the first in the list of before-subscribers.
+		 * @return {Object} handler with a `detach()`-method which can be used to detach the subscriber
+		 * @since 0.0.1
+		*/
+		onceBefore: function (customEvent, callback, filter, prepend) {
+			return Event.onceBefore(customEvent, callback, this, filter, prepend);
+		},
+		/**
+		Override Parcel's own `destroy` method to ensure destroying all the attached methods.
 
-        }
-    };
+		@method destroy
+		*/
+		destroy: function () {
+			ParcelEv.$super.destroy.call(this);
+			this.detachAll();
+		}
+	});
+	return ParcelEv;
+
 };
-},{"event-dom":3,"event/event-emitter.js":5,"lang-ext":9}],11:[function(require,module,exports){
+},{"./parcel.js":11,"event-dom":3,"event/event-emitter.js":5,"lang-ext":9}],11:[function(require,module,exports){
 "use strict";
 /**
 @module core
@@ -6888,7 +6884,7 @@ module.exports = function (window) {
 
 			return routes.some(function (config, route) {
 				if (route == path) {
-					rootApp(new config.parcel(r._routeParams), r.rootNode);
+					rootApp(config.parcel, r.rootNode, r._routeParams);
 					return true;
 				}
 				/*jshint -W084 */
@@ -6898,7 +6894,7 @@ module.exports = function (window) {
 					config.names.forEach(function (name, i) {
 						r._routeParams[name] = decodeURIComponent(matches[i +1]);
 					});
-					rootApp(new config.parcel(r._routeParams), r.rootNode);
+					rootApp(config.parcel, r.rootNode, r._routeParams);
 					return true;
 				}
 			});
@@ -7562,20 +7558,27 @@ module.exports = function (window) {
 		},
 
 		/**
-		Determines which [Parcel](Parcel.html) instance is the root app for this page
+		Determines which [Parcel](Parcel.html) is the root app for this page
 		and which is the DOM element it corresponds to and renders the app.
 
-		If ITSA controls the whole screen, the corresponding DOM element is going to be
+		If the root app controls the whole screen, the corresponding DOM element is going to be
 		`document.body`, which is the default when omitted.
 
 		@method rootApp
-		@param parcel {Parcel} instance of [Parcel](Parcel.html) that is the root of the app
-		@param [element=document.body] {DOM element} DOM element that is the root of the app
-		@return {Parcel} the `parcel` argument;
+		@param Parcel {Parcel} instance of [Parcel](Parcel.html) that is the root of the app.
+		@param [element=document.body] {DOM element} DOM element that is the root of the app.
+		@param [parcelConfig] {Object} optional arguments to provide to Parcel when intantiating it.
+		@return {Parcel} the root parcel just created (available in the [rootParcel](#property_rootParcel) property).
 		@static
 		*/
-		rootApp: function (parcel, rootNode) {
-			rootParcel = parcel;
+		rootApp: function (Parcel, rootNode, parcelConfig) {
+			if (rootParcel) rootParcel.destroy();
+			
+			if (arguments.length < 3 && rootNode && typeof rootNode.nodeName !== 'string') {
+				parcelConfig = rootNode;
+				rootNode = null;
+			}
+			rootParcel = new Parcel(parcelConfig);
 			/* global document:true */
 			rootNode = rootNode || document.body;
 			// Set a vNode to match the root
@@ -7585,11 +7588,11 @@ module.exports = function (window) {
 				children:[],
 				node:rootNode
 			};
-			var pNode = v._buildPNode(parcel);
+			var pNode = v._buildPNode(rootParcel);
 			rootNode.appendChild(pNode.node);
 			v._vDOM.children.push(pNode);
 
-			return parcel;
+			return rootParcel;
 		},
 		/**
 		Returns a new `pNode` based on the given parcel and namspace.
@@ -7606,6 +7609,7 @@ module.exports = function (window) {
 				.merge( {parcel:parcel, stamp:NaN, attrs: {}, children:[]});
 
 			parcel._pNode = pNode;
+			parcel.preView();
 			v._diffPNode(pNode, parcel);
 			return pNode;
 		},
@@ -7790,6 +7794,7 @@ module.exports = function (window) {
 						v._diffPNode(child, newChild);
 					} else {
 						var oldNode = child.node;
+						child.parcel.postView();
 						child = v._buildPNode(newChild, namespace);
 
 						insertNode(oldNode);
@@ -7805,7 +7810,10 @@ module.exports = function (window) {
 
 				// These end up with nothing so whatever was there has to be removed:
 				vu: removeNode,
-				pu: removeNode,
+				pu: function () {
+					child.parcel.postView();
+					removeNode();
+				},
 				su: removeNode,
 
 				// The following are ordered by destination
@@ -7819,6 +7827,7 @@ module.exports = function (window) {
 				},
 				pv: function () {
 					var oldNode = child.node;
+					child.parcel.postView();
 
 					child = v._buildVNode(newChild.tag, namespace);
 
@@ -7865,6 +7874,7 @@ module.exports = function (window) {
 				},
 				ps: function () {
 					var oldNode = child.node;
+					child.parcel.postView();
 
 					child = v._buildStringNode(newChild);
 
@@ -7875,8 +7885,8 @@ module.exports = function (window) {
 			var whatIsIt = function (child) {
 				if (child === undefined) return 'u';
 				if (typeof child === 'object') {
-					if (typeof child.tag === 'string') return 'v'; //vNode
 					if (typeof ((child.parcel && child.parcel.view) || child.view) === 'function') return 'p'; //pNode
+					if (typeof child.tag === 'string') return 'v'; //vNode
 				}
 				return 's';  // Anything else is probably a value that can be turned into a string.
 
@@ -8314,9 +8324,8 @@ process.chdir = function (dir) {
      * @type Object
      * @static
     */
-    Parcela.IO = require('io');
+    Parcela.IO = require('io')(window);
     Parcela.IO.config.merge(io_config);
-
 
     /**
      * [Event](Event.html)-instance

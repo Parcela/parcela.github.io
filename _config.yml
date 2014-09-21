@@ -1,5 +1,6 @@
 # Site settings
 title: Parcela
+version: 0.0.1
 email: marco@parcela.io
 description: ""
 baseurl: ""
@@ -7,3 +8,25 @@ url: "http://parcela.github.io"
 twitter_username: ParcelaLib
 github_username:  Parcela
 
+# Build settings
+highlighter: rouge
+markdown: redcarpet
+permalink: pretty
+
+redcarpet:
+  input: GFM
+  extensions: [with_toc_data, prettify, hard_wrap]
+
+collections:
+  docs:
+    output: true
+
+# Defaults per scope
+defaults:
+  -
+    scope:
+      path: ""
+      type: docs
+    values:
+      layout: module # overrides previous default layout
+      category: module

@@ -6,3 +6,17 @@ baseurl: ""
 url: "http://parcela.github.io"
 twitter_username: ParcelaLib
 github_username:  Parcela
+
+collections:
+  docs:
+    output: true
+
+# Defaults per scope
+defaults:
+  -
+    scope:
+      path: ""
+      type: docs
+    values:
+      layout: module # overrides previous default layout
+      category: module

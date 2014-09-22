@@ -10,6 +10,10 @@ github_username:  Parcela
 # Build settings
 markdown: redcarpet
 
+redcarpet:
+  input: GFM
+  extensions: [with_toc_data, prettify, hard_wrap]
+
 collections:
   docs:
     output: true

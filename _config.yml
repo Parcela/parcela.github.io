@@ -7,6 +7,10 @@ url: "http://parcela.github.io"
 twitter_username: ParcelaLib
 github_username:  Parcela
 
+# Build settings
+highlighter: rouge
+markdown: redcarpet
+
 collections:
   docs:
     output: true

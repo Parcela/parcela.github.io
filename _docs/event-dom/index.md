@@ -33,6 +33,19 @@ firstpar: get-started-browser
 </script>
 ```
 
+#Features#
+
+This module bring DOM-events to a higher level:
+
+* Subscribers work regardless of the domnode being part of the dom.
+* By using delegation, you can save many Event-subscribers.
+* Only a small number of dom-listeners are created. Just one for every possible dom-event.
+* e.target always matches the selector
+* No memoryleaks on the dom, no need to detach on the dom-node
+* Delegation support for `focus`, `blur`, `scroll`, `resize`, `error` and `load` event.
+* Both `before` and `after` listeners can be set.
+
+
 #The Basics#
 
 After including this module, you can listen for DOM-events, just like listening to other events. The difference with other events is that DOM-events don't need an emitterName when listening:

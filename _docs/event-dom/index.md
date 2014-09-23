@@ -37,14 +37,15 @@ firstpar: get-started-browser
 
 This module bring DOM-events to a higher level:
 
-* Subscribers work regardless of the domnode being part of the dom.
-* By using delegation, you can save many Event-subscribers.
-* Only a small number of dom-listeners are created. Just one for every possible dom-event.
+* subscribers work regardless of the domnode being part of the dom
+* by using delegation, you can save many Event-subscribers
+* only a small number of dom-listeners are created. Just one for every possible dom-event
 * e.target always matches the selector
-* No memoryleaks on the dom, no need to detach on the dom-node
-* Delegation support for `focus`, `blur`, `scroll`, `resize`, `error` and `load` event.
-* Both `before` and `after` listeners can be set.
-
+* no memoryleaks on the dom, no need to detach on the dom-node
+* delegation support for `focus`, `blur`, `scroll`, `resize`, `error` and `load` event
+* both `before` and `after` listeners can be set
+* `mouseover`- and `mouseout`-events only occurs on the selector (not noisy)
+* for all events, an `event**outside**` counterpart eventis is available
 
 #The Basics#
 
